@@ -123,7 +123,11 @@
 
 `shutdown` 命令用来关闭或重启系统。
 
-`ping` 命令用来测试网络连接。
+`ping` 命令用来测试网络连接。完整语法为：`ping [选项] 主机名或IP地址`，例如：`ping www.baidu.com`。其中，`-c` 选项表示指定发送的报文数，`-i` 选项表示指定间隔时间，`-w` 选项表示指定等待响应的时间。
+
+`wget` 命令用来下载文件。完整语法为：`wget [选项] URL`，例如：`wget http://www.example.com/file.zip`。其中，`-c` 选项表示断点续传，`-O` 选项表示指定下载后的文件名。
+
+`curl` 命令用来下载文件。完整语法为：`curl [选项] URL`，例如：`curl http://www.example.com/file.zip`。其中，`-o` 选项表示指定下载后的文件名。
 
 `ifconfig` 命令用来显示网络接口信息。
 
