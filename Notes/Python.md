@@ -145,3 +145,186 @@ res_index = temp.index(查找元素值, 查找起始索引值， 查找末尾索
 res_count = temp.count(查找元素值)
 ```
 
+### 元组
+
+#### 性质
+由一系列按特定顺序排序的元素组成。
+
+元组和列表（list）的不同之处在于：
+
+列表的元素是可以更改的，包括修改元素值，删除和插入元素，所以列表是可变序列；
+而元组一旦被创建，它的元素就不可更改了，所以元组是不可变序列。
+元组也可以看做是不可变的列表，通常情况下，元组用于保存无需修改的内容。
+
+从形式上看，元组的所有元素都放在一对小括号( )中，相邻元素之间用逗号,分隔，如下所示：
+(element1, element2, ... , elementn)
+
+其中 element1~elementn 表示元组中的各个元素，个数没有限制，只要是 Python 支持的数据类型就可以。
+
+从存储内容上看，元组可以存储整数、实数、字符串、列表、元组等任何类型的数据，并且在同一个元组中，元素的类型可以不同，例如：
+("c.biancheng.net", 1, [2,'a'], ("abc",3.0))
+
+在这个元组中，有多种类型的数据，包括整形、字符串、列表、元组。
+
+另外，我们都知道，列表的数据类型是 list，那么元组的数据类型是什么呢？我们不妨通过 type() 函数来查看一下：
+```python
+type( ("c.biancheng.net",1,[2,'a'],("abc",3.0)) )
+--> <class 'tuple'>
+```
+
+#### 声明
+```python
+# 使用 ( ) 直接创建
+# 通过( )创建元组后，一般使用=将它赋值给某个变量，具体格式为：
+tuplename = (element1, element2, ..., elementn)
+#其中，tuplename 表示变量名，element1 ~ elementn 表示元组的元素。
+num = (7, 14, 21, 28, 35)
+course = ("Python教程", "http://c.biancheng.net/python/")
+abc = ( "Python", 19, [1,2], ('c',2.0) )
+# 在 Python 中，元组通常都是使用一对小括号将所有元素包围起来的，但小括号不是必须的，只要将各元素用逗号隔开，Python 就会将其视为元组，请看下面的例子：
+course = "Python教程", "http://c.biancheng.net/python/"
+#需要注意的一点是，当创建的元组中只有一个字符串类型的元素时，该元素后面必须要加一个逗号,，否则 Python 解释器会将它视为字符串。
+
+# 使用tuple()函数创建元组
+# 除了使用( )创建元组外，Python 还提供了一个内置的函数 tuple()，用来将其它数据类型转换为元组类型。
+# tuple() 的语法格式如下：
+tuple(data)
+#其中，data 表示可以转化为元组的数据，包括字符串、元组、range 对象等。
+```
+
+#### 常用方法
+```python
+
+```
+
+### 字典
+
+#### 性质
+字典是另一种可变容器模型,可存储任意类型对象。如字符串、数字、元组等其他容器模型
+因为字典是无序的所以不支持索引和切片。
+key不可以重复,否则只会保留第一个;
+value值可以重复;
+key可以是任意的数据类型,但不能出现可变的数据类型,保证key唯一;
+key一般形式为字符串。
+
+#### 声明
+```python
+dict = {"nane": "张三", "age": 20, "sex": "男"}
+```
+
+#### 常用方法
+```python
+# 向字典中加入新Key-Value对。
+# 字典名[new key]=new value
+dict["score"] = 100
+
+# 删除字典中某对Key-Value。
+del 字典名[key]
+del dict["name"]
+
+# 查找字典中某Key的Value。
+value=字典名[key]
+value=dict["sex"]
+
+# 更改字典中某Key的Value
+字典名[key]=new_value
+dict["name"]="李四"
+
+# 清空字典
+dict.clear()
+
+# len函数返回该字典的键值对个数。
+dict.len()
+
+# keys函数会返回一个列表包含这个字典的所有Key。
+list1 = dict.keys()
+
+# values函数会返回一个列表包含这个字典的所有Value。
+list1 = dict.values()
+
+# items函数返回包含每个键值对的元组的列表
+dict = {"name": "张三", "age": 20, "sex": "男"}
+list1 = dict.items()
+list1
+-->dict_items([('name', '张三'), ('age', 20), ('sex', '男')])
+
+# 字典名[key]会返回该Key对应的Value值
+value1 = dict["age"]
+
+# setdefault函数
+# 如果key值存在,那么返回对应字典的value,不会用到自己设置的value;
+# 如果key值不存在.返回None,并且把新设置的key和value保存在字典中;
+# 如果key值不存在,但设置了value,则返回设置的value;
+dict.setdefault(key,value)
+
+# get函数
+# 如果key值存在,那么返回对应字典的value,不会用到自己设置的value;
+# 如果key值不存在.返回None,但是不会把新设置的key和value保存在字典中;
+# 如果key值不存在,但设置了value,则返回设置的value;
+dict.get(k,value)
+
+# enumerate函数
+# 返回字典的Key，以Key的顺序为索引的元组形式返回。
+enumerate(字典名)
+for i in enumerate(dict):
+    print(i)
+-->(0, 'name')
+(1, 'age')
+(2, 'sex')
+
+# 判断字典中是否存在某个Key
+key_name in dict.keys()
+
+# 判断字典中是否存在某个Value
+value in dict.values()
+```
+
+### 集合
+
+#### 性质
+
+#### 声明
+
+```python
+s = {1,2,4,5}
+```
+
+#### 常用方法
+
+```python
+# set()类型转换，将其他数据结构转换为集合形式以达到去重效果
+list1 = [1, 4, 5, 1, 4, 5]
+s1 = set(list1)
+s1
+--> {1, 4, 5}
+
+# 判断
+des in 集合名
+
+# update函数更新整个集合，把第二个集合插入第一个集合中
+set1.update(set2)
+
+# add函数可以向集合中插入一个值
+set1.add(插入元素值)
+
+# del 关键字用来删除集合，集合不存在。
+del set1
+
+# clear函数用来清空整个集合，集合还存在但不存在元素。
+set1.clear()
+
+# discard函数用来删除指定元素
+set1.discard(待删除的元素值)
+
+# remove函数用来移除指定元素
+set1.remove(待移除的元素值)
+
+# pop函数用来弹出最靠前的元素的值
+value = set1.pop()
+
+#集合存在以下运算符
+`&`运算符表示交集运算  `set1 & set2`
+`|`运算符表示并集运算  `set1 | set2`
+`-`运算符表示差集运算  `set1 - set2`
+`^`运算符表示对称差运算  `set1 ^ set2`
+```
