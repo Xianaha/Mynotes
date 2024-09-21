@@ -15,7 +15,7 @@
 - [实例解析video](【【动态规划】背包问题】https://www.bilibili.com/video/BV1K4411X766?vd_source=1e4713cfa8e350de3a5d5debd2321c1d)
 
 ##### 背包问题
-- [0-1背包问题讲解video](【[纯手推！！！]动态规划背包问题汇总 01背包 完全背包 多重背包 二维数组 一维滚动数组】https://www.bilibili.com/video/BV1Kz4y1W7U9?vd_source=1e4713cfa8e350de3a5d5debd2321c1d)
+- [问题讲解video](https://www.bilibili.com/video/BV1Kz4y1W7U9?vd_source=1e4713cfa8e350de3a5d5debd2321c1d)
 
 ##### 股票交易问题
 
