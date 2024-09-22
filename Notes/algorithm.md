@@ -26,6 +26,7 @@
 - [最长公共子序列问题详解-求长度](【动态规划再显神通，LeetCode：516.最长回文子序列】https://www.bilibili.com/video/BV1d8411K7W6?vd_source=1e4713cfa8e350de3a5d5debd2321c1d)
 
 ##### 最大子数组问题
+- [实例讲解video](https://www.bilibili.com/video/BV19V4y1F7b5?vd_source=1e4713cfa8e350de3a5d5debd2321c1d)
 
 ##### 旅行推销员问题
 
