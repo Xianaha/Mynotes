@@ -28,6 +28,10 @@
 ##### 最大子数组问题
 - [实例讲解video](https://www.bilibili.com/video/BV19V4y1F7b5?vd_source=1e4713cfa8e350de3a5d5debd2321c1d)
 
+##### 整数拆分问题
+
+- [实例讲解video](https://www.bilibili.com/video/BV1Mg411q7YJ?vd_source=1e4713cfa8e350de3a5d5debd2321c1d)
+
 ##### 旅行推销员问题
 
 
