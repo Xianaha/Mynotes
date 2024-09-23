@@ -2,7 +2,7 @@
 
 ## 常用指令
 
- `conda create -n env_name python=3.7` 创建一个名为env_name的环境，指定python版本为3.7。
+ `conda create -n env_name python=3.10` 创建一个名为env_name的环境，指定python版本为3.10。
 
  `conda activate env_name` 激活env_name环境。
 

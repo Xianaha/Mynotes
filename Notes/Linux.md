@@ -4,6 +4,10 @@
 
 `nvtop` 命令用来查看 系统CPU、内存和进程使用情况。
 
+`df` 命令用来显示磁盘使用情况。例如：`df -h` 显示磁盘使用情况，以方便查看。
+
+`nvidia-smi` 命令用来查看 NVIDIA 显卡信息。
+
 `date` 命令用来显示当前日期和时间。例如：`date` 显示当前日期和时间。
 
 `cal` 命令用来显示日历。例如：`cal 2021` 显示 2021 年的日历。
@@ -11,8 +15,6 @@
 `uptime` 命令用来显示系统运行时间。例如：`uptime` 显示系统运行时间。
 
 ## 与服务器相关
-
-`nvidia-smi` 命令用来查看 NVIDIA 显卡信息。
 
 `ssh` 命令用来登录远程服务器。例如：`ssh username@server_ip` 登录 `server_ip` 服务器，其中 `username` 是你的服务器用户名。
 
@@ -54,7 +56,6 @@
 
 `chown` 命令用来修改文件所有者。例如：`chown username file1.txt` 修改 `file1.txt` 的所有者为 `username`。
 
-`df` 命令用来显示磁盘使用情况。例如：`df -h` 显示磁盘使用情况，以方便查看。
 
 `tar` 命令用来打包和压缩文件。例如：`tar -cvf archive.tar /path/to/directory` 打包 `/path/to/directory` 目录到 `archive.tar` 文件。
 
