@@ -16,10 +16,8 @@
 
 `ssh` 命令用来登录远程服务器。例如：`ssh username@server_ip` 登录 `server_ip` 服务器，其中 `username` 是你的服务器用户名。
 
-## 与服务器相关
 
-`scp` 命令是 `ssh` 协议的一部分，可以用来在本地和远程服务器之间安全地传输文件。
-
+`scp` 命令是 `ssh` 协议的一部分，可以用来在本地和远程服务器之间安全地传输文件。例如：`scp file1.txt username@server_ip:/remote/path/` 将 `file1.txt` 复制到 `server_ip` 服务器的 `/remote/path/` 目录下。
 假设你有一个本地文件夹 `local_folder`，你想将其传到服务器的 `/remote/path/` 目录下，可以使用以下命令：
 `scp -r local_folder username@server_ip:/remote/path/`
 其中，`-r` 选项表示递归复制整个目录，`username` 是你的服务器用户名，`server_ip` 是你的服务器 IP 地址。
