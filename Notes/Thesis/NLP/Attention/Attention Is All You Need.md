@@ -28,6 +28,60 @@
 
 ![Transformer architecture](/Notes/Thesis/NLP/Attention/Transformer%20architecture.png "Transformer architecture")
 
+![Transformer architecture with functions](/Notes/Thesis/NLP/Attention/Transformer%20architecture%20with%20function.png "Transformer architecture with functions")
+
+![concise transformer architecture](/Notes/Thesis/NLP/Attention/concise%20Transformer.png "concise transformer architecture")
+
+### Encoder and Decoder Stacks
+
+![Encoder and Decoder](/Notes/Thesis/NLP/Attention/Encoder-Decoder.png "Encoder and Decoder")
+
+![Encoder and Decoder Inside](/Notes/Thesis/NLP/Attention/Encoder-Decoder%20Inside.png "Encoder and Decoder Inside")
+
+>Here, the encoder maps an input sequence of symbol representations (x1, ..., xn) to a sequence of continuous representations z = (z1, ..., zn).
+>
+在这里，编码器将输入向量表示序列(x1, ..., xn)映射到连续表示序列z=(z1, ..., zn)中。
+
+> Given z, the decoder then generates an output sequence (y1, ..., ym) of symbols one element at a time.
+>
+编码器给予解码器Z，解码器逐个生成输出向量序列(y1, ..., ym)。
+
+> At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next.
+>
+在生成yt的每一步，模型是自回归的，在生成下一个输出时，会将之前生成的向量作为额外输入。即过去时刻的输出yt将作为下一个输出y(t+1)的输入。
+
+#### Encoder
+
+![Encoder Unit](/Notes/Thesis/NLP/Attention/Encoder.png "Encoder Unit")
+
+>The encoder is composed of a stack of N = 6 identical layers. Each layer has two sub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position-wise fully connected feed-forward network.
+>
+编码器由N=6个相同层组成。每一层都有两个子层。第一个子层表达多头自注意力机制，第二个子层表达简单的、位置无关的全连接前馈网络（一个简单的感知机）。
+
+数据经过self-attention模块后得到一个加权之后的特征向量Z，这个特征向量Z包含了输入序列的全部信息。Z由公式Attention(Q,K,V)得到：
+$$Attention(Q,K,V)=softmax(\frac{QK^T}{\sqrt{d_k}})V$$
+其中Q,K,V分别是输入序列的特征向量，Q,K的维度都是d_k，V的维度是d_v。
+
+得到的特征向量Z会被送入Feed-Forward Nerual Network中，该全连接神经网络有两层，第一层是激活函数ReLU，第二层是一个线性激活函数。该函数可以表达为：
+$$FFN(x)=max(0,xW_1+b_1)W_2+b_2$$
+其中x是输入向量，W_1,b_1,W_2,b_2是权重和偏置。
+
+以上过程会重复N次，得到N个特征向量Z，然后将这些特征向量Z拼接起来，作为输出。同时该输出将会进入到Decoder中，作为Decoder的输入。
+
+#### Decoder
+
+### Attention
+
+#### Scaled Dot-Product Attention
+
+#### Multi-Head Attention
+
+### Position-wise Feed-Forward Networks
+
+### Embeddings and Softmax
+
+### Positional Encoding
+
 ## Conclusion：
 
 >In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers most commonly  encoder-decoder architectures with multi-headed self-attention.
@@ -62,3 +116,5 @@
 [Transformer原理图文讲解](https://jalammar.github.io/illustrated-transformer/)
 
 [Transformer原理动画演示](https://www.bilibili.com/video/BV1tSHVeYEdW?vd_source=1e4713cfa8e350de3a5d5debd2321c1d)
+
+[Transformer 原理讲解](https://blog.csdn.net/weixin_42475060/article/details/121101749?ops_request_misc=%257B%2522request%255Fid%2522%253A%252267B72B1C-98AD-4F50-822B-11F2374EC6CC%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=67B72B1C-98AD-4F50-822B-11F2374EC6CC&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-121101749-null-null.142^v100^pc_search_result_base6&utm_term=Transformer&spm=1018.2226.3001.4187)
