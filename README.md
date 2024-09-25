@@ -3,6 +3,7 @@
 #### 介绍
 
 .md编写方法：[Markdown语法说明](https://markdown.com.cn/basic-syntax/)
+其他编写方法：[RUNOOB.COM](https://www.runoob.com/markdown/md-tutorial.html)
 
 #### 软件架构
 
