@@ -36,7 +36,7 @@
 
 `file` 命令用来显示文件类型。例如：`file file1.txt` 显示 `file1.txt` 的类型。
 
-`du` 命令用来显示目录或文件大小。例如：`du -sh /path/to/directory` 显示 `/path/to/directory` 的大小。
+`du` 命令用来显示目录或文件大小。完整语法为：`du [选项] 文件或目录`，例如：`du -sh /path/to/directory` 显示 `/path/to/directory` 的大小；`du -h --max-depth=1` 显示当前目录下一级目录的大小。
 
 `cat` 命令用来显示文件内容。例如：`cat file1.txt` 显示 `file1.txt` 的内容。
 
