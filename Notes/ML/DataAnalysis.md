@@ -625,7 +625,147 @@ PS:np.save() 和np.load() 使用时，不用自己考虑数据类型和维度。
 
 
 
-## Pandas
+## Pandas(Panel Data)
+
+### introduction
+
+Pandas 是一个开源的第三方 Python 库，从 Numpy 和 Matplotlib 的基础上构建而来，享有数据分析“三剑客之一”的盛名（NumPy、Matplotlib、Pandas）。Pandas 已经成为 Python 数据分析的必备高级工具，它的目标是成为强大、灵活、可以支持任何编程语言的数据分析工具。
+
+Pandas 这个名字来源于面板数据（Panel Data）与数据分析（data analysis）这两个名词的组合。在经济学中，Panel Data 是一个关于多维数据集的术语。Pandas 最初被应用于金融量化交易领域，现在它的应用领域更加广泛，涵盖了农业、工业、交通等许多行业。
+
+Pandas 最初由 Wes McKinney（韦斯·麦金尼）于 2008 年开发，并于 2009 年实现开源。目前，Pandas 由 PyData 团队进行日常的开发和维护工作。在 2020 年 12 月，PyData 团队公布了最新的 Pandas 1.20 版本 。
+
+在 Pandas 没有出现之前，Python 在数据分析任务中主要承担着数据采集和数据预处理的工作，但是这对数据分析的支持十分有限，并不能突出 Python 简单、易上手的特点。Pandas 的出现使得 Python 做数据分析的能力得到了大幅度提升，它主要实现了数据分析的五个重要环节：  
+**加载数据**  
+**整理数据**  
+**操作数据**  
+**构建数据模型**  
+**分析数据**
+
+我们知道，构建和处理二维、多维数组是一项繁琐的任务。Pandas 为解决这一问题， 在 ndarray 数组（NumPy 中的数组）的基础上构建出了两种不同的数据结构，分别是 Series（一维数据结构）DataFrame（二维数据结构）：  
+Series 是带标签的一维数组，这里的标签可以理解为索引，但这个索引并不局限于整数，它也可以是字符类型，比如 a、b、c 等；  
+DataFrame 是一种表格型数据结构，它既有行标签，又有列标签。
+
+下面对上述数据结构做简单地的说明：
+
+| 数据结构 |     维度     |     说明     |
+| :----: |     :----:     |     :----:     |
+|Series|	1	|该结构能够存储各种数据类型，比如字符数、整数、浮点数、Python 对象等，Series 用 name 和 index 属性来描述数据值。Series 是一维数据结构，因此其维数不可以改变。 |
+|DataFrame|	2	|DataFrame 是一种二维表格型数据的结构，既有行索引，也有列索引。行索引是 index，列索引是 columns。在创建该结构时，可以指定相应的索引值。|
+
+使用方法：
+```python
+import pandas as pd
+```
+
+### Series结构
+Series 结构，也称 Series 序列，是 Pandas 常用的数据结构之一，它是一种类似于一维数组的结构，由一组数据值（value）和一组标签组成，其中标签与数据值之间是一一对应的关系。
+
+Series 可以保存任何数据类型，比如整数、字符串、浮点数、Python 对象等，它的标签默认为整数，从 0 开始依次递增。Series 的结构图，如下所示：
+![Series architecture](/Notes/ML/Series%20architecture.gif "Series architecture")  
+通过标签我们可以更加直观地查看数据所在的索引位置。
+
+`pd.Series(data=None, index=None, dtype=None, name=None, copy=False)`  
+创建 Series 结构。其中，data 为数据列表，index 为索引列表，dtype 为数据类型，name 为 Series 名称，copy 为是否复制数据。
+```python
+# 创建Series结构
+s = pd.Series()
+s
+>>> Series([], dtype: object)
+
+s = pd.Series([1, 2, 3, 4, 5])
+s
+>>> 0    1
+    1    2
+    2    3
+    3    4
+    4    5
+    dtype: int64
+
+# 使用标量值创建Series结构，则必须提供索引，示例如下：
+data = 10
+index = ['A', 'B', 'C', 'D', 'E']
+s = pd.Series(data, index=index)
+s
+>>> A    10
+    B    10
+    C    10
+    D    10
+    E    10
+    dtype: int64
+
+# ndarray 转换为 Series
+a = np.array([1, 2, 3, 4, 5])
+s = pd.Series(a)
+s
+>>> 0    1
+    1    2
+    2    3
+    3    4
+    4    5
+    dtype: int64
+
+# ndarray 是 NumPy 中的数组类型，当 data 是 ndarry 时，传递的索引必须具有与数组相同的长度。假如没有给 index 参数传参，在默认情况下，索引值将使用是 range(n) 生成，其中 n 代表数组长度，如下所示：
+[0,1,2,3…. range(len(array))-1]
+
+# 使用默认索引，创建 Series 序列对象：
+data = np.array(['a','b','c','d'])
+s = pd.Series(data)
+s
+>>> 0    a
+    1    b
+    2    c
+    3    d
+    dtype: object
+
+# 给定索引值，创建 Series 序列对象：
+# series 结构的索引可以是任意类型，比如字符串、日期等。
+
+data = np.array(['a','b','c','d'])
+index = ['A', 'B', 'C', 'D']
+s = pd.Series(data, index=index)
+s
+>>> A    a
+    B    b
+    C    c
+    D    d
+    dtype: object
+
+# dict创建Series对象
+# 可以把 dict 作为输入数据。如果没有传入索引时会按照字典的键来构造索引；反之，当传递了索引时需要将索引标签与字典中的值一一对应。
+
+data = {'A': 1, 'B': 2, 'C': 3, 'D': 4}
+s = pd.Series(data)
+s
+>>> A    1
+    B    2
+    C    3
+    D    4
+    dtype: int64
+
+data = {'A': 1, 'B': 2, 'C': 3, 'D': 4}
+s = pd.Series(data, index=['A', 'B', 'C', 'D'])
+s
+>>> A    1
+    B    2
+    C    3
+    D    4
+    dtype: int64
+
+data = {'a' : 0., 'b' : 1., 'c' : 2.}
+s = pd.Series(data,index=['b','c','d','a'])
+s
+>>> b    1.0
+    c    2.0
+    d    NaN
+    a    0.0    
+    dtype: float64
+# pd.Series会按照index来构造索引寻找字典中的值，如果字典中有缺失值，则会用NaN填充。
+
+
+```
+
+
 
 
 
@@ -688,3 +828,4 @@ with open('data.csv', 'w', newline='') as f:
 
 - [NumPy官网](https://numpy.org/)
 - [NumPy详解](https://blog.csdn.net/m0_74344139/article/details/134842295?ops_request_misc=&request_id=&biz_id=102&utm_term=Numpy%E8%AF%A6%E8%A7%A3&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-134842295.142^v100^pc_search_result_base6&spm=1018.2226.3001.4187)
+- [Pandas教程](https://c.biancheng.net/pandas)
