@@ -1122,10 +1122,408 @@ df
 # 这里删除了列 two。
 
 ```
+### 行索引操作DataFrame
+```python
+# 标签索引选取
+# 可以将行标签传递给 loc 函数，来选取数据。
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df.loc['a']
+>>> one    1
+    two    1
+    Name: a, dtype: int64
+# loc 允许接两个参数分别是行和列，参数之间需要使用“逗号”隔开，但该函数只能接收标签索引。
+
+# 整数索引选取
+# 通过将数据行所在的索引位置传递给 iloc 函数，也可以实现数据行选取。
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df.iloc[0]
+>>> one    1
+    two    1
+    Name: a, dtype: int64
+# iloc 允许传递整数索引，但该函数只能接收整数索引。
+
+# 切片操作多行选取
+# 也可以使用切片的方式同时选取多行。
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df.loc['a':'c']
+>>>    one  two
+    a   1.0   1
+    b   2.0   2
+    c   3.0   3
+# 这里使用了标签索引，选取了 a 到 c 之间的行。
+
+df.iloc[0:2]
+>>>    one  two
+    a   1.0   1
+    b   2.0   2
+# 这里使用了整数索引，选取了 0 到 2 之间的行。
+```
+
+`df.drop(labels=None, axis=0, index=None, columns=None, inplace=False, errors='raise')`  
+删除指定行或列的数据。其中，labels为行或列标签，axis为0表示删除行，为1表示删除列，index和columns分别表示行标签和列标签，inplace为True表示直接修改原数据，为False表示返回修改后的新数据, errors为'ignore'表示忽略错误、'raise'表示抛出错误。
+```python
+# 删除指定行或列的数据
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df.drop('a', axis=0)
+>>>    one  two
+    b   2.0   2
+    c   3.0   3
+    d   NaN   4
+# 这里删除了行标签为 'a' 的行。
+
+df.drop('two', axis=1)
+>>>    one
+    a   1.0
+    b   2.0
+    c   3.0
+    d   NaN
+# 这里删除了列标签为 'two' 的列。
+
+df.drop(['a', 'b'], axis=0)
+>>>    one  two
+    c   3.0   3
+    d   NaN   4
+# 这里删除了行标签为 'a' 和 'b' 的行。
+
+df.drop(['one', 'two'], axis=1)
+>>> Empty DataFrame
+    Columns: []
+    Index: [a, b, c, d]
+# 这里删除了列标签为 'one' 和 'two' 的列。
+```
+
+### 常用属性和方法
+| 名称 | 属性&方法 | 说明 |
+| :---- | :---- | :---- |
+| T | `df.T` | 转置，交换行列 |
+| shape | `df.shape` | 返回一个元组（行数，列数） |
+| index | `df.index` | 返回行标签（以Series形式） |
+| columns | `df.columns` | 返回列标签（以Series形式） |
+| values | `df.values` | 返回DataFrame中的数据（以Numpy数组形式） |
+| dtypes | `df.dtypes` | 返回DataFrame中每列的数据类型 |
+| ndim | `df.ndim` | 返回DataFrame的维度 |
+| size | `df.size` | 返回DataFrame的大小 |
+| empty | `df.empty` | 判断DataFrame是否为空 |
+| info | `df.info()` | 打印DataFrame的概览信息 |
+| describe | `df.describe()` | 打印DataFrame的汇总统计信息 |
+| head | `df.head(n=5)` | 显示前n行数据 |
+| tail | `df.tail(n=5)` | 显示后n行数据 |
+
+`df.describe()`  
+打印DataFrame的汇总统计信息。
+```python
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df.describe()
+>>>        one    two
+count  3.000000  4.000000
+mean   2.000000  2.500000
+std    1.000000  1.118034
+min    1.000000  1.000000
+25%    1.500000  1.750000
+50%    2.000000  2.500000
+75%    2.500000  3.250000
+max    3.000000  4.000000
+```
+
+`df.info()`  
+打印DataFrame的概览信息。
+```python
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df.info()
+<class 'pandas.core.frame.DataFrame'>
+Index: 4 entries, a to d
+Data columns (total 2 columns):
+ #   Column  Non-Null Count  Dtype  
+---  ------  --------------  -----  
+ 0   one     3 non-null      float64
+ 1   two     4 non-null      int64  
+dtypes: float64(1), int64(1)
+memory usage: 96.0+ bytes
+```
+
+`pd.concat(objs, axis=0, join='outer', join_axes=None, ignore_index=False, keys=None, levels=None, names=None, verify_integrity=False, copy=True)`  
+将多个DataFrame对象合并为一个DataFrame。其中，objs为DataFrame对象列表，axis为合并的轴，join为合并方式，join_axes为合并轴，ignore_index为是否忽略原索引，keys为合并后的索引，levels为层次化索引，names为层次化索引的名称，verify_integrity为是否检查合并后数据的完整性，copy为是否复制数据。
+```python
+# 合并两个DataFrame对象
+d1 = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df1 = pd.DataFrame(d1)
+
+d2 = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df2 = pd.DataFrame(d2)
+
+df3 = pd.concat([df1, df2])
+df3
+>>>    one  two
+a       1.0   1
+b       2.0   2
+c       3.0   3
+d       NaN   4
+a       1.0   1
+b       2.0   2
+c       3.0   3
+d       NaN   4
+
+# 合并两个DataFrame对象，指定合并轴
+df4 = pd.concat([df1, df2], axis=1)
+df4
+>>>    one	two	one	two
+a	   1.0	1	1.0	1
+b	   2.0	2	2.0	2
+c	   3.0	3	3.0	3
+d	   NaN	4	NaN	4
+a	   1.0	1	1.0	1
+b	   2.0	2	2.0	2
+c	   3.0	3	3.0	3
+d	   NaN	4	NaN	4
+
+# 合并两个DataFrame对象，指定合并方式, 这里join='inner'表示只保留共同的行，其他的行将被删除，做交集。若join='outer'，则保留所有行，做并集。由参数axes指定合并轴。这里默认为0，表示合并行。
+df5 = pd.concat([df1, df2], join='inner')
+df5
+>>>    one	two
+a	    1.0	1
+b	    2.0	2
+c	    3.0	3
+d	    NaN	4
+a	    1.0	1
+b	    2.0	2
+c	    3.0	3
+d	    NaN	4
+
+# 合并两个DataFrame对象，指定合并轴和合并方式
+df6 = pd.concat([df1, df2], axis=1, join='inner')
+df6
+>>>    	one	two	one	two
+a	    1.0	1	1.0	1
+b	    2.0	2	2.0	2
+c	    3.0	3	3.0	3
+d	    NaN	4	NaN	4
+
+# 合并两个DataFrame对象，指定合并轴和合并方式
+df7 = pd.concat([df1, df2], join='outer')
+df7
+>>>    one  two
+a       1.0   1
+b       2.0   2
+c       3.0   3
+d       NaN   4
+a       1.0   1
+b       2.0   2
+c       3.0   3
+d       NaN   4
+
+# 合并两个DataFrame对象，指定合并轴和合并方式
+df8 = pd.concat([df1, df2], join='outer', axis=1)
+df8
+>>>    one	two	one	two
+a	   1.0	1	1.0	1
+b	   2.0	2	2.0	2
+c	   3.0	3	3.0	3
+d	   NaN	4	NaN	4
+a	   1.0	1	1.0	1
+b	   2.0	2	2.0	2
+c	   3.0	3	3.0	3
+d	   NaN	4	NaN	4
+```
+
+`dp.shift(periods=1, freq=None, axis=0)`  
+对DataFrame进行数据移动，返回新的DataFrame。其中，periods为移动的行数，freq为移动的频率，axis为移动的轴。
+```python
+# 对DataFrame进行数据移动
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df.shift(periods=1)
+>>>    one	two
+a	    NaN	NaN
+b	    1.0	1.0
+c	    2.0	2.0
+d	    3.0	3.0
+
+df.shift(periods=-1)
+>>>   one	two
+a	2.0	2.0
+b	3.0	3.0
+c	NaN	4.0
+d	NaN	NaN
+```
+
+`dp.sort_values(by, axis=0, ascending=True, inplace=False, kind='quicksort', na_position='last')`  
+对DataFrame排序。其中，by为排序的列名，axis为排序的轴，ascending为是否升序，inplace为是否直接修改原数据，kind为排序算法，na_position为NaN值的位置。
+```python
+# 对DataFrame排序
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df.sort_values(by='one')
+>>>    one  two
+a   1.0   1
+b   2.0   2
+c   3.0   3
+d   NaN   4
+
+df.sort_values(by='one', ascending=False)
+>>>    one  two
+d   NaN   4
+c   3.0   3
+b   2.0   2
+a   1.0   1
+
+df.sort_values(by=['one', 'two'], ascending=[True, False])
+>>>    one  two
+a   1.0   1
+b   2.0   2
+c   3.0   3
+d   NaN   4
+```
+
+`df.sort_index(axis=0, level=None, ascending=True, inplace=False, kind='quicksort', na_position='last')`  
+对DataFrame索引排序。其中，axis为排序的轴，level为层次化索引，ascending为是否升序，inplace为是否直接修改原数据，kind为排序算法，na_position为NaN值的位置。
+```python
+# 对DataFrame索引排序
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df.sort_index()
+>>>    one  two
+a   1.0   1
+b   2.0   2
+c   3.0   3
+d   NaN   4
+
+df.sort_index(ascending=False)
+>>>    one  two
+d   NaN   4
+c   3.0   3
+b   2.0   2
+a   1.0   1
+
+df.sort_index(level=0, ascending=False)
+>>>    one  two
+a   1.0   1
+b   2.0   2
+c   3.0   3
+d   NaN   4
+```
+
+`df.groupby(by=None, axis=0, level=None, as_index=True, sort=True, group_keys=True, squeeze=False, observed=False)`  
+对DataFrame进行分组。其中，by为分组的列名，axis为分组的轴，level为层次化索引，as_index为是否保留原索引，sort为是否排序，group_keys为是否保留组名，squeeze为是否将分组后的结果压缩为Series，observed为是否观察组名。
+```python
+# 对DataFrame进行分组
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df.groupby(by='one').sum()
+>>>    one  two
+a   1.0   1
+b   2.0   2
+c   3.0   3
+d   NaN   4
+```
+
+
+
+
+
 
 ### Pandas 读取文件
+CSV 又称逗号分隔值文件，是一种简单的文件格式，以特定的结构来排列表格数据。 CSV 文件能够以纯文本形式存储表格数据，比如电子表格、数据库文件，并具有数据交换的通用格式。CSV 文件会在 Excel 文件中被打开，其行和列都定义了标准的数据格式。
+
+将 CSV 中的数据转换为 DataFrame 对象是非常便捷的。和一般文件读写不一样，它不需要你做打开文件、读取文件、关闭文件等操作。相反，您只需要一行代码就可以完成上述所有步骤，并将数据存储在 DataFrame 中。
+
+假如现在有一个 CSV 文件 data.csv，其内容如下：
+
+```
+Name,Hire Date,Salary,Leaves Remaining 
+John Idle,08/15/14,50000.00,10 
+Smith Gilliam,04/07/15,65000.00,6 
+Parker Chapman,02/21/14,45000.00,7 
+Jones Palin,10/14/13,70000.00,3 
+Terry Gilliam,07/22/14,48000.00,9 
+Michael Palin,06/28/13,66000.00,8  
+```
+
+`df = pd.read_csv(filepath_or_buffer，sep，header，names，index_col，encoding，skiprows，nrows，na_values，engine，usecols，parse_dates, low_memory)`  
+其中，filepath_or_buffer为文件路径或文件对象，sep为分隔符（默认为逗号，也可以指定为其他字符，比如制表符（\t）或分号（;）），header为文件是否有标题行（指定行数作为列名，默认为0，表示没有标题行），names为列名列表（用于自定义列名，若header为None，则该参数必须指定），index_col为索引列，encoding为编码格式（指定文件的编码格式，默认为'utf-8'。在处理某些编码的文件时（如应为 latin1），可以设置为其他编码格式），skiprows为跳过的行数，nrows为读取的行数，na_values为缺失值列表，engine为引擎，usecols为读取的列名列表，parse_dates为日期列名列表，low_memory为内存优化参数（默认为True，表示在解析数据时使用分块的方法以节省内存。当处理大数据集时，可以设置为False来强制一次性读取整个文件）。
+```python
+# 读取CSV文件
+df = pd.read_csv('data.csv')
+print(df)
+>>>    Name  Hire Date  Salary  Leaves Remaining
+0  John Idle  08/15/14  50000.00                10
+1  Smith Gilliam  04/07/15  65000.00                 6
+2  Parker Chapman  02/21/14  45000.00                 7
+3   Jones Palin  10/14/13  70000.00                 3
+4  Terry Gilliam  07/22/14  48000.00                 9
+5  Michael Palin  06/28/13  66000.00                 8
+
+# 读取json文件
+data = pd.read_json('data.json')
+print(data)
+>>>    Name  Hire Date  Salary  Leaves Remaining
+0  John Idle  08/15/14  50000.00                10
+1  Smith Gilliam  04/07/15  65000.00                 6
+2  Parker Chapman  02/21/14  45000.00                 7
+3   Jones Palin  10/14/13  70000.00                 3
+4  Terry Gilliam  07/22/14  48000.00                 9
+5  Michael Palin  06/28/13  66000.00                 8
+```
+
+
 
 ### Pandas csv读写文件
+文件的读写操作属于计算机的 IO 操作，Pandas IO 操作提供了一些读取器函数，比如 pd.read_csv()、pd.read_json 等，它们都返回一个 Pandas 对象。
+
+在 Pandas 中用于读取文本的函数有两个，分别是： read_csv() 和 read_table() ，它们能够自动地将表格数据转换为 DataFrame 对象。
+
+假如现在有一个 CSV 文件 data.csv，其内容如下：
+
+```
+ID,Name,Age,City,Salary
+1,Jack,28,Beijing,22000
+2,Lida,32,Shanghai,19000
+3,John,43,Shenzhen,12000
+4,Helen,38,Hengshui,3500
+```
+
+`pandas.read_csv(filepath_or_buffer, sep=',', delimiter=None, header='infer',names=None, index_col=None, usecols=None)`
+其中，filepath_or_buffer：文件路径或文件对象；sep：分隔符，默认为逗号；delimiter：分隔符，默认为 None；header：表头行数或列名列表，默认为 'infer'，表示自动检测；names：列名列表，默认为 None；index_col：索引列，默认为 None；usecols：读取的列名列表，默认为 None。
+```python
+# 读取CSV文件
+df = pd.read_csv('data.csv')
+print(df)
+>>>    ID  Name  Age  City  Salary
+0   1  Jack   28  Beijing   22000
+1   2  Lida   32  Shanghai   19000
+2   3  John   43  Shenzhen   12000
+3   4  Helen   38  Hengshui    3500
+```
+
+`pandas.read_table(filepath_or_buffer, sep='\t', delimiter=None, header='infer', names=None, index_col=None, usecols=None)`
+其中，filepath_or_buffer：文件路径或文件对象；sep：分隔符，默认为制表符；delimiter：分隔符，默认为 None；header：表头行数或列名列表，默认为 'infer'，表示自动检测；names：列名列表，默认为 None；index_col：索引列，默认为 None；usecols：读取的列名列表，默认为 None。
+```python
+# 读取CSV文件
+df = pd.read_table('data.csv', sep=',')
+print(df)
+>>>    ID  Name  Age  City  Salary
+0   1  Jack   28  Beijing   22000
+1   2  Lida   32  Shanghai   19000
+2   3  John   43  Shenzhen   12000
+3   4  Helen   38  Hengshui    3500
+```
 
 ### Pandas Excel读写文件
 
