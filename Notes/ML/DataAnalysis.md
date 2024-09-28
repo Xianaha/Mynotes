@@ -761,11 +761,373 @@ s
     a    0.0    
     dtype: float64
 # pd.Series会按照index来构造索引寻找字典中的值，如果字典中有缺失值，则会用NaN填充。
+```
 
+### 访问Series数据
+
+- 位置索引访问  
+这种访问方式与 ndarray 和 list 相同，使用元素自身的下标进行访问。我们知道数组的索引计数从 0 开始，这表示第一个元素存储在第 0 个索引位置上，以此类推，就可以获得 Series 序列中的每个元素。下面看一组简单的示例：
+```python
+s = pd.Series([1, 2, 3, 4, 5], index=['A', 'B', 'C', 'D', 'E'])
+s[0] # 位置下标访问
+>>> 1
+
+s['A'] # 标签下标访问
+>>> 1
+
+s[['A', 'C', 'E']] # 标签列表访问
+>>> A    1
+    C    3
+    E    5
+    dtype: int64
+
+s[2:4] # 切片访问
+>>> C    3
+    D    4
+    dtype: int64
+
+s[s > 3] # 条件访问
+>>> C    3
+    D    4
+    dtype: int64
+
+#若索引不存在，则会报错：
+s[10]
+>>> KeyError: 10
+
+s['F']
+>>> KeyError: 'F'
 
 ```
 
+`s.describe()`  
+返回 Series 序列的描述性统计信息。其中，count 为非空值的个数，mean 为平均值，std 为标准差，min 为最小值，25% 为 25% 分位数，50% 为 50% 分位数，75% 为 75% 分位数，max 为最大值。
+```python
+s = pd.Series([1, 2, 3, 4, 5], index=['A', 'B', 'C', 'D', 'E'])
+s.describe()
+>>> count    5.000000
+    mean     3.000000
+    std      1.414214
+    min      1.000000
+    25%      2.000000
+    50%      3.000000
+    75%      4.000000
+    max      5.000000
+    dtype: float64
+```
 
+### Series常用属性和方法
+
+下表列出了 Series 对象的常用属性。
+| 名称 | 属性 |
+| :---- | :---- |
+| axes | 以列表的形式返回所有行索引标签。 |
+| dtype | 返回 Series 序列的数据类型。 |
+| empty | 返回 Series 序列是否为空。 |
+| ndim | 返回 Series 序列的维数。 |
+| shape | 返回 Series 序列的形状（元组）。 |
+| size | 返回 Series 序列的元素个数（标量）。 |
+| values | 返回 Series 序列的元素值。 |
+| index | 返回 Series 序列的索引。 |
+
+```python
+s = pd.Series([1, 2, 3, 4, 5], index=['A', 'B', 'C', 'D', 'E'])
+s.axes
+>>> [RangeIndex(start=0, stop=5, step=1)] # 根据定义，Series 序列只有一维。
+
+s.dtype
+>>> dtype('int64')
+
+s.empty
+>>> False
+
+s.ndim
+>>> 1
+
+s.shape
+>>> (5,) # 根据定义，Series 序列只有一维。
+
+5.size
+>>> 5
+
+5.values
+>>> array([1, 2, 3, 4, 5])
+
+s.index
+>>> Index(['A', 'B', 'C', 'D', 'E'], dtype='object')
+```
+
+`s.head(n)`  
+返回 Series 序列的前n行(前n个元素)。若不填写参数，则默认返回前5行;若n大于序列长度，则返回整个序列；若n为0，则返回空序列；若n为负数，则返回除了最后$|n|$个元素外的序列。
+```python
+s = pd.Series([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], index=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'])
+s.head()
+>>> A    1
+    B    2
+    C    3
+    D    4
+    E    5
+    dtype: int64
+```
+
+`s.tail()`  
+返回 Series 序列的后几行。若不填写参数，则默认返回后5行;若n大于序列长度，则返回整个序列；若n为0，则返回空序列；若n为负数，则返回除了最前$|n|$个元素外的序列。
+```python
+s = pd.Series([1, 2, 3, 4, 5], index=['A', 'B', 'C', 'D', 'E'])
+s.tail()
+>>> A    1
+    B    2
+    C    3
+    D    4
+    E    5
+    dtype: int64
+```
+
+`s.isnull()`  
+用于检测 Series 序列中是否存在空值，返回布尔值序列。其中，True表示空值，False表示非空值。
+```python
+s = pd.Series([1, 2, 3, 4, None, 6, 7, 8, 9, 10], index=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'])
+s.isnull()
+>>> A    False
+    B    False
+    C    False
+    D    False
+    E     True
+    F    False
+    G    False
+    H    False
+    I    False
+    J    False
+    dtype: bool
+```
+
+`s.notnull()`  
+用于检测 Series 序列中是否存在非空值，返回布尔值序列。其中，True表示非空值，False表示空值。
+```python
+s = pd.Series([1, 2, 3, 4, None, 6, 7, 8, 9, 10], index=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'])
+s.notnull()
+>>> A     True
+    B     True
+    C     True
+    D     True
+    E    False
+    F     True
+    G     True
+    H     True
+    I     True
+    J     True
+    dtype: bool
+```
+PS:其实不难理解，在实际的数据分析任物中，数据的收集往往要经历一个繁琐的过程。在这个过程中难免会因为一些不可抗力，或者人为因素导致数据丢失的现象。这时，我们可以使用相应的方法对缺失值进行处理，比如均值插值、数据补齐等方法。上述两个方法就是帮助我们检测是否存在缺失值。
+
+### DataFrame结构
+DataFrame 一个表格型的数据结构，既有行标签（index），又有列标签（columns），它也被称异构数据表，所谓异构，指的是表格中每列的数据类型可以不同，比如可以是字符串、整型或者浮点型等。其结构图示意图，如下所示：
+
+![DataFrame architecture](/Notes/ML/Data%20Frame%20architecture.gif "DataFrame architecture")
+表格中展示了某个销售团队个人信息和绩效评级（rating）的相关数据。数据以行和列形式来表示，其中每一列表示一个属性，而每一行表示一个条目的信息。
+
+下表展示了上述表格中每一列标签所描述数据的数据类型，如下所示：
+| 列标签 | 数据类型 |
+| :---- | :---- |
+| name | 字符串 |
+| age | 整数 |
+| gender | 字符串 |
+| rating | 浮点数 |
+
+DataFrame 的每一行数据都可以看成一个 Series 结构，只不过，DataFrame 为这些行中每个数据值增加了一个列标签。因此 DataFrame 其实是从 Series 的基础上演变而来。在数据分析任务中 DataFrame 的应用非常广泛，因为它描述数据的更为清晰、直观。
+
+通过示例对  DataFrame 结构做进一步讲解。 下面展示了一张学生成绩表，如下所示：
+![Student performance table](/Notes/ML/DataFrame%20Example.gif "Student performance table")
+
+DataFrame 结构类似于 Execl 的表格型，表格中列标签的含义如下所示：
+- Regd.No：表示登记的序列号
+- Name：学生姓名
+- Marks：学生分数
+
+同 Series 一样，DataFrame 自带行标签索引，默认为“隐式索引”即从 0 开始依次递增，行标签与 DataFrame 中的数据项一一对应。上述表格的行标签从 0 到 5，共记录了 5 条数据（图中将行标签省略）。当然你也可以用“显式索引”的方式来设置行标签。
+
+下面对 DataFrame 数据结构的特点做简单地总结，如下所示：
+- DataFrame 每一列的标签值允许使用不同的数据类型；
+- DataFrame 是表格型的数据结构，具有行和列；
+- DataFrame 中的每个数据值都可以被修改。
+- DataFrame 结构的行数、列数允许增加或者删除；
+- DataFrame 有两个方向的标签轴，分别是行标签和列标签；
+- DataFrame 可以对行和列执行算术运算。
+
+使用Data Frame：
+
+```python
+import pandas as pd
+```
+
+### 创建DataFrame对象
+创建 DataFrame 对象的语法格式如下：
+```python
+pd.DataFrame(data=None, index=None, columns=None, dtype=None, copy=False)
+```
+- data：数据，可以是字典、列表、Numpy数组、Pandas的Series、或者其他DataFrame。
+- index：行标签，可以是列表、Numpy数组、Pandas的Index，默认行标签是np.arange(n)生成的。
+- columns：列标签，可以是列表、Numpy数组、Pandas的Index，默认列标签是np.arange(n)生成的。
+- dtype：数据类型，可以是字符串、数据类型。
+- copy：是否复制数据，默认为False。
+
+`pd.DataFrame()`
+```python
+# 创建一个空的 DataFrame 对象。
+df = pd.DataFrame()
+>>> Empty DataFrame
+    Columns: []
+    Index: []
+
+# 列表创建DataFame对象
+data = [1,2,3,4,5]
+df = pd.DataFrame(data)
+df
+>>> 0
+0	1
+1	2
+2	3
+3	4
+4	5
+
+# 使用嵌套列表创建 DataFrame 对象：
+data = [['Alex',10],['Bob',12],['Clarke',13]]
+df = pd.DataFrame(data,columns=['Name','Age'])
+df
+>>> Name  Age
+0  Alex   10
+1   Bob   12
+2  Clarke  13
+
+# 指定数值元素的数据类型为 float：
+data = [['Alex',10],['Bob',12],['Clarke',13]]
+df = pd.DataFrame(data,columns=['Name','Age'],dtype=float)
+df
+>>> Name  Age
+0  Alex   10.0
+1   Bob   12.0
+2  Clarke  13.0
+
+# 字典嵌套列表创建
+# data 字典中，键对应的值的元素长度必须相同（也就是列表长度相同）。如果传递了索引，那么索引的长度应该等于数组的长度；如果没有传递索引，那么默认情况下，索引将是 range(n)，其中 n 代表数组长度。
+data = {'Name':['Tom', 'Jack', 'Steve', 'Ricky'],'Age':[28,34,29,42]}
+df = pd.DataFrame(data)
+df
+>>> Name  Age
+0   Tom   28
+1  Jack   34
+2  Steve  29
+3  Ricky  42
+# 这里使用了默认行标签，也就是 range(n)。它生成了 0,1,2,3，并分别对应了列表中的每个元素值。
+
+# 现在给上述示例添加自定义的行标签：
+data = {'Name':['Tom', 'Jack', 'Steve', 'Ricky'],'Age':[28,34,29,42]}
+df = pd.DataFrame(data, index=['rank1','rank2','rank3','rank4'])
+df
+>>>     Name  Age
+rank1   Tom   28
+rank2  Jack   34
+rank3  Steve  29
+rank4  Ricky  42
+# index 参数为每行分配了一个索引。
+
+# 列表嵌套字典创建DataFrame对象
+# 列表嵌套字典可以作为输入数据传递给 DataFrame 构造函数。默认情况下，字典的键被用作列名。
+data = [{'a': 1, 'b': 2},{'a': 5, 'b': 10, 'c': 20}]
+df = pd.DataFrame(data)
+df
+>>>    a  b    c
+0      1  2   NaN
+1      5  10  20.0
+# 这里，字典的键 a 和 b 被用作列名，键 c 被忽略。
+
+# 给上述示例添加行标签索引：
+data = [{'a': 1, 'b': 2},{'a': 5, 'b': 10, 'c': 20}]
+df = pd.DataFrame(data, index=['first', 'second'])
+df
+>>>    a  b    c
+first   1  2   NaN
+second  5  10  20.0
+
+# 使用字典嵌套列表以及行、列索引表创建一个 DataFrame 对象。
+data = [{'a': 1, 'b': 2},{'a': 5, 'b': 10, 'c': 20}]
+df1 = pd.DataFrame(data, index=['first', 'second'], columns=['a', 'b'])
+df2 = pd.DataFrame(data, index=['first', 'second'], columns=['a', 'b1'])
+df1, df2
+>>> (        a   b
+     first   1   2
+     second  5  10,
+             a  b1
+     first   1 NaN
+     second  5 NaN)
+
+# Series创建DataFrame对象
+# 可以传递一个字典形式的 Series，从而创建一个 DataFrame 对象，其输出结果的行索引是所有 index 的合集。
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df
+>>>    one  two
+    a   1.0   1
+    b   2.0   2
+    c   3.0   3
+    d   NaN   4
+# 对于 one 列而言，此处虽然显示了行索引 'd'，但由于没有与其对应的值，所以它的值为 NaN。
+```
+
+### 列索引操作DataFrame
+DataFrame 可以使用列索（columns index）引来完成数据的选取、添加和删除操作。
+```python
+# 列索引选取数据列
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df['one']
+>>> a    1
+    b    2
+    c    3
+    Name: one, dtype: int64
+
+# 列索引添加数据列
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])}
+df = pd.DataFrame(d)
+df['three'] = pd.Series([10, 20, 30, 40], index=['a', 'b', 'c', 'd'])
+df
+>>>    one  two  three
+    a   1.0   1   10.0
+    b   2.0   2   20.0
+    c   3.0   3   30.0
+    d   NaN   4   40.0
+# 这里可以通过列做相加运算：
+df['sum'] = df['one'] + df['two'] + df['three']
+df
+>>>    one  two  three  sum
+    a   1.0   1   10.0   12.0
+    b   2.0   2   20.0   24.0
+    c   3.0   3   30.0   36.0
+    d   NaN   4   40.0   NaN
+
+# 列索引删除数据列
+d = {'one' : pd.Series([1, 2, 3], index=['a', 'b', 'c']),
+   'two' : pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd']),
+   'three' : pd.Series([10,20,30], index=['a','b','c'])}
+df = pd.DataFrame(d)
+del df['two']
+df
+>>>    one  three
+    a   1.0   10.0
+    b   2.0   20.0
+    c   3.0   30.0
+# 这里删除了列 two。
+
+```
+
+### Pandas 读取文件
+
+### Pandas csv读写文件
+
+### Pandas Excel读写文件
 
 
 
@@ -777,7 +1139,7 @@ s
 
 ## Scikit-learn
 
-## CSV文件的读写
+## CSV库对文件的读写
 
 ```python
 import csv
