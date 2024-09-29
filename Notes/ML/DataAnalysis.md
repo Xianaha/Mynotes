@@ -1687,6 +1687,62 @@ df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Name': ['Jack', 'Lida', 'John', 'Helen']
 df.to_excel('data.xlsx', sheet_name='Sheet1', index=False)
 ```
 
+### Pandas绘图
+
+Pandas 在数据分析、数据可视化方面有着较为广泛的应用，Pandas 对 Matplotlib 绘图软件包的基础上单独封装了一个plot()接口，通过调用该接口可以实现常用的绘图操作。本节我们深入讲解一下 Pandas 的绘图操作。
+
+Pandas 之所以能够实现了数据可视化，主要利用了 Matplotlib 库的 plot() 方法，它对 plot() 方法做了简单的封装，因此您可以直接调用该接口。
+
+Pandas 的 plot() 方法可以实现常见的绘图操作，包括折线图、散点图、直方图、饼图等。
+
+`df.plot(kind='line', x=None, y=None, ax=None, subplots=False, sharex=None, sharey=False, layout=None, figsize=None, use_index=True, title=None, grid=None, legend=False, style=None, logx=False, logy=False, loglog=False, xticks=None, yticks=None, xlim=None, ylim=None, rot=None, fontsize=None, colormap=None, table=False, yerr=None, xerr=None, secondary_y=False, sort_columns=False, **kwds)`
+其中，kind：图表类型，默认为 'line'；x：x轴数据，默认为 None；y：y轴数据，默认为 None；ax：指定绘图区域，默认为 None；subplots：是否创建子图，默认为 False；sharex：是否共享x轴，默认为 None；sharey：是否共享y轴，默认为 False；layout：子图布局，默认为 None；figsize：图形尺寸，默认为 None；use_index：是否使用索引，默认为 True；title：图表标题，默认为 None；grid：是否显示网格，默认为 None；legend：是否显示图例，默认为 False；style：线条样式，默认为 None；logx：是否对x轴进行对数变换，默认为 False；logy：是否对y轴进行对数变换，默认为 False；loglog：是否对x轴和y轴同时进行对数变换，默认为 False；xticks：x轴刻度，默认为 None；yticks：y轴刻度，默认为 None；xlim：x轴范围，默认为 None；ylim：y轴范围，默认为 None；rot：x轴刻度旋转角度，默认为 None；fontsize：字体大小，默认为 None；colormap：颜色映射，默认为 None；table：是否显示数据表，默认为 False；yerr：y轴误差范围，默认为 None；xerr：x轴误差范围，默认为 None；secondary_y：是否创建副y轴，默认为 False；sort_columns：是否对列进行排序，默认为 False；**kwds：其他关键字参数。
+
+```python
+# 绘制折线图
+df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
+df.plot(kind='line', x='ID', y='Salary', title='Salary by ID')
+```
+![折线图](/Notes/ML/line.png)
+
+```python
+# 绘制散点图
+df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
+df.plot(kind='scatter', x='ID', y='Salary', title='Salary by ID')
+```
+![散点图](/Notes/ML/scatter.png)
+
+```python
+# 绘制直方图
+df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
+df.plot(kind='hist', x='Salary', title='Salary Histogram')
+```
+![直方图](/Notes/ML/hist.png)
+
+```python
+# 绘制饼图
+df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
+df.plot(kind='pie', y='Salary', title='Salary by ID')
+```
+![饼图](/Notes/ML/pie.png)
+
+```python
+# 绘制箱线图
+df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
+df.plot(kind='box', y='Salary', title='Salary by ID')
+```
+![箱线图](/Notes/ML/box.png)
+
+```python
+
+# 绘制密度图
+df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
+df.plot(kind='area', y='Salary', title='Salary Density')
+```
+![密度图](/Notes/ML/area.png)
+
+
+
 
 
 
