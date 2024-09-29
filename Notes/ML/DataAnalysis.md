@@ -1456,7 +1456,7 @@ Terry Gilliam,07/22/14,48000.00,9
 Michael Palin,06/28/13,66000.00,8  
 ```
 
-`df = pd.read_csv(filepath_or_buffer，sep，header，names，index_col，encoding，skiprows，nrows，na_values，engine，usecols，parse_dates, low_memory)`  
+`pd.read_csv(filepath_or_buffer，sep，header，names，index_col，encoding，skiprows，nrows，na_values，engine，usecols，parse_dates, low_memory)`  
 其中，filepath_or_buffer为文件路径或文件对象，sep为分隔符（默认为逗号，也可以指定为其他字符，比如制表符（\t）或分号（;）），header为文件是否有标题行（指定行数作为列名，默认为0，表示没有标题行），names为列名列表（用于自定义列名，若header为None，则该参数必须指定），index_col为索引列，encoding为编码格式（指定文件的编码格式，默认为'utf-8'。在处理某些编码的文件时（如应为 latin1），可以设置为其他编码格式），skiprows为跳过的行数，nrows为读取的行数，na_values为缺失值列表，engine为引擎，usecols为读取的列名列表，parse_dates为日期列名列表，low_memory为内存优化参数（默认为True，表示在解析数据时使用分块的方法以节省内存。当处理大数据集时，可以设置为False来强制一次性读取整个文件）。
 ```python
 # 读取CSV文件
@@ -1489,7 +1489,7 @@ print(data)
 
 在 Pandas 中用于读取文本的函数有两个，分别是： read_csv() 和 read_table() ，它们能够自动地将表格数据转换为 DataFrame 对象。
 
-假如现在有一个 CSV 文件 data.csv，其内容如下：
+假如现在有一个 CSV 文件 C:/Users/Administrator/Desktop/person.csv，其内容如下：
 
 ```
 ID,Name,Age,City,Salary
@@ -1499,24 +1499,105 @@ ID,Name,Age,City,Salary
 4,Helen,38,Hengshui,3500
 ```
 
-`pandas.read_csv(filepath_or_buffer, sep=',', delimiter=None, header='infer',names=None, index_col=None, usecols=None)`
+`pandas.read_csv(filepath_or_buffer, sep=',', skiprows=None, delimiter=None, header='infer',names=None, index_col=None, usecols=None)`
 其中，filepath_or_buffer：文件路径或文件对象；sep：分隔符，默认为逗号；delimiter：分隔符，默认为 None；header：表头行数或列名列表，默认为 'infer'，表示自动检测；names：列名列表，默认为 None；index_col：索引列，默认为 None；usecols：读取的列名列表，默认为 None。
 ```python
 # 读取CSV文件
-df = pd.read_csv('data.csv')
+df = pd.read_csv('C:/Users/Administrator/Desktop/person.csv')
 print(df)
 >>>    ID  Name  Age  City  Salary
 0   1  Jack   28  Beijing   22000
 1   2  Lida   32  Shanghai   19000
 2   3  John   43  Shenzhen   12000
 3   4  Helen   38  Hengshui    3500
+
+# 自定义索引
+# 在 CSV 文件中指定了一个列，然后使用index_col可以实现自定义索引。
+df=pd.read_csv("C:/Users/Administrator/Desktop/person.csv",index_col=['ID'])
+df
+>>>    Name  Age  City  Salary
+ID                               
+1  Jack   28  Beijing   22000
+2  Lida   32  Shanghai   19000
+3  John   43  Shenzhen   12000
+4  Helen   38  Hengshui    3500
+
+# 查看每一列的dtype
+df=pd.read_csv("C:/Users/Administrator/Desktop/person.csv",dtype={'Salary':np.float64})
+df.dtypes
+>>> ID           int64
+Name         object
+Age          int64
+City         object
+Salary    float64
+dtype: object
+# 默认情况下，Salary 列的 dtype 是 int 类型，但结果显示其为 float 类型，因为已经在上述代码中做了类型转换。
+
+# 更改文件标头名
+# 使用 names 参数可以指定头文件的名称。
+df=pd.read_csv("C:/Users/Administrator/Desktop/person.csv",names=['a','b','c','d','e'])
+df
+>>>   a      b    c         d       e
+0  ID   Name  Age      City  Salary
+1   1   Jack   28   Beijing   22000
+2   2   Lida   32  Shanghai   19000
+3   3   John   43  Shenzhen   12000
+4   4  Helen   38  Hengshui    3500
+# 文件标头名是附加的自定义名称，但是您会发现，原来的标头名（列标签名）并没有被删除，此时您可以使用header参数来删除它。
+df=pd.read_csv("C:/Users/Administrator/Desktop/person.csv",names=['a','b','c','d','e'],header=0)
+df
+>>>  a      b   c         d      e
+0  1   Jack  28   Beijing  22000
+1  2   Lida  32  Shanghai  19000
+2  3   John  43  Shenzhen  12000
+3  4  Helen  38  Hengshui   3500
+# 现在，文件标头名已经被删除，只保留了自定义名称。假如原标头名并没有定义在第一行，您也可以传递相应的行号来删除它。
+
+# 跳过指定的行数
+# skiprows参数表示跳过指定的行数。
+df=pd.read_csv("C:/Users/Administrator/Desktop/person.csv",skiprows=2)
+df
+>>>    ID  Name  Age  City  Salary
+0   3  John   43  Shenzhen   12000
+1   4  Helen   38  Hengshui    3500
+# 跳过了前两行，只读取了后两行。
+
 ```
 
-`pandas.read_table(filepath_or_buffer, sep='\t', delimiter=None, header='infer', names=None, index_col=None, usecols=None)`
+Pandas 提供的 to_csv() 函数用于将 DataFrame 转换为 CSV 数据。如果想要把 CSV 数据写入文件，只需向函数传递一个文件对象即可。否则，CSV 数据将以字符串格式返回。
+`pd.to_csv(path_or_buf, sep=',', na_rep='', float_format=None, columns=None, header=True, index=True, index_label=None, mode='w', encoding=None, compression=None, quoting=None, quotechar='"', line_terminator='\n', chunksize=None, date_format=None, doublequote=True, escapechar=None, decimal='.')`  
+其中，path_or_buf：文件路径或文件对象；sep：分隔符，默认为逗号；na_rep：缺失值替换字符，默认为 ''；float_format：浮点数格式，默认为 None；columns：列名列表，默认为 None；header：是否写入列名，默认为 True；index：是否写入索引，默认为 True；index_label：索引标签，默认为 None；mode：写入模式，默认为 'w'；encoding：编码格式，默认为 None；compression：压缩格式，默认为 None；quoting：引号类型，默认为 None；quotechar：引号字符，默认为 '"'；line_terminator：行终止符，默认为 '\n'；chunksize：写入块大小，默认为 None；date_format：日期格式，默认为 None；doublequote：双引号类型，默认为 True；escapechar：转义字符，默认为 None；decimal：小数点符号，默认为 '.'。
+```python
+# 写入CSV文件
+data = {'Name': ['Smith', 'Parker'], 'ID': [101, 102], 'Language': ['Python', 'JavaScript']} 
+info = pd.DataFrame(data) 
+info.to_csv('data.csv')
+>>> data.csv:
+    Name  ID  Language
+0  Smith  101    Python
+1  Parker  102  JavaScript
+
+# 可以通过设定index=False参数，禁止写入索引。
+info.to_csv('data.csv', index=False)
+>>> data.csv:
+Name  ID  Language
+Smith  101    Python
+Parker  102  JavaScript
+
+# 也可以通过sep参数指定分隔符
+info.to_csv('data.csv', sep='|')
+>>> data.csv:
+    Name|ID|Language
+0  Smith|101|Python
+1  Parker|102|JavaScript
+```
+
+
+`pd.read_table(filepath_or_buffer, sep='\t', delimiter=None, header='infer', names=None, index_col=None, usecols=None)`
 其中，filepath_or_buffer：文件路径或文件对象；sep：分隔符，默认为制表符；delimiter：分隔符，默认为 None；header：表头行数或列名列表，默认为 'infer'，表示自动检测；names：列名列表，默认为 None；index_col：索引列，默认为 None；usecols：读取的列名列表，默认为 None。
 ```python
 # 读取CSV文件
-df = pd.read_table('data.csv', sep=',')
+df = pd.read_table('C:/Users/Administrator/Desktop/person.csv', sep=',')
 print(df)
 >>>    ID  Name  Age  City  Salary
 0   1  Jack   28  Beijing   22000
@@ -1526,6 +1607,86 @@ print(df)
 ```
 
 ### Pandas Excel读写文件
+
+假若现在有一个Excel文件data.xlsx，如下表所示：
+| ID | Name | Age | City | Salary |
+| --- | --- | --- | --- | --- |
+| 1 | Jack | 28 | Beijing | 22000 |
+| 2 | Lida | 32 | Shanghai | 19000 |
+| 3 | John | 43 | Shenzhen | 12000 |
+| 4 | Helen | 38 | Hengshui | 3500 |
+
+`pd.read_excel(io, sheet_name=0, header=0, names=None, index_col=None,
+              usecols=None, squeeze=False,dtype=None, engine=None,
+              converters=None, true_values=None, false_values=None,
+              skiprows=None, nrows=None, na_values=None, parse_dates=False,
+              date_parser=None, thousands=None, comment=None, skipfooter=0,
+              convert_float=True, **kwds)`
+| 参数 | 说明 |
+| --- | --- |
+| io | 表示 Excel 文件的存储路径。 |
+| sheet_name | 工作表名称或索引，默认为 0 |
+| header | 指定作为列名的行，默认0，即取第一行的值为列名；若数据不包含列名，则设定 header = None。若将其设置为 header=2，则表示将前两行作为多重索引。 |
+| names | 一般适用于Excel缺少列名，或者需要重新定义列名的情况；names的长度必须等于Excel表格列的长度，否则会报错。 |
+| index_col | 用做行索引的列，可以是工作表的列名称，如 index_col = '列名'，也可以是整数或者列表。 |
+| usecols | int或list类型，默认为None，表示需要读取所有列。 |
+| squeeze | 是否将结果压缩为 Series，默认为 False |
+| dtype | 数据类型字典，默认为 None |
+| engine | 引擎，默认为 None |
+| converters | 类型转换器字典，规定每一列的数据类型，默认为 None |
+| true_values | 真值列表，默认为 None |
+| false_values | 假值列表，默认为 None |
+| skiprows | 接受一个列表，表示跳过指定行数的数据，从头部第一行开始，默认为 None |
+| nrows | 需要读取的行数，默认为 None |
+| na_values | 缺失值列表，默认为 None |
+| parse_dates | 是否将日期列转换为日期类型，默认为 False |
+| date_parser | 日期解析器，默认为 None |
+| thousands | 千分位分隔符，默认为 None |
+| comment | 注释行标记，默认为 None |
+| skipfooter | 接受一个列表，省略指定行数的数据，从尾部最后一行开始，默认为 0 |
+| convert_float | 是否将浮点数转换为科学计数法，默认为 True |
+| **kwds | 其他关键字参数 |
+```python
+# 读取Excel文件
+df = pd.read_excel('data.xlsx', sheet_name='Sheet1')
+print(df)
+>>>    ID  Name  Age  City  Salary
+0   1  Jack   28  Beijing   22000
+1   2  Lida   32  Shanghai   19000
+2   3  John   43  Shenzhen   12000
+3   4  Helen   38  Hengshui    3500
+```
+
+通过 to_excel() 函数可以将 Dataframe 中的数据写入到 Excel 文件。
+
+如果想要把单个对象写入 Excel 文件，那么必须指定目标文件名；如果想要写入到多张工作表中，则需要创建一个带有目标文件名的ExcelWriter对象，并通过sheet_name参数依次指定工作表的名称。
+
+因为版本问题，建议安装openpyxl库：`pip install openpyxl`或`conda install openpyxl`。  
+
+
+`pd.to_excel(excel_writer, sheet_name='Sheet1', na_rep='', float_format=None, columns=None, header=True, index=True, index_label=None, startrow=0, startcol=0, engine=None, merge_cells=True, encoding=None, inf_rep='inf', verbose=True)`
+| 参数 | 说明 |
+| --- | --- |
+| excel_writer | 目标Excel文件路径或ExcelWriter对象 |
+| sheet_name | 指定要写入数据的工作表名称，默认为 'Sheet1' |
+| na_rep | 缺失值替换字符，默认为 '' |
+| float_format | 浮点数格式，默认为 None |
+| columns | 列名列表，指要写入的列，默认为 None |
+| header | 是否写入列名，写出每一列的名称，如果给出的是字符串列表，则表示列的别名，默认为 True |
+| index | 是否写入索引，默认为 True |
+| index_label | 引用索引列的列标签。如果未指定，并且 hearder 和 index 均为为 True，则使用索引名称。如果 DataFrame使用 MultiIndex，则需要给出一个序列，默认为 None |
+| startrow | 起始行，初始写入的行位置，默认值0。表示引用左上角的行单元格来储存 DataFrame。 |
+| startcol | 起始列，初始写入的列位置，默认值0。表示引用左上角的列单元格来储存 DataFrame。 |
+| engine | 它是一个可选参数，用于指定要使用的引擎，可以是 openpyxl 或 xlsxwriter，默认为 None |
+| merge_cells | 是否合并单元格，默认为 True |
+| encoding | 编码格式，默认为 None |
+| inf_rep | 无穷大值替换字符，默认为 'inf' |
+| verbose | 是否显示进度条，默认为 True |
+```python
+df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Name': ['Jack', 'Lida', 'John', 'Helen'], 'Age': [28, 32, 43, 38], 'City': ['Beijing', 'Shanghai', 'Shenzhen', 'Hengshui'], 'Salary': [22000, 19000, 12000, 3500]})
+df.to_excel('data.xlsx', sheet_name='Sheet1', index=False)
+```
+
 
 
 
