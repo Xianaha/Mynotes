@@ -662,7 +662,7 @@ import pandas as pd
 Series 结构，也称 Series 序列，是 Pandas 常用的数据结构之一，它是一种类似于一维数组的结构，由一组数据值（value）和一组标签组成，其中标签与数据值之间是一一对应的关系。
 
 Series 可以保存任何数据类型，比如整数、字符串、浮点数、Python 对象等，它的标签默认为整数，从 0 开始依次递增。Series 的结构图，如下所示：
-![Series architecture](/Notes/ML/Series%20architecture.gif "Series architecture")  
+![Series architecture](/Notes/ML/image/Series%20architecture.gif "Series architecture")  
 通过标签我们可以更加直观地查看数据所在的索引位置。
 
 `pd.Series(data=None, index=None, dtype=None, name=None, copy=False)`  
@@ -923,7 +923,7 @@ PS:其实不难理解，在实际的数据分析任物中，数据的收集往�
 ### DataFrame结构
 DataFrame 一个表格型的数据结构，既有行标签（index），又有列标签（columns），它也被称异构数据表，所谓异构，指的是表格中每列的数据类型可以不同，比如可以是字符串、整型或者浮点型等。其结构图示意图，如下所示：
 
-![DataFrame architecture](/Notes/ML/Data%20Frame%20architecture.gif "DataFrame architecture")
+![DataFrame architecture](/Notes/ML/image/Data%20Frame%20architecture.gif "DataFrame architecture")
 表格中展示了某个销售团队个人信息和绩效评级（rating）的相关数据。数据以行和列形式来表示，其中每一列表示一个属性，而每一行表示一个条目的信息。
 
 下表展示了上述表格中每一列标签所描述数据的数据类型，如下所示：
@@ -937,7 +937,7 @@ DataFrame 一个表格型的数据结构，既有行标签（index），又有�
 DataFrame 的每一行数据都可以看成一个 Series 结构，只不过，DataFrame 为这些行中每个数据值增加了一个列标签。因此 DataFrame 其实是从 Series 的基础上演变而来。在数据分析任务中 DataFrame 的应用非常广泛，因为它描述数据的更为清晰、直观。
 
 通过示例对  DataFrame 结构做进一步讲解。 下面展示了一张学生成绩表，如下所示：
-![Student performance table](/Notes/ML/DataFrame%20Example.gif "Student performance table")
+![Student performance table](/Notes/ML/image/DataFrame%20Example.gif "Student performance table")
 
 DataFrame 结构类似于 Execl 的表格型，表格中列标签的含义如下所示：
 - Regd.No：表示登记的序列号
@@ -1703,35 +1703,35 @@ Pandas 的 plot() 方法可以实现常见的绘图操作，包括折线图、�
 df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
 df.plot(kind='line', x='ID', y='Salary', title='Salary by ID')
 ```
-![折线图](/Notes/ML/line.png)
+![折线图](/Notes/ML/imgage/line.png)
 
 ```python
 # 绘制散点图
 df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
 df.plot(kind='scatter', x='ID', y='Salary', title='Salary by ID')
 ```
-![散点图](/Notes/ML/scatter.png)
+![散点图](/Notes/ML/image/scatter.png)
 
 ```python
 # 绘制直方图
 df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
 df.plot(kind='hist', x='Salary', title='Salary Histogram')
 ```
-![直方图](/Notes/ML/hist.png)
+![直方图](/Notes/ML/imgae/hist.png)
 
 ```python
 # 绘制饼图
 df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
 df.plot(kind='pie', y='Salary', title='Salary by ID')
 ```
-![饼图](/Notes/ML/pie.png)
+![饼图](/Notes/ML/imgae/pie.png)
 
 ```python
 # 绘制箱线图
 df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
 df.plot(kind='box', y='Salary', title='Salary by ID')
 ```
-![箱线图](/Notes/ML/box.png)
+![箱线图](/Notes/ML/image/box.png)
 
 ```python
 
@@ -1739,7 +1739,7 @@ df.plot(kind='box', y='Salary', title='Salary by ID')
 df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
 df.plot(kind='area', y='Salary', title='Salary Density')
 ```
-![密度图](/Notes/ML/area.png)
+![密度图](/Notes/ML/image/area.png)
 
 
 
