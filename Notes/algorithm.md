@@ -36,7 +36,18 @@
 
 
 ### 分治法(Divide and Conquer)
-1234
+
+#### 概念
+- [分治法详解](https://blog.csdn.net/Beatrice_lovely/article/details/119257184?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522E544372B-4B87-47F4-A679-81D84DF2DCC4%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=E544372B-4B87-47F4-A679-81D84DF2DCC4&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-119257184-null-null.142^v100^pc_search_result_base6&utm_term=%E5%88%86%E6%B2%BB%E7%AE%97%E6%B3%95%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3&spm=1018.2226.3001.4187)
+
+#### 应用场景
+
+##### 最大二叉树
+- [实例解析video](https://www.bilibili.com/video/BV1MG411G7ox?vd_source=1e4713cfa8e350de3a5d5debd2321c1d)
+
+##### 寻找多数
+- [实例解析video](https://www.bilibili.com/video/BV17K411W79y?vd_source=1e4713cfa8e350de3a5d5debd2321c1d)
+
 ### 贪心算法(Greedy Algorithm)
 
 ### 回溯算法(Backtracking)
