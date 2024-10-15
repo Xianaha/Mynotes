@@ -49,5 +49,8 @@
 - [实例解析video](https://www.bilibili.com/video/BV17K411W79y?vd_source=1e4713cfa8e350de3a5d5debd2321c1d)
 
 ### 贪心算法(Greedy Algorithm)
+#### 概念
+
+#### 应用场景
 
 ### 回溯算法(Backtracking)
