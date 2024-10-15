@@ -36,7 +36,7 @@
 
 
 ### 分治法(Divide and Conquer)
-1
+1234
 ### 贪心算法(Greedy Algorithm)
 
 ### 回溯算法(Backtracking)
