@@ -50,7 +50,24 @@
 
 ### 贪心算法(Greedy Algorithm)
 #### 概念
-1111111111
+
 #### 应用场景
 
 ### 回溯算法(Backtracking)
+#### 概念
+
+**一般模式：**
+```python
+def backtrack(路径, 选择列表):
+    if (终止条件):
+        收集结果
+        return
+    for i in 集合:
+        处理结点
+        backtrack(路径, 选择列表)
+        回溯操作
+```
+
+
+
+#### 应用场景
