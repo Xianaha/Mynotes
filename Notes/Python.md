@@ -296,6 +296,14 @@ res_count = temp.count(查找元素值)
 
 类型为str。
 线性存储，通过下标访问，但不可修改！
+可以对字符串进行重新构建以达成修改的目的：
+```python
+s = "hello world"
+s = s + "!"
+s
+>>> "hello world!"
+# 这里通过重新赋值或拼接的方式生成了新的字符串s。
+```
 支持切片。
 
 ```python
