@@ -1,5 +1,10 @@
 # Python语法
 
+## 关键字
+
+### all
+
+
 ## 基本方法
 
 ```python
@@ -17,6 +22,38 @@ range(1, 5, 2) # 创建一个整数序列，从1开始，到4结束，步长为2
 len()
 len(str) # 计算字符串或列表的长度。
 # 计算字符串或的长度。
+
+all()
+在Python中，`all()` 是一个内置函数，用于判断可迭代对象中的所有元素是否都是 `True`。只要可迭代对象中有一个元素为 `False`，`all()` 就会返回 `False`；如果可迭代对象为空，它会返回 `True`。
+
+语法：all(iterable)
+`iterable`：一个可迭代对象，例如列表、元组、集合、字典等。
+返回 `True` 如果 `iterable` 中的所有元素为 `True`，否则返回 `False`。
+
+基本用法：
+print(all([True, True, True]))  # 输出: True
+print(all([True, False, True]))  # 输出: False
+print(all([]))  # 输出: True (空可迭代对象)
+
+在 Python 中，0 被认为是 `False`，非零值被认为是 `True`。
+print(all([1, 2, 3]))  # 输出: True
+print(all([1, 0, 3]))  # 输出: False
+print(all([0, 0, 0]))  # 输出: False
+
+非空字符串被认为是 `True`。
+print(all(['hello', 'world']))  # 输出: True
+print(all(['hello', '']))        # 输出: False
+print(all(['', '']))              # 输出: False
+
+结合生成器表达式
+可以与生成器表达式一起使用，检查某些条件是否都满足。
+numbers = [1, 2, 3, 4]
+
+检查所有数字是否都大于 0
+print(all(n > 0 for n in numbers))  # 输出: True
+
+检查是否所有数字都是偶数
+print(all(n % 2 == 0 for n in numbers))  # 输出: False
 
 .count()
 str.count("o") # 计算字符串中某个字符出现的次数。
@@ -87,6 +124,67 @@ str.upper() # 将字符串转换为大写。
 lst.sort() # 对列表进行排序。默认情况下，它会按升序排列；如果指定reverse=True，则按降序排列。
 # 对列表进行排序。
 ```
+
+## 位运算
+### 与运算（&）
+只有两个位都是1时，结果才是1。
+
+```python
+a = 0b1010
+b = 0b1100
+c = a & b
+print(c) # 输出结果为1000
+```
+
+### 或运算（|）
+只要两个位有一个是1，结果就是1。
+
+```python
+a = 0b1010
+b = 0b1100
+c = a | b
+print(c) # 输出结果为1110
+```
+
+### 异或运算（^）
+两个位都不同时，结果才是1；两个位相同时，结果就是0。
+
+```python
+a = 0b1010
+b = 0b1100
+c = a ^ b
+print(c) # 输出结果为0110
+```
+
+### 取反运算（~）
+对每个位取反，即0变1，1变0。
+
+```python
+a = 0b1010
+b = ~a
+print(b) # 输出结果为-1101
+```
+
+### 左移运算（<<）
+将数字的二进制形式向左移动指定的位数。
+
+```python
+a = 0b1010
+b = a << 2
+print(b) # 输出结果为0b101000
+```
+
+### 右移运算（>>）
+将数字的二进制形式向右移动指定的位数。
+
+```python
+a = 0b1010
+b = a >> 2
+print(b) # 输出结果为0b0010
+```
+
+
+
 
 ## 条件语句
 
