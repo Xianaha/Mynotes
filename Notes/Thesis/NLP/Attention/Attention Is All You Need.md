@@ -59,7 +59,7 @@
 编码器由N=6个相同层组成。每一层都有两个子层。第一个子层表达多头自注意力机制，第二个子层表达简单的、位置无关的全连接前馈网络（一个简单的感知机）。
 
 数据经过self-attention模块后得到一个加权之后的特征向量Z，这个特征向量Z包含了输入序列的全部信息。Z由公式Attention(Q,K,V)得到：
-$$Attention(Q,K,V)=softmax(\frac{QK^T}{\sqrt{d_k}})V$$
+$$Attention(Q,K,V)=softmax(\frac{QK^T}{\sqrt{d_k}})V$$  
 其中Q,K,V分别是输入序列的特征向量，Q,K的维度都是d_k，V的维度是d_v。
 
 得到的特征向量Z会被送入Feed-Forward Nerual Network中，该全连接神经网络有两层，第一层是激活函数ReLU，第二层是一个线性激活函数。该函数可以表达为：
@@ -69,7 +69,8 @@ $$FFN(x)=max(0,xW_1+b_1)W_2+b_2$$
 以上过程会重复N次，得到N个特征向量Z，然后将这些特征向量Z拼接起来，作为输出。同时该输出将会进入到Decoder中，作为Decoder的输入。
 
 #### Decoder
-
+>The decoder is also composed of a stack of N = 6 identical layers. In addition to the twosub-layers in each encoder layer, the decoder inserts a third sub-layer, which performs multi-head attention over the output of the encoder stack.
+>
 ### Attention
 
 #### Scaled Dot-Product Attention
