@@ -26,17 +26,17 @@
 
 ## Method：
 
-![Transformer architecture](/Notes/Thesis/NLP/Attention/Transformer%20architecture.png "Transformer architecture")
+![Transformer architecture](<Transformer%20architecture.png>)
 
-![Transformer architecture with functions](/Notes/Thesis/NLP/Attention/Transformer%20architecture%20with%20function.png "Transformer architecture with functions")
+![Transformer architecture with functions](<Transformer%20architecture%20with%20function.png>)
 
-![concise transformer architecture](/Notes/Thesis/NLP/Attention/concise%20Transformer.png "concise transformer architecture")
+![concise transformer architecture](<concise%20Transformer.png>)
 
 ### Encoder and Decoder Stacks
 
-![Encoder and Decoder](/Notes/Thesis/NLP/Attention/Encoder-Decoder.png "Encoder and Decoder")
+![Encoder and Decoder](<Encoder-Decoder.png>)
 
-![Encoder and Decoder Inside](/Notes/Thesis/NLP/Attention/Encoder-Decoder%20Inside.png "Encoder and Decoder Inside")
+![Encoder and Decoder Inside](<Encoder-Decoder%20Inside.png>)
 
 >Here, the encoder maps an input sequence of symbol representations (x1, ..., xn) to a sequence of continuous representations z = (z1, ..., zn).
 >
@@ -52,7 +52,7 @@
 
 #### Encoder
 
-![Encoder Unit](/Notes/Thesis/NLP/Attention/Encoder.png "Encoder Unit")
+![Encoder Unit](<Encoder.png>)
 
 >The encoder is composed of a stack of N = 6 identical layers. Each layer has two sub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position-wise fully connected feed-forward network.
 >
@@ -69,14 +69,41 @@ $$FFN(x)=max(0,xW_1+b_1)W_2+b_2$$
 以上过程会重复N次，得到N个特征向量Z，然后将这些特征向量Z拼接起来，作为输出。同时该输出将会进入到Decoder中，作为Decoder的输入。
 
 #### Decoder
->The decoder is also composed of a stack of N = 6 identical layers. In addition to the twosub-layers in each encoder layer, the decoder inserts a third sub-layer, which performs multi-head attention over the output of the encoder stack.
+>The decoder is also composed of a stack of N = 6 identical layers. In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer, which performs multi-head attention over the output of the encoder stack.
 >
+解码器也是由N=6个相同层组成。除了每个编码器层中的两个子层之外，解码器还插入了一个第三个子层，该子层对编码器堆栈的输出执行多头注意力。
+
+>Similar to the encoder, we employ residual connections around each of the sub-layers, followed by layer normalization.
+>
+与编码器相似，我们在每个子层周围都插入残差连接，并进行层归一化。
+
+>We also modify the self-attention sub-layer in the decoder stack to prevent positions from attending to subsequent positions. This masking, combined with fact that the output embeddings are offset by one position, ensures that the predictions for position i can depend only on the known outputs at positions less than i.
+>
+我们还修改了解码器堆栈中的自注意力子层，以防止当前位置的注意力依赖后续位置的信息。这种屏蔽机制与输出的嵌入向量是一个位置偏移的情况相结合，可以确保位置i的预测仅依赖于位置i之前的已知输出。
+
 ### Attention
-
+>An attention function can be described as mapping a query and a set of key-value pairs to an output, where the query, keys, values, and output are all vectors. The output is computed as a weighted sum of the values, where the weight assigned to each value is computed by a compatibility function of the query with the corresponding key.
+>
+注意力函数可以描述为将查询和一组键-值对映射到输出，其中查询、键、值和输出都是向量。输出是通过对值进行加权求和得到的，权重是通过查询与相应键的兼容性函数计算得到的。
 #### Scaled Dot-Product Attention
-
+![alt text](<Scaled Dot-Product Attention.png>)
+>We call our particular attention "Scaled Dot-Product Attention". The input consists of queries and keys of dimension dk, and values of dimension dv. We compute the dot products of the query with all keys, divide each by $\sqrt{d_k}$, and apply a softmax function to obtain the weights on the values.
+>
+我们将特定的注意力机制命名为“缩放点积注意力”。输入由查询和键的维度dk和维度的值dv组成。我们对查询与所有键的点积进行除以$\sqrt{d_k}$，并应用softmax函数来获得值上的权重。
+>In practice, we compute the attention function on a set of queries simultaneously, packed together into a matrix Q. The keys and values are also packed together into matrices K and V . We compute the matrix of outputs as:
+$$Attention(Q,K,V)=softmax(\frac{QK^T}{\sqrt{d_k}})V$$
+>
+实际上，我们对一组查询同时进行注意力计算，将其打包成矩阵Q。键和值也被打包成矩阵K和V。我们计算输出矩阵如下：
+$$Attention(Q,K,V)=softmax(\frac{QK^T}{\sqrt{d_k}})V$$
+其中Q,K,V分别是输入序列的特征向量，Q,K的维度都是d_k，V的维度是d_v。
+>The two most commonly used attention functions are additive attention , and dot-product (multi-plicative) attention. Dot-product attention is identical to our algorithm, except for the scaling factor
+of √1dk. Additive attention computes the compatibility function using a feed-forward network with a single hidden layer. While the two are similar in theoretical complexity, dot-product attention is much faster and more space-efficient in practice, since it can be implemented using highly optimized matrix multiplication code.
+>
+两种最常用的注意力函数是加性注意力和点积注意力。点积注意力与我们的算法相同，只是除以了$\sqrt{d_k}$。加性注意力则使用一个单层隐藏的前馈网络来计算兼容函数。虽然两者在理论复杂度上类似，但点积注意力在实践中更快、更节省空间，因为它可以使用高度优化的矩阵乘法代码来实现。
+>While for small values of dk the two mechanisms perform similarly, additive attention outperforms dot product attention without scaling for larger values of dk [3]. We suspect that for large values of dk, the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients 4. To counteract this effect, we scale the dot products by √1dk
+>
 #### Multi-Head Attention
-
+![alt text](<Multi-Head Attention.png>)
 ### Position-wise Feed-Forward Networks
 
 ### Embeddings and Softmax
