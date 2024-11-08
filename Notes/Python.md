@@ -296,7 +296,7 @@ f(name = 'Python')
 
 ```python
 temp[-1]
---> 5 # 列表长度
+>>>  5 # 列表长度
 ```
 
 #### 声明
@@ -333,13 +333,13 @@ temp1 = [1, 3, 5]
 temp2 = [2, "qwa",  'c', 3]
 temp3 = temp1 + temp2
 temp3
--->[1, 3, 5, 2, 'qwa', 'c', 3]
+>>> [1, 3, 5, 2, 'qwa', 'c', 3]
 
 # 运算符*会使该列表前后拼接n倍
 n = 3
 temp3 = temp2 * n
 temp3
--->[2, 'qwa', 'c', 3, 2, 'qwa', 'c', 3, 2, 'qwa', 'c', 3]
+>>> [2, 'qwa', 'c', 3, 2, 'qwa', 'c', 3, 2, 'qwa', 'c', 3]
 
 list()
 list(range(1, 11)) # 将range对象转换为列表
@@ -376,7 +376,7 @@ temp1.sort(reverse = True)     #降序
 temp3 = [{"price":10.5},{"price":24},{"price":15}]
 temp3.sort(key=lambda item:item["price"])
 temp3
--->[{'price': 10.5}, {'price': 15}, {'price': 24}]
+>>> [{'price': 10.5}, {'price': 15}, {'price': 24}]
 
 #copy函数用于创建列表的副本。创建副本和赋值是不一样的，创建副本会于new一个新对象，而赋值只是&。
 temp3.copy(temp1)
@@ -640,7 +640,7 @@ print("我的名字是%s，今年%d岁了，成绩是%.2f分。" % (name, age, s
 
 ```python
 type( ("c.biancheng.net",1,[2,'a'],("abc",3.0)) )
---> <class 'tuple'>
+>>>  <class 'tuple'>
 ```
 
 #### 声明
@@ -682,13 +682,55 @@ tuple1.index(元素值)
 因为字典是无序的所以不支持索引和切片。
 key不可以重复,否则只会保留第一个;
 value值可以重复;
-key可以是任意的数据类型,但不能出现可变的数据类型,保证key唯一;
+key可以是任意的数据类型,但不能出现可变的数据类型,保证key唯一。字典的key可以是数字、字符串、元组等任意不可变类型，但不能是可变类型，如列表、字典等。
 key一般形式为字符串。
 
 #### 声明
 
 ```python
 dict = {"nane": "张三", "age": 20, "sex": "男"}
+
+# 嵌套字典形成多层字典结构
+
+persons = {
+    'person1': {'name': 'Alice', 'age': 25},
+    'person2': {'name': 'Bob', 'age': 30}
+}
+
+
+students = {
+    "ZhangSan" : {
+        "name": "张三",
+        "age": 20,
+        "sex": "男"
+        "courses" : {
+            "Python": {
+                "teacher": "老师A",
+                "score": 90
+            },
+            "Java": {
+                "teacher": "老师B",
+                "score": 85
+            }
+        }
+    },
+    "LiSisi" : {
+        "name" : "李思思",
+        "age": 21,
+        "sex": "女"
+        "courses" : {
+            "C++": {
+                "teacher": "老师C",
+                "score": 80
+            },
+            "C": {
+                "teacher": "老师D",
+                "score": 75
+            }
+        }
+    }
+}
+
 ```
 
 #### 常用方法
@@ -726,7 +768,7 @@ list1 = dict.values()
 dict = {"name": "张三", "age": 20, "sex": "男"}
 list1 = dict.items()
 list1
--->dict_items([('name', '张三'), ('age', 20), ('sex', '男')])
+>>> dict_items([('name', '张三'), ('age', 20), ('sex', '男')])
 
 # 字典名[key]会返回该Key对应的Value值
 value1 = dict["age"]
@@ -748,7 +790,7 @@ dict.get(k,value)
 enumerate(字典名)
 for i in enumerate(dict):
     print(i)
--->(0, 'name')
+>>> (0, 'name')
 (1, 'age')
 (2, 'sex')
 
@@ -762,11 +804,17 @@ value in dict.values()
 ### 集合
 
 #### 性质
-
+- 无序：集合中的元素没有固定顺序。  
+- 不重复：集合中的元素不能重复，添加重复元素时，集合只会保留一个。
 #### 声明
 
 ```python
-s = {1,2,4,5}
+# 使用花括号创建集合
+my_set = {1, 2, 3, 4}
+
+# 使用set()函数创建集合
+my_set2 = set([1, 2, 3, 4])
+
 ```
 
 #### 常用方法
@@ -776,7 +824,7 @@ s = {1,2,4,5}
 list1 = [1, 4, 5, 1, 4, 5]
 s1 = set(list1)
 s1
---> {1, 4, 5}
+>>> {1, 4, 5}
 
 # 判断
 des in 集合名
