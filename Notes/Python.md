@@ -36,6 +36,129 @@ except ZeroDivisionError:
     pass  # 捕获异常而不做处理
 
 ```
+### nonlocal
+nonlocal关键字用于在嵌套函数中声明变量，指示该变量是来自外部函数的作用域，而不是全局作用域。简单来说，当我们在一个内部函数中想要修改外部函数（不是全局）的局部变量时，我们可以使用nonlocal。
+
+#### 作用
+- 声明在嵌套作用域中引用的变量  
+在嵌套作用域中，nonlocal 关键字用于声明该变量是来自外部函数的作用域，并使得内部函数可以访问它。
+```python
+def outer():
+    y = 20
+    def inner():
+        nonlocal y
+        y += 10
+        print(y)
+    inner()
+    print(y)
+
+outer()
+>>> 30
+20
+```
+
+### global
+global关键字用于在函数内部修改全局变量。
+
+#### 作用
+- 修改全局变量  
+在函数内部，global 关键字用于修改全局变量。
+```python
+x = 10
+
+def my_function():
+    global x
+    x += 10
+    print(x)
+
+my_function()
+>>> 20
+```
+
+
+### del
+del 关键字用于删除对象。
+
+#### 作用
+- 删除对象  
+del 关键字用于删除对象，包括变量、列表、元组、字典等。
+```python
+x = 10
+y = [1, 2, 3]
+
+del x
+del y[1]
+
+print(x) # 输出结果为NameError: name 'x' is not defined
+print(y) # 输出结果为[1, 3]
+```
+
+### is
+is 关键字用于比较两个对象是否相同。is 是身份运算符，用于判断两个对象的身份（内存地址）是否相同。与 == 不同， 后者比较的是对象的值。
+
+#### 作用
+- 判断对象是否相同  
+is 关键字用于判断两个对象是否相同。
+```python
+a = 10
+b = 10
+print(a is b) # 输出结果为True
+c = b # 两个变量指向同一个对象,c 引用了 b
+print(a is b) # 输出结果为True
+print(c is b) # 输出结果为True
+
+c = 20 # 重新赋值，b 与 c 不再指向同一个对象，c 指向了一个值为 20 的对象
+print(c is b, b, c) # 输出结果为False 10 20
+
+d = b # 再次赋值，d 引用了 b
+print(d is b) # 输出结果为True
+d += 10 # 对 d 进行操作，d 重新指向一个值为 b + 10 的对象
+print(d is b, b, d) # 输出结果为False 10 20
+
+e = a # 再次赋值，e 引用了 a
+a += 10 # 对 a 进行操作，a 重新指向一个值为 a + 10 的对象
+print(e is a, a, e) # 输出结果为False 20 10
+
+```
+
+### in
+in 关键字用于判断某个对象是否存在于某个序列中，例如字符串、列表、元组、集合和字典等。
+在使用 in 关键字时，如果对象存在于序列中，则返回 True，否则返回 False。
+在使用 in 关键之前，需要确保序列中包含该对象的数据类型，否则会报错。例如，字符串中不包含数字，所以在字符串中使用 in 关键字时会报错。
+
+#### 作用
+- 判断对象是否存在于序列中  
+in 关键字用于判断某个对象是否存在于某个序列中。
+```python
+a = 10
+b = [1, 2, 3]
+c = (1, 2, 3)
+d = {1, 2, 3}
+e = "hello world"
+
+print(a in b) # 输出结果为False
+print(a in c) # 输出结果为False
+print(a in d) # 输出结果为False
+print(a in e) # TypeError: 'in <string>' requires string as left operand, not int
+
+1 in b # 输出结果为True
+1 in c # 输出结果为True
+1 in d # 输出结果为True
+1 in e # TypeError: 'in <string>' requires string as left operand, not int
+
+2 in b # 输出结果为True
+2 in c # 输出结果为True
+2 in d # 输出结果为True
+2 in e # TypeError: 'in <string>' requires string as left operand, not int
+
+"l" in e # 输出结果为True
+"l" in b # 输出结果为False
+"l" in c # 输出结果为False
+"l" in d # 输出结果为False
+
+```
+
+
 
 
 
