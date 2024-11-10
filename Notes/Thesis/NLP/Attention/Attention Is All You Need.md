@@ -100,10 +100,13 @@ $$Attention(Q,K,V)=softmax(\frac{QK^T}{\sqrt{d_k}})V$$
 of √1dk. Additive attention computes the compatibility function using a feed-forward network with a single hidden layer. While the two are similar in theoretical complexity, dot-product attention is much faster and more space-efficient in practice, since it can be implemented using highly optimized matrix multiplication code.
 >
 两种最常用的注意力函数是加性注意力和点积注意力。点积注意力与我们的算法相同，只是除以了$\sqrt{d_k}$。加性注意力则使用一个单层隐藏的前馈网络来计算兼容函数。虽然两者在理论复杂度上类似，但点积注意力在实践中更快、更节省空间，因为它可以使用高度优化的矩阵乘法代码来实现。
->While for small values of dk the two mechanisms perform similarly, additive attention outperforms dot product attention without scaling for larger values of dk [3]. We suspect that for large values of dk, the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients 4. To counteract this effect, we scale the dot products by √1dk
+>While for small values of dk the two mechanisms perform similarly, additive attention outperforms dot product attention without scaling for larger values of dk. We suspect that for large values of dk, the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients    . To counteract this effect, we scale the dot products by √1dk
 >
+虽然对于较小的dk值，两者的表现类似，但对于较大的dk值，加性注意力优于点积注意力，而不进行缩放。我们怀疑对于较大的dk值，点积的大小会增大，使得softmax函数进入极小梯度的区域。为了抵消这种影响，我们将点积除以$\sqrt{d_k}$。
 #### Multi-Head Attention
 ![alt text](<Multi-Head Attention.png>)
+>
+>
 ### Position-wise Feed-Forward Networks
 
 ### Embeddings and Softmax
