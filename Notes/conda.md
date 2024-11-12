@@ -16,7 +16,7 @@
 
  `conda search package_name` 搜索package_name包。
 
- `conda update package_name` 更新package_name包。
+ `conda update package_name` 更新package_name包(更新至最新版本)。若需要更新到指定版本，则 `conda update numpy=1.21` 更新numpy包到1.21版本。
 
  `conda update --all` 更新当前环境中的所有包。
 
