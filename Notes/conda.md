@@ -2,6 +2,8 @@
 
 ## 常用指令
 
+`conda info` 显示conda版本信息。
+
  `conda create -n env_name python=3.10` 创建一个名为env_name的环境，指定python版本为3.10。
 
  `conda activate env_name` 激活env_name环境。
@@ -13,6 +15,16 @@
  `conda remove package_name` 卸载package_name包。
 
  `conda list` 列出当前环境中的所有包。
+
+ `conda config --show` 显示当前配置。
+
+ `conda config --add envs_dirs envs_path` 添加虚拟环境路径。
+
+ `conda config --remove envs_dirs envs_path` 移除虚拟环境路径。
+
+ `conda config --set channel_priority strict` 设置channel优先级为strict。
+
+ `conda config --set always_yes yes` 自动确认所有包的安装。
 
  `conda search package_name` 搜索package_name包。
 
