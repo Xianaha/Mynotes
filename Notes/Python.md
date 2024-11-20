@@ -212,6 +212,17 @@ print(all(n > 0 for n in numbers))  # 输出: True
 检查是否所有数字都是偶数
 print(all(n % 2 == 0 for n in numbers))  # 输出: False
 
+enumerate()
+enumerate 是 Python 的一个内置函数，用于将可迭代对象（如列表、元组等）组合为一个索引序列。这个函数会返回一个枚举对象，您可以通过遍历这个对象来获取元素的索引值及对应的元素。
+lst = [aplle, banana, cherry, peach]
+for index, value in enumerate(lst, start=99):
+    print(index, value)
+
+>>> 99 aplle
+100 banana
+101 cherry
+102 peach
+
 .count()
 str.count("o") # 计算字符串中某个字符出现的次数。
 # 计算字符串中某个字符出现的次数。
