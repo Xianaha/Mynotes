@@ -1,5 +1,29 @@
 import os
 
+# 假设有如下目录结构：
+# Cats, Dogs, and Foxes
+# ├── batch file name extension.py
+# ├── cat/
+# │   ├── cat001.jpg
+# │   ├── cat002.jpg
+# │   ├── cat003.jpg
+# │   ├── cat004.jpg
+# │   ├── cat005.jpg
+# │   ├── ...
+# ├── dog/
+# │   ├── dog001.jpg
+# │   ├── dog002.jpg
+# │   ├── dog003.jpg
+# │   ├── dog004.jpeg
+# │   ├── dog005.jpeg
+# │   ├── ...
+# └── fox/
+#     ├── fox001.jpg
+#     ├── fox002.jpg
+#     ├── fox003.jpg
+#     ├── fox004.jpg
+#     ├── fox005.jpg
+#     ├── ...
 
 def batch_file_name_extension(root_dir):
     for root, dirs, files in os.walk(root_dir):
