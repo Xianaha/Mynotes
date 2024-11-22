@@ -40,8 +40,8 @@ class MyDataset(Dataset):
         if self.transform:
             img = self.transform(img)
         return img, label
-
-dataset = MyDataset(root="D:\Code\VScode_Python\datasets\Cats, Dogs, and Foxes", transform=transform)
+dataset_path = "/data/wang_xian/IdentifyCats,dogs,andfoxes/dataset"
+dataset = MyDataset(root=dataset_path, transform=transform)
 data = dataset.imgs
 labels = dataset.labels
 
@@ -88,13 +88,13 @@ model.to(device)
 epochs = 100
 for epoch in range(epochs):
     running_loss = 0.0
-    for images, labels in train_data:
+    for images, labels in enumerate(train_loader):
         images, labels = images.to(device), labels.to(device)
         
         optimizer.zero_grad()
         outputs = model(images)
         loss = criterion(outputs, labels)
-        loss.backwards()
+        loss.backward()
         optimizer.step()
         
         running_loss += loss.item()
