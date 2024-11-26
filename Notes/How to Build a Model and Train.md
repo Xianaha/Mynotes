@@ -143,8 +143,27 @@ test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False, num_workers
 
 #### Model Architecture
 定义一个模型架构，可以选择不同的模型结构，如卷积神经网络、循环神经网络、递归神经网络等。
+模型架构细节可以参考[General Knowledge In DL](./General%20Knowledge%20In%20DL.md)中`torch.nn`模块的介绍。
 ```python
-
+class simpleNet(nn.Module):
+    def __init__(self):
+        super(CNN, self).__init__()
+        # 第一层：卷积层 + 激活层 + 池化层
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)  # 输入3通道，输出16通道
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)   # 最大池化层，大小2x2
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1) # 输入16通道，输出32通道
+        
+        # 全连接层
+        self.fc1 = nn.Linear(32 * 32 * 32, 128)   # 输入维度为32x32x32，输出维度为128
+        self.fc2 = nn.Linear(128, 3)    # 输入维度为128，输出维度为3
+        
+    def forward(self, x):
+        x = self.pool(fct.relu(self.conv1(x)))
+        x = self.pool(fct.relu(self.conv2(x)))
+        x = x.view(-1, 32 * 32 * 32)
+        x = fct.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
 ```
 
 
