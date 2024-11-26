@@ -55,3 +55,230 @@ $$x'=a_1x+a_2$$
 
 - Softmax函数：$f(x_i)=\frac{e^{x_i}}{\sum_{j=1}^{n}e^{x_j}}$，输出范围为(0,1)，用于多分类问题。
 
+## Common libraries 
+记录一些常用的深度学习库。
+
+### torch.nn
+`torch.nn`是一个神经网络模块，用于构建和训练神经网络。
+
+使用：
+```python
+import torch.nn as nn
+#  from torch import nn
+```
+
+构建一个简单的神经网络：
+```python
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        pass
+        # 定义各种网络结构：
+        # 需要保证各层的输入数据的维度和输出数据的维度一致
+        # self.fc1 = nn.Linear(in_features, out_features)
+        # self.conv1 = nn.Conv2d(in_channels = 1, out_channels = 6, kernel_size = 5, stride = 1, padding = 0)
+        # self.pool = nn.MaxPool2d(kernel_size = 2, stride = 2)
+        
+
+
+    def forward(self, x):
+        pass
+        # 定义网络的前向传播过程
+        # x = self.fc1(x)
+        # x = self.conv1(x)
+        # x = self.pool(x)
+        # x = F.relu(x)
+        # x = x.view(x.size(0), -1)
+        # return x
+```
+这里可以使用torchsummary库来查看神经网络的结构：
+```python
+from torchsummary import summary
+summary(Net, input_size=(3, 224, 224))
+```
+
+### torch.nn.functional
+`torch.nn.functional`是一个函数库，包含了神经网络的常用函数。
+
+使用：
+```python
+import torch.nn.functional as F
+```
+
+### torch.utils.data.DataLoader
+`torch.utils.data.DataLoader`是一个数据加载器，用于加载和预处理数据集。它的作用包括：
+
+- 批量加载数据：DataLoader 可以将数据集分成多个小批次，便于模型进行训练和评估。
+
+- 随机打乱数据：它可以在每个 epoch 开始时打乱数据，帮助提高模型的泛化能力。
+
+- 支持多线程加载：DataLoader 可以利用多线程来加速数据加载过程，尤其是在处理大型数据集时，这能够有效减少模型训练的时间。
+
+- 自动处理数据集的迭代：使用 DataLoader 可以方便地迭代数据集，简化训练循环的编写。
+
+- 集成数据预处理：可以直接在数据加载过程中进行必要的数据预处理操作，比如数据增强、归一化等
+
+使用：
+```python
+from torch.utils.data import DataLoader
+```
+`DataLoader(dataset, batch_size=1, shuffle=False, sampler=None, batch_sampler=None, num_workers=0, collate_fn=None, pin_memory=False, drop_last=False, timeout=0, worker_init_fn=None)`其中：
+- dataset（必填）：要加载的数据集对象，它必须是一个实现了`__len__`和`__getitem__`方法的类。
+
+- batch_size（可选）：每个批次的样本数量，默认为 1。
+
+- shuffle（可选）：是否在每个 epoch 开始时打乱数据，默认为 False。
+
+- sampler（可选）：自定义数据抽样策略的对象。如果提供了 sampler，shuffle 参数将被忽略。
+
+- num_workers（可选）：用于数据加载的子进程数量，默认为 0（表示不使用多线程）。
+
+- collate_fn（可选）：用于将一批样本合并为一个小批量的函数，默认为 None。
+
+- pin_memory（可选）：如果为 True，DataLoader 会将数据加载到 pinned memory 中，有助于提高 GPU 加载速度。
+
+- drop_last（可选）：如果为 True，则在数据集大小不能被 batch_size 整除时丢弃最后一个小批量，默认为 False。
+
+- timeout（可选）：加载数据的超时时间。
+  
+- worker_init_fn（可选）：用于初始化每个工作进程的函数。
+例如：
+```python
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+```
+
+
+
+### torch.utils.data.Dataset
+`torch.utils.data.Dataset`是一个抽象类，用于定义数据集。通过继承`Dataset`类，可以自定义自己的数据集。
+
+使用：
+```python
+from torch.utils.data import Dataset
+```
+
+在PyTorch中，自定义数据集类需要继承 `torch.utils.data.Dataset`类，并实现以下几个方法：
+
+- `__init__(self, root, transform=None)`：构造函数，用于初始化数据集，包括数据集的根目录和数据转换方式。
+- `__len__(self)`：返回数据集的样本数量。
+- `__getitem__(self, index)`：返回指定索引的样本，包括图像和标签。
+
+以下是一个自定义数据集类的例子：
+
+```python
+import os # 对文件和目录进行操作
+from PIL import Image # 图像处理库
+from torch.utils.data import Dataset # 自定义数据集类
+class MyDataset(Dataset): # 继承Dataset类
+    def __init__(self, root, transform=None):
+        self.root = root # 数据集根目录
+        self.transform = transform # 已经定义好的数据转换方式
+        self.imgs = [] # 存放样本的特征矩阵
+        self.labels = [] # 存放样本的标签列表
+        # 遍历目录，将图片转化的特征矩阵和其对应类别标签添加到imgs和labels列表中
+        for label, class_dir in enumerate(os.listdir(root)):
+            class_path = os.path.join(root, class_dir)
+            if os.path.isdir(class_path):
+                for img_file in os.listdir(class_path):
+                    img = Image.open(os.path.join(class_path, img_file)).convert("RGB") # 以RGB模式打开图片
+                    if self.transform:
+                        img = self.transform(img) # 将图像转换后再存放
+                    self.imgs.append(img)
+                    self.labels.append(label)
+        self.labels = [x - 1 for x in self.labels]  # 标签从0开始，这里将标签从1开始。CrossEntropyLoss 要求目标标签在 [0, C-1] 范围内
+      
+    def __len__(self):
+        return len(self.imgs)
+  
+    def __getitem__(self, index): # 使得数据集对象能够像列表一样使用索引访问到样本的特征矩阵和标签
+        img = self.imgs[index]
+        label = self.labels[index]
+        # print(f"Fetching index {index}: Image {img}, Label {label}")  # 打印取出的样本和标签
+        return img, label
+
+# 实例化自定义数据集对象
+dataset = MyDataset(root="D:\Code\VScode_Python\datasets\Cats, Dogs, and Foxes", transform=transform)
+```
+
+由于train_test_split函数会将训练集和测试集的数据和标签分开，所以通常还需要重新将将数据和标签绑定到一个对象中。
+这里可以自定义一个类来封装数据和标签，并实现 `__getitem__`方法，使得数据集对象能够像列表一样使用索引访问到样本的特征矩阵和标签。
+注意：这里组合前，样本已经经过了数据转换，所以不需要再次转换。
+
+```python
+class SubsetDataset(Dataset):
+    def __init__(self, img_list, label_list):
+        self.imgs = img_list
+        self.labels = label_list
+
+    def __len__(self):
+        return len(self.imgs)
+
+    def __getitem__(self, idx):
+        return self.imgs[idx], self.labels[idx]
+
+# 将数据和标签绑定到一个对象中，通过SubsetDataset类实例化训练集和测试集对象
+train_dataset = SubsetDataset(train_data, train_labels)
+test_dataset = SubsetDataset(test_data, test_labels)
+```
+
+### torchsummary
+`torchsummary`是一个用于打印神经网络模型结构的库。通过这个库，可以方便地查看模型的结构，包括每一层的输入输出维度、每一层的激活函数、每一层的参数数量等。
+
+安装：
+```
+pip install torchsummary
+```
+
+使用：
+```python
+from torchsummary import summary
+```
+
+`summary(model, input_size)`，其中`model`是需要打印结构的神经网络模型，`input_size`是输入的图像大小。
+`summary()`会打印出模型的结构，包括每一层的输入输出维度、每一层的激活函数、每一层的参数数量等。其依照的是`forward()`的定义运作，所以需要定义好`forward()`函数。
+```python
+# 定义CNN网络结构
+class CNN(nn.Module):
+    def __init__(self):
+        super(CNN, self).__init__()
+        # 第一层：卷积层 + 激活层 + 池化层
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)  # 输入3通道，输出16通道
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)   # 最大池化层，大小2x2
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1) # 输入16通道，输出32通道
+        
+        # 全连接层
+        self.fc1 = nn.Linear(32 * 32 * 32, 128)   # 输入维度为32x32x32，输出维度为128
+        self.fc2 = nn.Linear(128, 3)    # 输入维度为128，输出维度为3
+        
+    def forward(self, x):
+        x = self.pool(fct.relu(self.conv1(x)))
+        x = self.pool(fct.relu(self.conv2(x)))
+        x = x.view(-1, 32 * 32 * 32)
+        x = fct.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+summary(CNN(), (3, 128, 128))
+
+>>>
+----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+            Conv2d-1         [-1, 16, 128, 128]             448
+         MaxPool2d-2           [-1, 16, 64, 64]               0
+            Conv2d-3           [-1, 32, 64, 64]           4,640
+         MaxPool2d-4           [-1, 32, 32, 32]               0
+            Linear-5                  [-1, 128]       4,194,432
+            Linear-6                    [-1, 3]             387
+================================================================
+Total params: 4,199,907
+Trainable params: 4,199,907
+Non-trainable params: 0
+----------------------------------------------------------------
+Input size (MB): 0.19
+Forward/backward pass size (MB): 3.75
+Params size (MB): 16.02
+Estimated Total Size (MB): 19.96
+----------------------------------------------------------------
+```
+
