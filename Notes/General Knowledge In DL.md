@@ -65,10 +65,32 @@ $$x'=a_1x+a_2$$
 ```python
 import torch
 ```
+**模型保存和加载**：
+`torch.save(obj, f)`，其中`obj`是要保存的对象，`f`是保存文件的路径。  
+通常与`.state_dict()`一起使用，保存模型参数。
+`model.state_dict()`方法返回一个字典，包含了模型的权重和偏置。
+```python
+torch.save(model.state_dict(), 'path/to/save/file.pth')
+```
+
+`torch.load(f)`，其中`f`是保存文件的路径。  
+通常与`.load_state_dict()`一起使用，加载模型参数。
+```python
+model.load_state_dict(torch.load('path/to/save/file.pth'))
+```
+
+**文件格式**：
+
+- `.pt`：保存的模型参数和优化器状态。
+- `.pth`：保存的模型参数。
+- `.onnx`：保存的神经网络结构和参数。  
+
+其中，`.pt`和`.pth`这两种扩展名通常可以互换使用，都是用于保存模型的结构和权重。PTH更常见于保存完整模型，而PT则可能更多地用于脚本模型或者逻辑模型。
+
+而`onnx`全称是Open Neural Network Exchange，是一种开放的神经网络交换格式。它的设计目的是为了实现不同深度学习框架之间的互操作性，例如可以将PyTorch模型导出为ONNX格式，然后在其他框架（如TensorFlow、MXNet等）中使用。
 
 
-
-### torch.nn
+#### torch.nn
 `torch.nn`是一个神经网络模块，用于构建和训练神经网络。
 
 使用：
@@ -107,7 +129,7 @@ from torchsummary import summary
 summary(Net, input_size=(3, 224, 224))
 ```
 
-### torch.nn.functional
+#### torch.nn.functional
 `torch.nn.functional`是一个函数库，包含了神经网络的常用函数。
 
 使用：
@@ -115,7 +137,7 @@ summary(Net, input_size=(3, 224, 224))
 import torch.nn.functional as F
 ```
 
-### torch.utils.data.DataLoader
+#### torch.utils.data.DataLoader
 `torch.utils.data.DataLoader`是一个数据加载器，用于加载和预处理数据集。它的作用包括：
 
 - 批量加载数据：DataLoader 可以将数据集分成多个小批次，便于模型进行训练和评估。
@@ -160,7 +182,7 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
 
 
-### torch.utils.data.Dataset
+#### torch.utils.data.Dataset
 `torch.utils.data.Dataset`是一个抽象类，用于定义数据集。通过继承`Dataset`类，可以自定义自己的数据集。
 
 使用：
