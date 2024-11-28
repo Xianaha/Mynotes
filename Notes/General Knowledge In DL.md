@@ -65,6 +65,16 @@ $$x'=a_1x+a_2$$
 ```python
 import torch
 ```
+
+`torch.randn(size)`：创建随机的张量，`size`表示张量的形状。  
+它会返回一个包含随机数的张量，这些随机数是从标准正态分布（均值为0，标准差为1）中抽取的。
+```python
+x = torch.randn(3, 4)
+print(x)
+```
+
+
+
 **模型保存和加载**：
 `torch.save(obj, f)`，其中`obj`是要保存的对象，`f`是保存文件的路径。  
 通常与`.state_dict()`一起使用，保存模型参数。
@@ -88,6 +98,35 @@ model.load_state_dict(torch.load('path/to/save/file.pth'))
 其中，`.pt`和`.pth`这两种扩展名通常可以互换使用，都是用于保存模型的结构和权重。PTH更常见于保存完整模型，而PT则可能更多地用于脚本模型或者逻辑模型。
 
 而`onnx`全称是Open Neural Network Exchange，是一种开放的神经网络交换格式。它的设计目的是为了实现不同深度学习框架之间的互操作性，例如可以将PyTorch模型导出为ONNX格式，然后在其他框架（如TensorFlow、MXNet等）中使用。
+
+`torch.onnx.export(model, input, f, verbose=False, export_params=True, opset_version=11, do_constant_folding=True, input_names=None, output_names=None, dynamic_axes=None, keep_initializers_as_inputs=None)`
+
+- `model`：要导出的模型。
+- `input`：模型的输入，可以是`torch.Tensor`或`tuple/list`等。
+- `f`：导出的模型文件路径。
+- `verbose`：是否打印导出过程中的信息。
+- `export_params`：是否导出模型的参数。
+- `opset_version`：ONNX 算子集版本。
+- `do_constant_folding`：是否执行常量折叠。
+- `input_names`：输入节点的名称。
+- `output_names`：输出节点的名称。
+- `dynamic_axes`：动态维度。
+- `keep_initializers_as_inputs`：是否将初始化器视为输入。
+
+```python
+import torch
+import torchvision.models as models
+
+# 实例化模型
+model = models.resnet18(pretrained=True)
+
+# 实例化输入
+input = torch.randn(1, 3, 224, 224)
+
+# 导出模型
+torch.onnx.export(model, input, "resnet18.onnx", verbose=True)
+```
+
 
 
 #### torch.nn
