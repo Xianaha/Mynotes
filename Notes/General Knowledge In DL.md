@@ -58,6 +58,16 @@ $$x'=a_1x+a_2$$
 ## Common libraries 
 记录一些常用的深度学习库。
 
+### torch
+`torch`是一个基于张量(tensor)的科学计算库，可以用来进行机器学习、深度学习等相关的计算。
+
+使用：
+```python
+import torch
+```
+
+
+
 ### torch.nn
 `torch.nn`是一个神经网络模块，用于构建和训练神经网络。
 
@@ -221,6 +231,28 @@ class SubsetDataset(Dataset):
 train_dataset = SubsetDataset(train_data, train_labels)
 test_dataset = SubsetDataset(test_data, test_labels)
 ```
+
+### torchvision
+`torchvision`是一个用于计算机视觉任务的库，它提供了常用的数据集、模型和图像变换。
+
+安装：
+```
+pip install torchvision
+```
+
+使用：
+```python
+import torchvision
+```
+
+常用的数据集：
+- CIFAR10：CIFAR-10 数据集，包含 60,000 张 32x32 像素的彩色图像，共 10 个类别。
+- CIFAR100：CIFAR-100 数据集，包含 60,000 张 32x32 像素的彩色图像，共 100 个类别。
+- MNIST：MNIST 数据集，包含 60,000 张 28x28 像素的灰度图像，共 10 个类别。
+- FashionMNIST：FashionMNIST 数据集，包含 60,000 张 28x28 像素的灰度图像，共 10 个类别。
+- ImageNet：ImageNet 数据集，包含 1,281,167 张 224x224 像素的彩色图像，共 1000 个类别。
+
+常用的数据变换：
 
 ### torchsummary
 `torchsummary`是一个用于打印神经网络模型结构的库。通过这个库，可以方便地查看模型的结构，包括每一层的输入输出维度、每一层的激活函数、每一层的参数数量等。
