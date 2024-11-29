@@ -71,7 +71,52 @@ import torch
 `dim = -1`：沿着最后一维度进行运算。
 在二维张量中，`dim = 0`表示沿着列方向进行运算，`dim = 1`表示沿着行方向进行运算。
 
-**torch.max**:
+`tensor.item()`：将张量转换为标量。`item()`只适用于包含单个元素的张量，如果尝试在多元素张量上使用`item()`，将会引发错误
+```python
+tensor = torch.tensor([3.14])
+scalar = tensor.item()
+scalar
+>>> 3.14
+```
+
+`tensor.view(shape)`：改变张量的形状。
+```python
+tensor = torch.tensor([[1,2,3],[4,5,6],[7,8,9]])
+tensor.view(9,1)
+>>> tensor([[1],
+            [2],
+            [3],
+            [4],
+            [5],
+            [6],
+            [7],
+            [8],
+            [9]])
+```
+
+`tensor.size()`：返回张量的形状。
+```python
+tensor = torch.tensor([[1,2,3],[4,5,6],[7,8,9]])
+tensor.size()
+>>> torch.Size([3, 3])
+```
+
+`tensor.unsqueeze(dim)`：在指定维度上增加一个维度。
+```python
+tensor = torch.tensor([1,2,3])
+tensor.unsqueeze(0)
+tensor
+>>> tensor([[[1, 2, 3]]])
+```
+
+`tensor.squeeze(dim)`：在指定维度上减少一个维度。
+```python
+tensor = torch.tensor([[[1, 2, 3]]])
+tensor.squeeze(0)
+tensor
+>>> tensor([1, 2, 3])
+```
+
 `torch.max(input, dim=None, keepdim=False, out=None)`，返回输入张量`input`中元素的最大值和索引。
 - `input`：输入张量。
 - `dim`：沿着哪个维度进行运算，默认为`None`，表示沿所有维度进行运算。
