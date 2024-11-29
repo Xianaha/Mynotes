@@ -66,6 +66,30 @@ $$x'=a_1x+a_2$$
 import torch
 ```
 
+`dim = 0`：沿着第0维度进行运算。  
+`dim = 1`：沿着第1维度进行运算。  
+`dim = -1`：沿着最后一维度进行运算。
+在二维张量中，`dim = 0`表示沿着列方向进行运算，`dim = 1`表示沿着行方向进行运算。
+
+**torch.max**:
+`torch.max(input, dim=None, keepdim=False, out=None)`，返回输入张量`input`中元素的最大值和索引。
+- `input`：输入张量。
+- `dim`：沿着哪个维度进行运算，默认为`None`，表示沿所有维度进行运算。
+- `keepdim`：是否保留输出张量的维度，默认为`False`。
+- `out`：输出张量，默认为`None`，表示不输出。
+
+```python
+import torch
+
+input = torch.randn(3, 4)
+output, indices = torch.max(input, dim=1)
+print(output)
+>>> tensor([0.3643, 0.1918, 0.3199])
+print(indices)
+>>> tensor([2, 1, 2])
+```
+
+
 `torch.randn(size)`：创建随机的张量，`size`表示张量的形状。  
 它会返回一个包含随机数的张量，这些随机数是从标准正态分布（均值为0，标准差为1）中抽取的。
 ```python
@@ -73,6 +97,21 @@ x = torch.randn(3, 4)
 print(x)
 ```
 
+`model.train()`：将模型设置为训练模式，即打开dropout等随机因素。
+```python
+model.train()
+```
+
+`model.eval()`：将模型设置为评估模式，即关闭dropout等随机因素。
+```python
+model.eval()
+```
+
+`torch.no_grad()`：关闭自动求导，即关闭`requires_grad`属性。
+```python
+with torch.no_grad():
+    pass
+```
 
 
 **模型保存和加载**：
@@ -125,6 +164,28 @@ input = torch.randn(1, 3, 224, 224)
 
 # 导出模型
 torch.onnx.export(model, input, "resnet18.onnx", verbose=True)
+```
+
+**Sofmax**：
+`torch.softmax(input, dim=None, _stacklevel=3, dtype=None)`，softmax函数通常用作激活函数，用于将输出转换为概率分布，常用于多分类问题。
+- `input`：输入张量。
+- `dim`：沿着哪个维度进行softmax运算，默认为`None`，表示沿所有维度进行softmax运算。
+- `_stacklevel`：用于设置报错信息的堆栈深度，默认为3。
+- `dtype`：输出张量的数据类型，默认为`None`，表示保持输入张量的数据类型。
+
+softmax函数的公式为：  
+$$f(x_i)=\frac{e^{x_i}}{\sum_{j=1}^{n}e^{x_j}}$$
+输出范围为(0,1)。
+
+```python
+import torch
+
+input = torch.randn(3, 4)
+output = torch.softmax(input, dim=1)
+print(output)
+>>> tensor([[0.0900, 0.2447, 0.6652, 0.0900],
+            [0.0900, 0.2447, 0.6652, 0.0900],
+            [0.0900, 0.2447, 0.6652, 0.0900]])
 ```
 
 

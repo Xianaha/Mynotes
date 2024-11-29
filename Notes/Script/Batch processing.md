@@ -48,7 +48,7 @@ path
 ```
 
 `os.path.exists(path)` 
-可以判断文件或目录是否存在。
+可以判断文件或目录是否存在，也可以判断文件是否可读、可写、可执行（是否损坏）。
 ```python
 if os.path.exists(path):
     # 文件或目录存在
@@ -97,6 +97,9 @@ with open(file, mode) as f:
 ```
 
 ### 读取文件内容
+
+`
+
 
 `file.endswith(suffix)` 
 可以判断文件名是否以指定后缀结尾。
