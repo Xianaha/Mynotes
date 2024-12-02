@@ -2,14 +2,15 @@ import torch
 import torch.onnx
 from torch.nn import CNN
 
-def transform_pth_to_onnx(model_class, dummy_input, model_path, onnx_path):
+def transform_pth_to_onnx(model_class, img_size, model_path):
     model = model_class()
     model.load_state_dict(torch.load(model_path))
     model.eval()
+    onnx_path = os.path.splitext(model_path)[0] + ".onnx"
     
-    input = dummy_input
+    input = torch.randn(1, 3, img_size, img_size)
     torch.onnx.export(model,
-                      dummy_input,
+                      input,
                       onnx_path,
                       export_params=True,
                       opset_version=11,
@@ -17,4 +18,4 @@ def transform_pth_to_onnx(model_class, dummy_input, model_path, onnx_path):
         
     )
 
-transform_pth_to_onnx(model_class=CNN, dummy_input=torch.randn(1, 3, 128, 128), model_path='/data/wang_xian/IdentifyCats,dogs,andfoxes/model.pth', onnx_path='/data/wang_xian/IdentifyCats,dogs,andfoxes/model.onnx')
+transform_pth_to_onnx(CNN, 224,"/data/wang_xian/IdentifyCats,dogs,andfoxes/MyResNet_model.pt")
