@@ -4,6 +4,22 @@
 
     这个笔记主要用来记录深度学习中的一些基础知识，包括但不限于基础理论和常用算法等等。
 
+### Run on CPU and GPU
+张量和模型在不同平台上（CPU，GPU）上加载时，可能会有所不同。在GPU上，需要使用`tensor.to(device)`方法将张量加载到GPU上。否则，如果二者在不同平台上，可能会导致运行错误（Runtime error）。
+
+```python
+import torch
+
+# create a tensor on CPU
+tensor = torch.tensor([1, 2, 3])
+
+# create a tensor on GPU
+if torch.cuda.is_available():
+    tensor = tensor.to(torch.device('cuda'))
+```
+
+
+
 ### Normalization(标准化)
 
 标准化是指对数据进行变换，使其具有相同的量纲，即使数据分布在不同的范围内。常见的标准化方法有：
@@ -64,6 +80,14 @@ $$x'=a_1x+a_2$$
 使用：
 ```python
 import torch
+```
+
+**GPU加速**：
+
+如果有GPU，可以将张量和模型转移到GPU上进行运算。对模型进行封装，只需要在创建模型时指定`device`参数即可。
+```python
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = MyModel().to(device)
 ```
 
 `dim = 0`：沿着第0维度进行运算。  
@@ -211,29 +235,6 @@ input = torch.randn(1, 3, 224, 224)
 torch.onnx.export(model, input, "resnet18.onnx", verbose=True)
 ```
 
-**Sofmax**：
-`torch.softmax(input, dim=None, _stacklevel=3, dtype=None)`，softmax函数通常用作激活函数，用于将输出转换为概率分布，常用于多分类问题。
-- `input`：输入张量。
-- `dim`：沿着哪个维度进行softmax运算，默认为`None`，表示沿所有维度进行softmax运算。
-- `_stacklevel`：用于设置报错信息的堆栈深度，默认为3。
-- `dtype`：输出张量的数据类型，默认为`None`，表示保持输入张量的数据类型。
-
-softmax函数的公式为：  
-$$f(x_i)=\frac{e^{x_i}}{\sum_{j=1}^{n}e^{x_j}}$$
-输出范围为(0,1)。
-
-```python
-import torch
-
-input = torch.randn(3, 4)
-output = torch.softmax(input, dim=1)
-print(output)
->>> tensor([[0.0900, 0.2447, 0.6652, 0.0900],
-            [0.0900, 0.2447, 0.6652, 0.0900],
-            [0.0900, 0.2447, 0.6652, 0.0900]])
-```
-
-
 
 #### torch.nn
 `torch.nn`是一个神经网络模块，用于构建和训练神经网络。
@@ -273,6 +274,59 @@ class Net(nn.Module):
 from torchsummary import summary
 summary(Net, input_size=(3, 224, 224))
 ```
+如果要在GPU上训练模型，需要将模型和数据移到GPU上：
+```python
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+model.to(device)
+summary(model, input_size=(3, 224, 224))
+```
+
+
+**Sofmax**：
+`torch.softmax(input, dim=None, _stacklevel=3, dtype=None)`，softmax函数通常用作激活函数，用于将输出转换为概率分布，常用于多分类问题。
+- `input`：输入张量。
+- `dim`：沿着哪个维度进行softmax运算，默认为`None`，表示沿所有维度进行softmax运算。
+- `_stacklevel`：用于设置报错信息的堆栈深度，默认为3。
+- `dtype`：输出张量的数据类型，默认为`None`，表示保持输入张量的数据类型。
+
+softmax函数的公式为：  
+$$f(x_i)=\frac{e^{x_i}}{\sum_{j=1}^{n}e^{x_j}}$$
+输出范围为(0,1)。
+
+```python
+import torch
+
+input = torch.randn(3, 4)
+output = torch.softmax(input, dim=1)
+print(output)
+>>> tensor([[0.0900, 0.2447, 0.6652, 0.0900],
+            [0.0900, 0.2447, 0.6652, 0.0900],
+            [0.0900, 0.2447, 0.6652, 0.0900]])
+```
+
+**Dropout**：
+`torch.nn.Dropout(p=0.5, inplace=False)`，Dropout是一种正则化方法，可以防止过拟合。
+- `p`：随机失活的概率，默认为0.5。
+- `inplace`：是否在原地操作，默认为False。
+
+```python
+import torch.nn as nn
+
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        self.fc1 = nn.Linear(10, 20)
+        self.fc2 = nn.Linear(20, 10)
+        self.dropout = nn.Dropout(p=0.5)
+
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.dropout(x)
+        x = self.fc2(x)
+        return x
+```
+
+
 
 #### torch.nn.functional
 `torch.nn.functional`是一个函数库，包含了神经网络的常用函数。
