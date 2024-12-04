@@ -112,9 +112,9 @@ def run_task_at(target_time, *args):
         time.sleep(0.1)  # 减少 CPU 占用
 
 if __name__ == '__main__':
-    target_time="2024/11/20 19:43:01"
-    xingming=""
-    xuehao=""
-    link=""
+    target_time="2024/12/04 19:43:01"
+    xingming="王宪"
+    xuehao="2024025441"
+    link="https://www.wjx.top/vm/tOexPKH.aspx"
     run_task_at(datetime.strptime(target_time, "%Y/%m/%d %H:%M:%S"),*[xuehao,xingming,link])
 

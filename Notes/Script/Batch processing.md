@@ -195,6 +195,15 @@ import shutil
 shutil.copy(src, dst)
 ```
 
+## requests
+requests 模块可以用来发送 HTTP 请求。
+```python
+import requests
+```
+
+### Link
+[requests 官方教材](https://requests.readthedocs.io/projects/cn/zh-cn/latest/user/quickstart.html#)
+
 ## subprocess
 subprocess 模块可以用来执行子进程。
 ```python

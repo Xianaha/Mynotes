@@ -10,7 +10,7 @@
 
  `conda deactivate` 退出当前环境。
 
- `conda install package_name` 安装package_name包。完整指令为：`conda install package_name=version`，其中version表示版本号，可选。
+ `conda install package_name` 安装package_name包。完整指令为：`conda install package_name=version`，其中version表示版本号，可选。`conda install -n env_name package_name` 安装package_name包到env_name环境。
 
  `conda remove package_name` 卸载package_name包。
 
