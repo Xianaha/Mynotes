@@ -3,6 +3,13 @@
 ## 常用指令
 
 `conda info` 显示conda版本信息。
+```
+# conda environments:
+#
+base                   D:\Miniconda
+pytorch              * D:\Miniconda\envs\pytorch
+```
+这里显示了当前conda环境的名称、路径、激活状态。其中`*`表示当前环境。
 
  `conda create -n env_name python=3.10` 创建一个名为env_name的环境，指定python版本为3.10。
 
