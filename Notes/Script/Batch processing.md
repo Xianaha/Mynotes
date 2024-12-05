@@ -201,6 +201,236 @@ requests 模块可以用来发送 HTTP 请求。
 import requests
 ```
 
+- `url`，通常是一个字符串，表示请求的 URL。
+
+- `params`，是一个字典，表示请求的查询参数。
+
+- `data`，是一个字典或字符串，表示请求的请求体。
+
+- `headers`，是一个字典，表示请求的头部信息。
+
+- `cookies`，是一个字典，表示请求的 Cookie。
+
+- `auth`，是一个元组，表示 HTTP 认证的用户名和密码。
+
+- `timeout`，是一个浮点数，表示请求的超时时间（单位：秒）。
+
+- `verify`，是一个布尔值或字符串，表示是否验证 SSL 证书。
+
+- `stream`，是一个布尔值，表示是否以流的形式接收响应内容。
+
+- `cert`，是一个字符串，表示客户端 SSL 证书的路径。
+
+- `json`，是一个字典或列表，表示请求的 JSON 数据。
+
+- `method`，是一个字符串，表示 HTTP 请求的方法。
+
+`requests.get(url, params=None, **kwargs)` 
+获取指定 URL 的内容。其中：
+- `url`，表示请求的 URL。
+- `params`，表示请求的查询参数。
+- `kwargs`，表示其他的请求参数。
+
+```python
+url = 'https://www.csdn.net/'
+response = requests.get(url)
+response.text
+>>> <html><body><script language="javascript"> window.onload=setTimeout("iw(20)", 200); function iw(OI) {var qo, mo="", no="", oo = [0x67,0x4d,0xdd......................
+```
+
+`requests.post(url, data=None, json=None, **kwargs)` 
+发送 POST 请求。其中：
+- `url`，表示请求的 URL。
+- `data`，表示请求的请求体。
+- `json`，表示请求的 JSON 数据。
+- `kwargs`，表示其他的请求参数。
+```python
+url = 'https://httpbin.org/post'
+data = {'name': 'Alice', 'age': 25}
+response = requests.post(url, data=data)
+response.json()
+>>> {'args': {}, 'data': '{"name": "Alice", "age": 25}', 'files': {}, 'form': {}, 'headers': {'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'Connection': 'keep-alive', 'Content-Length': '22', 'Content-Type': 'application/x-www-form-urlencoded', 'Host': 'httpbin.org', 'User-Agent': 'python-requests/2.25.1', 'X-Amzn-Trace-Id': 'Root=1-60a1d9a0-7d5d1d5d5a0d5d5a4a0a5a5a'}, 'json': None, 'origin': '172.16.58.3', 'url': 'https://httpbin.org/post'}
+```
+
+`requests.put(url, data=None, **kwargs)` 
+发送 PUT 请求。其中：
+- `url`，表示请求的 URL。
+- `data`，表示请求的请求体。
+- `kwargs`，表示其他的请求参数。
+```python
+url = 'https://httpbin.org/put'
+data = {'name': 'Alice', 'age': 25}
+response = requests.put(url, data=data)
+response.json()
+>>> {'args': {}, 'data': '{"name": "Alice", "age": 25}', 'files': {}, 'form': {}, 'headers': {'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'Connection': 'keep-alive', 'Content-Length': '22', 'Content-Type': 'application/x-www-form-urlencoded', 'Host': 'httpbin.org', 'User-Agent': 'python-requests/2.25.1', 'X-Amzn-Trace-Id': 'Root=1-60a1d9a0-7d5d1d5d5a0d5d5a4a0a5a5a'}, 'json': None, 'origin': '172.16.58.3', 'url': 'https://httpbin.org/put'}
+```
+
+`requests.delete(url, **kwargs)` 
+发送 DELETE 请求。其中：
+- `url`，表示请求的 URL。
+- `kwargs`，表示其他的请求参数。
+```python
+url = 'https://httpbin.org/delete'
+response = requests.delete(url)
+response.json()
+>>> {'args': {}, 'data': '', 'files': {}, 'form': {}, 'headers': {'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'Connection': 'keep-alive', 'Content-Length': '0', 'Host': 'httpbin.org', 'User-Agent': 'python-requests/2.25.1', 'X-Amzn-Trace-Id': 'Root=1-60a1d9a0-7d5d1d5d5a0d5d5a4a0a5a5a'}, 'json': None, 'origin': '172.16.58.3', 'url': 'https://httpbin.org/delete'}
+```
+
+`requests.head(url, **kwargs)` 
+发送 HEAD 请求。其中：
+- `url`，表示请求的 URL。
+- `kwargs`，表示其他的请求参数。
+```python
+url = 'https://httpbin.org/get'
+response = requests.head(url)
+response.headers
+>>> {'Server': 'nginx', 'Date': 'Thu, 16 Sep 2021 07:56:22 GMT', 'Content-Type': 'application/json', 'Content-Length': '270', 'Connection': 'keep-alive', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': 'true'}
+```
+
+`requests.options(url, **kwargs)` 
+发送 OPTIONS 请求。其中：
+- `url`，表示请求的 URL。
+- `kwargs`，表示其他的请求参数。
+```python
+url = 'https://httpbin.org/get'
+response = requests.options(url)
+response.headers
+>>> {'Server': 'nginx', 'Date': 'Thu, 16 Sep 2021 07:56:22 GMT', 'Content-Type': 'application/json', 'Content-Length': '270', 'Connection': 'keep-alive', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': 'true', 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS', 'Access-Control-Allow-Headers': 'DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization', 'Access-Control-Max-Age': '604800'}
+```
+
+`requests.request(method, url, **kwargs)` 
+发送自定义请求。其中，method 是 HTTP 请求的方法，url 是请求的 URL。其中：
+- `url`，表示请求的 URL。
+- `kwargs`，表示其他的请求参数。
+```python
+url = 'https://httpbin.org/get'
+response = requests.request('GET', url)
+response.json()
+>>> {'args': {}, 'headers': {'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'Connection': 'keep-alive', 'Host': 'httpbin.org', 'User-Agent': 'python-requests/2.25.1'}, 'origin': '172.16.58.3', 'url': 'https://httpbin.org/get'}
+```
+
+`response.status_code` 
+表示响应的状态码。
+
+`response.headers` 
+表示响应的头部信息。
+
+`response.content` 
+表示响应的字节内容。
+
+
+## re
+re 模块可以用来处理正则表达式。
+```python
+import re
+```
+
+**正则表达式**：
+正则表达式（Regular Expression，简称 regex）是一种用于匹配字符串的模式，它可以用来检索、替换和验证文本数据。正则表达式通过特定的语法规则描述字符串的结构，从而实现对文本的灵活操作。  
+正则表达式通常用于以下几个主要场景：
+- 搜索：查找符合特定模式的字符串。
+- 替换：将符合特定模式的字符串替换成另一个字符串。
+- 验证：检查字符串是否符合特定格式，如电子邮件地址、电话号码等。
+
+正则表达式的语法包括字符集、量词、锚点和分组等，可以用于创建非常复杂的匹配规则。例如：
+- `\d` 匹配任何数字。
+- `\w` 匹配任何字母数字字符（包括下划线）。
+- `.` 匹配除换行符外的任何单个字符。
+- `*` 表示前面的元素可以出现零次或多次。
+- `+` 表示前面的元素可以出现一次或多次。
+
+通过组合这些基本元素，可以构建出强大的文本处理功能。
+
+
+**匹配模式**：
+匹配模式是指在正则表达式中用于定义如何查找和匹配字符串的规则或方法。匹配模式决定了正则表达式如何解析和应用在目标文本上，以找到特定的字符串或模式。
+常见的匹配模式包括以下几种：  
+- 贪婪模式：这是默认的匹配模式，它会尽可能多地匹配字符。例如，正则表达式 `.*` 会尝试匹配尽可能多的字符，直到找到满足条件的最后一个字符串。  
+- 非贪婪模式（懒惰模式）：使用 `?` 修饰符，可以使匹配尽量少地匹配字符，直到找到满足条件的第一个字符串。例如，正则表达式 `.*?` 会尽可能少地匹配字符。  
+区分大小写：默认情况下，大多数正则表达式匹配是区分大小写的，但可以通过特定的标志（如 `i`）来进行不区分大小写的匹配。  
+- 多行模式：在多行文本中使用时，可以通过特定的标志（如 `m`）来改变 ^ 和 $ 的行为，使它们匹配每一行的开头和结尾，而不仅仅是整个字符串的开头和结尾。  
+- 单行模式：使用 `s` 标志可以使 . 匹配包括换行符在内的任何字符。
+
+不同的匹配模式可以通过设置正则表达式的标志（如 /pattern/flags）来实现。选择合适的匹配模式可以提高正则表达式的灵活性和准确性。  
+
+
+`re.findall(pattern, string, flags=0)` 
+可以查找字符串中所有匹配正则表达式的子串。其中：
+- `pattern`，表示正则表达式。
+- `string`，表示要搜索的字符串。
+- `flags`，表示匹配模式。
+- 返回值是一个列表，包含所有匹配的子串。
+```python
+pattern = r'\d+'
+string = 'The price is $10.50, the quantity is 20, the total is $20.00.'
+re.findall(pattern, string)
+>>> ['10', '20']
+```
+
+`re.search(pattern, string, flags=0)` 
+可以搜索字符串中第一个匹配正则表达式的子串。其中：
+- `pattern`，表示正则表达式。
+- `string`，表示要搜索的字符串。
+- `flags`，表示匹配模式。
+- 返回值是一个 Match 对象，包含第一个匹配的子串。
+```python
+pattern = r'\d+'
+string = 'The price is $10.50, the quantity is 20, the total is $20.00.'
+match = re.search(pattern, string)
+match.group()
+>>> '10'
+```
+
+`re.match(pattern, string, flags=0)` 
+可以从字符串开头匹配正则表达式。其中：
+- `pattern`，表示正则表达式。
+- `string`，表示要搜索的字符串。
+- `flags`，表示匹配模式。
+- 返回值是一个 Match 对象，包含第一个匹配的子串。
+```python
+pattern = r'\d+'
+string = 'The price is $10.50, the quantity is 20, the total is $20.00.'
+match = re.match(pattern, string)
+match.group()
+>>> '10'
+```
+
+`re.sub(pattern, repl, string, count=0, flags=0)` 
+可以替换字符串中所有匹配正则表达式的子串。其中：
+- `pattern`，表示正则表达式。
+- `repl`，表示替换字符串。
+- `string`，表示要搜索的字符串。
+- `count`，表示替换的次数。
+- `flags`，表示匹配模式。
+- 返回值是一个字符串，表示替换后的字符串。
+```python
+pattern = r'\d+'
+repl = 'X'
+string = 'The price is $10.50, the quantity is 20, the total is $20.00.'
+re.sub(pattern, repl, string)
+>>> 'The price is X.50, the quantity is X, the total is X.00.'
+```
+
+`re.split(pattern, string, maxsplit=0, flags=0)` 
+可以分割字符串。其中：
+- `pattern`，表示分隔符。
+- `string`，表示要分割的字符串。
+- `maxsplit`，表示分割的次数。
+- `flags`，表示匹配模式。
+- 返回值是一个列表，包含分割后的子串。
+```python
+pattern = r'\s+'
+string = 'The price is $10.50, the quantity is 20, the total is $20.00.'
+re.split(pattern, string)
+>>> ['The', 'price', 'is', '$10.50,', 'the', 'quantity', 'is', '20,', 'the', 'total', 'is', '$20.00.']
+```
+
+
+
+
+
+
+
 ### Link
 [requests 官方教材](https://requests.readthedocs.io/projects/cn/zh-cn/latest/user/quickstart.html#)
 
