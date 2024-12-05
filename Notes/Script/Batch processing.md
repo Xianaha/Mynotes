@@ -318,6 +318,39 @@ response.json()
 `response.content` 
 表示响应的字节内容。
 
+`response.raise_for_status()`
+如果响应的状态码不是 2xx，则抛出 HTTPError 异常。出现该情况时，可以考虑以下原因：
+- 检查URL：确保您请求的URL是正确的并且在正常运作。您可以在浏览器中尝试直接访问该URL，看是否能正常打开。
+
+- 检查目标网站的可用性：目标网站可能正在进行维护，您可以稍后再试。
+
+- 请求头与其他参数：有些网站会拒绝没有正确请求头的请求，您可以考虑增加或修改User-Agent或其他请求头，以模仿真实的浏览器请求。
+```python
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'
+}
+```
+- IP封禁或限制：某些网站可能会在短时间内限制同一个IP的请求次数，从而造成访问失败。您可以通过更改网络环境或在请求之间增加延迟来解决。
+
+- 使用代理：如果您的请求频繁地被拒绝，可以考虑使用代理服务器来减小被封禁的风险。
+
+- 调试信息：为了更好地Debug，可以打印response.status_code和response.text来获取更多的错误信息。
+```python
+try:
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+except requests.HTTPError as e:
+    print(f"HTTP error occurred: {e}")
+    print(f"Status code: {response.status_code}")
+    print(f"Response text: {response.text}")
+```
+
+```python
+response = requests.get('https://httpbin.org/status/404')
+response.raise_for_status()
+>>> requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://httpbin.org/status/404
+```
+
 
 ## re
 re 模块可以用来处理正则表达式。
