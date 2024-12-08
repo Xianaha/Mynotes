@@ -1,5 +1,8 @@
 # Batch processing
 批处理是指将一系列的操作自动化地执行，并将结果输出到文件中，以便后续处理。批处理的优点是可以节省人力，提高工作效率。批处理的实现方法有很多，常见的有命令行、脚本、任务计划程序、服务器任务、应用程序等。
+
+
+
 ## os
 Python 提供了一个 os 模块，可以用来处理文件和目录。
 ```python
@@ -195,7 +198,33 @@ import shutil
 shutil.copy(src, dst)
 ```
 
-## requests
+## Crawl
+
+### 抓包分析
+- 打开开发者工具
+    - `F12`/右键点击检查选择`Network`标签页
+- 刷新页面/点击下一页/下滑页面/点击数据加载
+    - 让网页的数据加载出来
+- 通过关键字搜索找到对应的数据位置
+    - 关键字
+        - 采集评论（以评论内容搜索）
+        - 采集用户信息（以用户昵称搜索）
+        - 采集商品信息（以商品名称搜索）
+        - 采集订单信息（以订单号搜索）
+
+### 代码实现
+- 发送请求
+    - 使用`requests`模块发送请求，获取响应内容
+        - 模拟浏览器，找到分析的`url`和`header`信息（请求标头）
+        - 使用`requests.get(url, headers=headers)`发送请求，返回响应内容`response`
+- 获取数据
+    - 使用`BeautifulSoup`模块解析响应内容，获取数据
+- 解析数据
+    - 解析数据，提取需要的数据
+- 保存数据
+    - 将数据保存到文件中，以便后续处理
+
+### requests
 requests 模块可以用来发送 HTTP 请求。
 ```python
 import requests
@@ -203,13 +232,18 @@ import requests
 
 - `url`，通常是一个字符串，表示请求的 URL。
 
-- `params`，是一个字典，表示请求的查询参数。
+- `params`，是一个字典，表示请求的查询参数。`params` 参数用于向服务器发送查询字符串参数。这些参数通常是在 URL 中以键值对的形式传递的，主要用于过滤或指定要获取的数据。
+
+例如，如果你想请求一个 API，并且希望根据某些条件（如页面编号、搜索关键字等）来过滤结果，你可以使用 params 来构建查询参数。
 
 - `data`，是一个字典或字符串，表示请求的请求体。
 
 - `headers`，是一个字典，表示请求的头部信息。
+在大多数现代浏览器中，可以通过打开开发者工具获取 User-Agent。一般可以按下 `F12` 键，切换到 `Network`（网络）标签页，然后刷新页面。选中任意请求，查看其
+请求标头的内容可以获取headers。一般需要`cookie` 和 `User-Agent`信息。
+- `cookies`，是一个字典，表示请求的 Cookie。主要用于身份验证，检测是否登录账号。
 
-- `cookies`，是一个字典，表示请求的 Cookie。
+- `User-Agent`，用户代理，表示浏览器/设备基本信息
 
 - `auth`，是一个元组，表示 HTTP 认证的用户名和密码。
 
@@ -230,6 +264,7 @@ import requests
 - `url`，表示请求的 URL。
 - `params`，表示请求的查询参数。
 - `kwargs`，表示其他的请求参数。
+- 返回值是一个 Response 对象，包含响应内容、状态码、头部信息等。
 
 ```python
 url = 'https://www.csdn.net/'
@@ -238,12 +273,14 @@ response.text
 >>> <html><body><script language="javascript"> window.onload=setTimeout("iw(20)", 200); function iw(OI) {var qo, mo="", no="", oo = [0x67,0x4d,0xdd......................
 ```
 
+
 `requests.post(url, data=None, json=None, **kwargs)` 
 发送 POST 请求。其中：
 - `url`，表示请求的 URL。
 - `data`，表示请求的请求体。
 - `json`，表示请求的 JSON 数据。
 - `kwargs`，表示其他的请求参数。
+- 返回值是一个 Response 对象，包含响应内容、状态码、头部信息等。
 ```python
 url = 'https://httpbin.org/post'
 data = {'name': 'Alice', 'age': 25}
@@ -257,6 +294,7 @@ response.json()
 - `url`，表示请求的 URL。
 - `data`，表示请求的请求体。
 - `kwargs`，表示其他的请求参数。
+- 返回值是一个 Response 对象，包含响应内容、状态码、头部信息等。
 ```python
 url = 'https://httpbin.org/put'
 data = {'name': 'Alice', 'age': 25}
@@ -269,6 +307,7 @@ response.json()
 发送 DELETE 请求。其中：
 - `url`，表示请求的 URL。
 - `kwargs`，表示其他的请求参数。
+- 返回值是一个 Response 对象，包含响应内容、状态码、头部信息等。
 ```python
 url = 'https://httpbin.org/delete'
 response = requests.delete(url)
@@ -280,6 +319,7 @@ response.json()
 发送 HEAD 请求。其中：
 - `url`，表示请求的 URL。
 - `kwargs`，表示其他的请求参数。
+- 返回值是一个 Response 对象，包含响应内容、状态码、头部信息等。
 ```python
 url = 'https://httpbin.org/get'
 response = requests.head(url)
@@ -291,6 +331,7 @@ response.headers
 发送 OPTIONS 请求。其中：
 - `url`，表示请求的 URL。
 - `kwargs`，表示其他的请求参数。
+- 返回值是一个 Response 对象，包含响应内容、状态码、头部信息等。
 ```python
 url = 'https://httpbin.org/get'
 response = requests.options(url)
@@ -302,11 +343,28 @@ response.headers
 发送自定义请求。其中，method 是 HTTP 请求的方法，url 是请求的 URL。其中：
 - `url`，表示请求的 URL。
 - `kwargs`，表示其他的请求参数。
+- 返回值是一个 Response 对象，包含响应内容、状态码、头部信息等。
 ```python
 url = 'https://httpbin.org/get'
 response = requests.request('GET', url)
 response.json()
 >>> {'args': {}, 'headers': {'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'Connection': 'keep-alive', 'Host': 'httpbin.org', 'User-Agent': 'python-requests/2.25.1'}, 'origin': '172.16.58.3', 'url': 'https://httpbin.org/get'}
+```
+
+`response.text` 
+表示响应的文本内容。
+
+`response.json()` 
+表示响应的 JSON 数据。
+
+`response.url` 
+表示响应的 URL。
+
+`response.encoding` 
+表示响应的编码格式。
+```python
+# 转码
+response.encoding = 'utf-8'
 ```
 
 `response.status_code` 
@@ -351,8 +409,122 @@ response.raise_for_status()
 >>> requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://httpbin.org/status/404
 ```
 
+### BeautifulSoup
+BeautifulSoup 模块可以用来解析 HTML 文档。
+```python
+from bs4 import BeautifulSoup
+```
 
-## re
+`BeautifulSoup(markup, features=None, **kwargs)` 
+可以解析 HTML 文档。其中：
+- `markup`，表示要解析的 HTML 文档。
+- `features`，表示解析器的特性。
+- `kwargs`，表示其他的解析参数。
+- 返回值是一个 BeautifulSoup 对象，包含解析后的文档。
+```python
+html = '''
+<html>
+<head>
+    <title>Example</title>
+</head>
+<body>
+    <p>Hello, world!</p>
+</body>
+</html>
+'''
+soup = BeautifulSoup(html, 'html.parser')
+print(soup.title.string)
+>>> Example
+```
+
+`soup.prettify()` 
+可以格式化 HTML 文档。
+```python
+html = '''
+<html>
+<head>
+    <title>Example</title>
+</head>
+<body>
+    <p>Hello, world!</p>
+</body>
+</html>
+'''
+soup = BeautifulSoup(html, 'html.parser')
+print(soup.prettify())
+```
+
+`soup.title.string` 
+可以获取文档的标题。
+
+`soup.find_all(name, attrs, recursive, string, **kwargs)` 
+可以查找文档中所有符合条件的元素。其中：
+- `name`，表示元素的名称。
+- `attrs`，表示元素的属性。
+- `recursive`，表示是否递归查找。
+- `string`，表示是否查找字符串。
+- `kwargs`，表示其他的查找参数。
+- 返回值是一个列表，包含所有符合条件的元素。
+```python
+html = '''
+<html>
+<head>
+    <title>Example</title>
+</head>
+<body>
+    <p>Hello, world!</p>
+</body>
+</html>
+'''
+soup = BeautifulSoup(html, 'html.parser')
+print(soup.find_all('p'))
+```
+
+`soup.find(name, attrs, recursive, string, **kwargs)` 
+可以查找文档中第一个符合条件的元素。其中：
+- `name`，表示元素的名称。
+- `attrs`，表示元素的属性。
+- `recursive`，表示是否递归查找。
+- `string`，表示是否查找字符串。
+- `kwargs`，表示其他的查找参数。
+- 返回值是一个 Tag 对象，表示第一个符合条件的元素。
+```python
+html = '''
+<html>
+<head>
+    <title>Example</title>
+</head>
+<body>
+    <p>Hello, world!</p>
+</body>
+</html>
+'''
+soup = BeautifulSoup(html, 'html.parser')
+print(soup.find('p'))
+```
+
+`soup.select(selector)` 
+可以查找文档中所有符合 CSS 选择器的元素。其中：
+- `selector`，表示 CSS 选择器。
+- 返回值是一个列表，包含所有符合条件的元素。
+```python
+html = '''
+<html>
+<head>
+    <title>Example</title>
+</head>
+<body>
+    <p>Hello, world!</p>
+</body>
+</html>
+'''
+soup = BeautifulSoup(html, 'html.parser')
+print(soup.select('p'))
+```
+
+
+
+### re
 re 模块可以用来处理正则表达式。
 ```python
 import re
@@ -371,6 +543,19 @@ import re
 - `.` 匹配除换行符外的任何单个字符。
 - `*` 表示前面的元素可以出现零次或多次。
 - `+` 表示前面的元素可以出现一次或多次。
+- `?` 表示前面的元素可以出现零次或一次。
+- `()` 表示创建分组，可以用于提取子串，表示需要的子串。
+- `|` 表示或，可以匹配多个选项。
+- `^` 表示行首，`$` 表示行尾。
+- `\` 表示转义字符，可以用于匹配特殊字符。
+- `[]` 表示字符集，可以匹配指定范围内的字符。
+- `{}` 表示数量词，可以用于指定出现次数。
+- `*` 表示零次或多次，`+` 表示一次或多次，`?` 表示零次或一次。
+- `^` 表示非，`|` 表示或，`.` 表示任意字符，`(` 表示分组，`)` 表示结束分组。
+
+详细可以看[正则表达式教程](https://www.runoob.com/regexp/regexp-intro.html)。
+
+
 
 通过组合这些基本元素，可以构建出强大的文本处理功能。
 
@@ -390,14 +575,14 @@ import re
 `re.findall(pattern, string, flags=0)` 
 可以查找字符串中所有匹配正则表达式的子串。其中：
 - `pattern`，表示正则表达式。
-- `string`，表示要搜索的字符串。
+- `string`，表示要搜索的字符串，通常是数据源、数据集合、字符序列等。
 - `flags`，表示匹配模式。
 - 返回值是一个列表，包含所有匹配的子串。
 ```python
 pattern = r'\d+'
 string = 'The price is $10.50, the quantity is 20, the total is $20.00.'
 re.findall(pattern, string)
->>> ['10', '20']
+>>> ['10', '50', '20', '20', '00']
 ```
 
 `re.search(pattern, string, flags=0)` 
@@ -441,7 +626,7 @@ pattern = r'\d+'
 repl = 'X'
 string = 'The price is $10.50, the quantity is 20, the total is $20.00.'
 re.sub(pattern, repl, string)
->>> 'The price is X.50, the quantity is X, the total is X.00.'
+>>> 'The price is $X.X, the quantity is X, the total is X.X.'
 ```
 
 `re.split(pattern, string, maxsplit=0, flags=0)` 
@@ -461,10 +646,7 @@ re.split(pattern, string)
 
 
 
-
-
-
-### Link
+#### Link
 [requests 官方教材](https://requests.readthedocs.io/projects/cn/zh-cn/latest/user/quickstart.html#)
 
 ## subprocess
