@@ -760,9 +760,8 @@ print(soup.select('p'))
 ```
 
 
-
 ### re
-re 模块可以用来处理正则表达式。
+`re` 模块可以用来处理正则表达式。
 ```python
 import re
 ```
