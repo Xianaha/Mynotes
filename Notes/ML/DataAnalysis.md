@@ -1566,7 +1566,26 @@ df
 
 Pandas 提供的 to_csv() 函数用于将 DataFrame 转换为 CSV 数据。如果想要把 CSV 数据写入文件，只需向函数传递一个文件对象即可。否则，CSV 数据将以字符串格式返回。
 `pd.to_csv(path_or_buf, sep=',', na_rep='', float_format=None, columns=None, header=True, index=True, index_label=None, mode='w', encoding=None, compression=None, quoting=None, quotechar='"', line_terminator='\n', chunksize=None, date_format=None, doublequote=True, escapechar=None, decimal='.')`  
-其中，path_or_buf：文件路径或文件对象；sep：分隔符，默认为逗号；na_rep：缺失值替换字符，默认为 ''；float_format：浮点数格式，默认为 None；columns：列名列表，默认为 None；header：是否写入列名，默认为 True；index：是否写入索引，默认为 True；index_label：索引标签，默认为 None；mode：写入模式，默认为 'w'；encoding：编码格式，默认为 None；compression：压缩格式，默认为 None；quoting：引号类型，默认为 None；quotechar：引号字符，默认为 '"'；line_terminator：行终止符，默认为 '\n'；chunksize：写入块大小，默认为 None；date_format：日期格式，默认为 None；doublequote：双引号类型，默认为 True；escapechar：转义字符，默认为 None；decimal：小数点符号，默认为 '.'。
+其中:
+- `path_or_buf`：文件路径或文件对象；
+- `sep`：分隔符，默认为逗号；
+- `na_rep`：缺失值替换字符，默认为 ''；
+- `header`：是否写入列名，默认为 True；
+- `float_format`：浮点数格式，默认为 None；
+- `columns`：列名列表，默认为 None；header：是否写入列名，默认为 True；
+- `index`：是否写入索引，默认为 True；
+- `index_label`：：索引标签，默认为 None；
+- `mode`：写入模式，默认为 'w'；
+- `encoding`：编码格式，默认为 None；
+- `compression`：压缩格式，默认为 None；
+- `quoting`：引号类型，默认为 None；
+- `quotechar`：引号字符，默认为 '"'；
+- `line_terminator`：行终止符，默认为 '\n'；
+- `chunksize`：写入块大小，默认为 None；
+- `date_format`：日期格式，默认为 None；
+- `doublequote`：双引号类型，默认为 True；
+- `escapechar`：转义字符，默认为 None；
+- `decimal`：小数点符号，默认为 '.'。
 ```python
 # 写入CSV文件
 data = {'Name': ['Smith', 'Parker'], 'ID': [101, 102], 'Language': ['Python', 'JavaScript']} 
