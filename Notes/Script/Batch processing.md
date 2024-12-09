@@ -224,8 +224,46 @@ shutil.copy(src, dst)
 - 保存数据
     - 将数据保存到文件中，以便后续处理
 
+### json
+json 模块可以用来处理 JSON 数据。
+```python
+import json
+```
+
+`json.dumps(obj)` 
+可以将 Python 对象编码为 JSON 字符串。
+```python
+json_str = json.dumps(obj)
+```
+
+`json.loads(s)` 
+可以将 JSON 字符串解码为 Python 对象。
+```python
+obj = json.loads(s)
+```
+
+`json.load(fp)` 
+可以从文件中读取 JSON 数据，并解码为 Python 对象。
+```python
+with open(file, 'r') as f:
+    obj = json.load(f)
+```
+
+`json.dump(obj, fp)` 
+可以将 Python 对象编码为 JSON 字符串，并写入文件。
+```python
+with open(file, 'w') as f:
+    json.dump(obj, f)
+```
+
+`json.dumps(obj, indent=4)` 
+可以格式化 JSON 字符串。
+```python
+json_str = json.dumps(obj, indent=4)
+```
+
 ### requests
-requests 模块可以用来发送 HTTP 请求。
+requests 模块可以用来发送 HTTP 请求。适合静态页面的爬取，动态页面的爬取需要用到`selenium`模块。
 ```python
 import requests
 ```
@@ -408,6 +446,205 @@ response = requests.get('https://httpbin.org/status/404')
 response.raise_for_status()
 >>> requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://httpbin.org/status/404
 ```
+
+### webdriver-manager
+webdriver-manager 可以用来自动下载浏览器驱动。
+
+安装：
+```python
+pip install webdriver-manager
+```
+```python
+from webdriver_manager.chrome import ChromeDriverManager
+```
+
+`ChromeDriverManager().install()` 
+可以下载 Chrome 浏览器的驱动。
+```python
+from webdriver_manager.chrome import ChromeDriverManager
+
+driver_path = ChromeDriverManager().install()
+```
+
+### selenium
+`Selenium` 是一个用于自动化浏览器操作的工具，常用于 Web 应用的测试和网页内容的抓取。它支持多种浏览器，包括 Chrome、Firefox、Safari 等。适合动态网页的自动化测试、爬虫、自动化运维等领域。但因为selenium要模仿浏览器行为，在速度上会慢于requests。
+[Selenium 教程网站](https://www.runoob.com/python3/python-selenium.html)
+安装：
+```python
+pip install selenium
+```
+
+**常用方法**：
+`webriver` 
+表示浏览器驱动，可以用来控制浏览器。
+```python
+from selenium import webdriver
+
+# 使用 Chrome 浏览器
+driver = webdriver.Chrome()
+
+# 使用 Firefox 浏览器
+driver = webdriver.Firefox()
+
+# 使用 Edge 浏览器
+driver = webdriver.Edge()
+
+# 关闭浏览器(通常配套使用)
+driver.quit()
+```
+在打开网页后，系统会自动加载网页窗口实例。若不希望系统自动加载，可以设置`headless`参数为`True`。
+```python
+from selenium.webdriver.edge.options import Options # 如果使用chrome则将edge换成chrome
+options = webdriver.Options()
+options.add_argument('headless')
+driver = webdriver.Edeg(options=options)
+```
+
+`driver.get(url)` 
+可以打开指定 URL 的页面。通常和driver.quit()配合使用。
+```python
+driver.get('https://www.baidu.com')
+```
+
+`driver.back()`
+可以返回上一页。
+
+`driver.forward()`
+可以前进到下一页。
+
+`driver.refresh()`
+可以刷新当前页面。
+
+`element.click()`
+可以点击元素。
+
+`element.send_keys(text)`
+可以输入文本。
+
+`element.clear()`
+可以清空输入框。
+
+`element.text`
+可以获取元素的文本。
+
+`element.get_attribute(name)`
+可以获取元素的属性。
+
+`element.location`
+可以获取元素的位置。
+
+`element.size`
+可以获取元素的大小。
+
+`element.screenshot(filename)`
+可以截取元素的屏幕快照。
+
+`element.is_displayed()`
+可以判断元素是否可见。
+
+`element.is_enabled()`
+可以判断元素是否可用。
+
+`element.is_selected()`
+可以判断元素是否被选中。
+
+`driver.find_element(by, value)`
+查找第一个匹配的元素。其中：
+- `by`，表示查找元素的类型。
+- `value`，表示查找元素的属性。
+- 返回值是一个 WebElement 对象，表示找到的元素。
+```python
+element = driver.find_element(By.ID, 'kw')
+
+```
+
+`driver.find_elements(by, value)`
+查找所有匹配的元素。其中：
+- `by`，表示查找元素的类型。
+- `value`，表示查找元素的属性。
+- 返回值是一个列表，包含所有找到的元素。
+```python
+elements = driver.find_elements(By.CLASS_NAME, 'class-name')
+```
+
+`driver.execute_script(script, *args)`
+执行 JavaScript 代码。其中：
+- `script`，表示 JavaScript 代码。
+- `args`，表示参数。
+- 返回值是执行 JavaScript 代码的返回值。
+```python
+result = driver.execute_script("return 1 + 2;")
+```
+
+`driver.add_cookie(cookie_dict)`
+添加 Cookie。其中：
+- `cookie_dict`，表示 Cookie 的字典。
+```python
+cookie_dict = {
+    'name': 'value',
+    'name2': 'value2'
+}
+driver.add_cookie(cookie_dict)
+```
+
+`driver.get_cookies()`
+获取所有 Cookie。
+
+`driver.delete_all_cookies()`
+删除所有 Cookie。
+
+`driver.delete_cookie(name)`
+删除指定名称的 Cookie。
+
+`driver.maximize_window()`
+最大化浏览器窗口。
+
+`driver.minimize_window()`
+最小化浏览器窗口。
+
+
+`driver.implicitly_wait(time)`
+设置隐式等待时间。
+
+`driver.WebDriverWait(timeout, poll_frequency, ignored_exceptions)`
+设置显式等待时间。
+
+`driver.set_page_load_timeout(time)`
+设置页面加载超时时间。
+
+`driver.set_script_timeout(time)`
+设置脚本超时时间。
+
+
+
+#### selenium.webdriver.common.by
+`By` 类提供了一系列常用的查找元素的策略。
+```python
+from selenium.webdriver.common.by import By
+
+# 查找 ID 为 id-value 的元素
+element = driver.find_element(By.ID, 'id-value')
+
+# 查找 NAME 为 name-value 的元素
+element = driver.find_element(By.NAME, 'name-value')
+
+# 查找 XPATH 为 xpath-value 的元素
+element = driver.find_element(By.XPATH, 'xpath-value')
+
+# 查找 CSS 选择器为 css-selector 的元素
+element = driver.find_element(By.CSS_SELECTOR, 'css-selector')
+
+# 查找 TAG NAME 为 tag-name 的元素
+element = driver.find_element(By.TAG_NAME, 'tag-name')
+
+# 查找 CLASS NAME 为 class-name 的元素
+element = driver.find_element(By.CLASS_NAME, 'class-name')
+
+# 查找 LINK TEXT 为 link-text 的元素
+element = driver.find_element(By.LINK_TEXT, 'link-text')
+
+
+
 
 ### BeautifulSoup
 BeautifulSoup 模块可以用来解析 HTML 文档。
