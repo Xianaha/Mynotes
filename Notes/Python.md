@@ -941,19 +941,19 @@ list1
 # 字典名[key]会返回该Key对应的Value值
 value1 = dict["age"]
 
-# setdefault函数
+setdefault()
 # 如果key值存在,那么返回对应字典的value,不会用到自己设置的value;
 # 如果key值不存在.返回None,并且把新设置的key和value保存在字典中;
 # 如果key值不存在,但设置了value,则返回设置的value;
 dict.setdefault(key,value)
 
-# get函数
+get()
 # 如果key值存在,那么返回对应字典的value,不会用到自己设置的value;
 # 如果key值不存在.返回None,但是不会把新设置的key和value保存在字典中;
 # 如果key值不存在,但设置了value,则返回设置的value;
 dict.get(k,value)
 
-# enumerate函数
+enumerate()
 # 返回字典的Key，以Key的顺序为索引的元组形式返回。
 enumerate(字典名)
 for i in enumerate(dict):
