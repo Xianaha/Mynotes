@@ -642,7 +642,7 @@ element = driver.find_element(By.CLASS_NAME, 'class-name')
 
 # 查找 LINK TEXT 为 link-text 的元素
 element = driver.find_element(By.LINK_TEXT, 'link-text')
-
+```
 
 
 
