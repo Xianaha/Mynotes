@@ -1024,3 +1024,21 @@ value = set1.pop()
 `-`运算符表示差集运算  `set1 - set2`
 `^`运算符表示对称差运算  `set1 ^ set2`
 ```
+## typing模块
+
+Python 3.5 引入了新的模块 `typing`，它提供了一些类型提示的功能，可以让我们在编码时提供更多的提示信息，提高代码的可读性和可维护性。
+
+### Final
+
+`typing.Final` 是一个类型注解，用来定义常量。
+
+```python
+from typing import Final
+
+PI: Final = 3.141592653589793
+# 也可以为变量加上数据类型注解
+MAX_SIZE: Final[int] = 1000
+```
+
+
+
