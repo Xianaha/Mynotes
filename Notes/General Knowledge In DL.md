@@ -55,6 +55,43 @@ $$x'=a_1x+a_2$$
     
     特征矩阵：每一行代表一个特征，每一列代表一个样本。
 
+### 神经网络参数的计算  
+神经网络每一层的参数计算主要涉及到该层的权重（weights）和偏置（biases）。不同的层类型（如全连接层、卷积层、循环层等）会有不同的参数计算方式。下面是一些常见层类型的参数计算方法：   
+
+- **全连接层**（Dense Layer）
+全连接层也称为线性层或全连层，其参数包括权重和偏置。
+
+    - 权重（Weights）：假设输入层有`n`个神经元，输出层有`m`个神经元，那么全连接层需要`n x m`个权重。
+    - 偏置（Biases）：输出层有`m`个神经元，那么需要`m`个偏置。
+- **卷积层**（Convolutional Layer）
+卷积层的参数包括卷积核（filters 或 kernels）和偏置。
+
+    - 卷积核（Filters）：假设卷积核的大小为`k x k`，输入通道数为`c_in`，输出通道数为`c_out`，那么卷积层需要`c_out x c_in x k x k`个权重。
+    - 偏置（Biases）：输出通道数为`c_out`，那么需要`c_out`个偏置。
+    - 池化层（Pooling Layer）
+    池化层通常不包含可训练参数，如最大池化（Max Pooling）和平均池化（Average Pooling），它们只是对输入进行下采样。
+
+- **循环层**（Recurrent Layer）
+循环层如LSTM（长短期记忆网络）和GRU（门控循环单元）包含更多的参数，因为它们需要维持时间上的信息。
+
+    - LSTM：假设输入维度为`n`，隐藏层维度为`h`，则LSTM的参数包括：
+
+        - 输入门（Input Gate）：`4 x h x (n + h)`
+        - 输出门（Output Gate）：`4 x h x (n + h)`
+        - 偏置（Biases）：`4 x h`
+    - GRU：假设输入维度为 ，隐藏层维度为 ，则GRU的参数包括：
+
+        - 重置门（Reset Gate）：`3 x h x (n + h)`
+        - 更新门（Update Gate）：`3 x h x (n + h)`
+        - 偏置（Biases）：`3 x h`
+- **归一化层**（Normalization Layer）
+如Batch Normalization和Layer Normalization，它们包含可训练的缩放参数（gamma）和偏移参数（beta）。
+
+    - Batch Normalization：假设特征维度为`n`，则需要`2 x n`个参数。
+    - Layer Normalization：假设特征维度为`n`，则需要`2 x n`个参数。
+- **激活层**（Activation Layer）
+激活层如ReLU、Sigmoid、Tanh等通常不包含可训练参数，它们只是对输入进行非线性变换。
+
 ### Activation Function(激活函数)
 
 激活函数是神经网络的关键，它决定了神经网络的输出。常见的激活函数有：
