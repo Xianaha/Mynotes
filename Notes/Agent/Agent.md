@@ -15,3 +15,66 @@
 
 这里的Ai是指什么呢？一个“首脑”？
 pool中的各类数据是否需要打上标签？比如：输入、输出、中间结果？
+
+Ai调用工具时，工具类应该包含一个方法————该方法可以命令Ai从pool中获取工具自己需要的参数。而Ai应该包含一类方法————该方法可以可以接受工具的请求（需要的参数类型和数量），然后再pool池中检索相应数据，再传递给工具。工具收到参数后，执行相应的操作，并将结果存入pool中。
+
+流程图：
+
+用户发出请求 -> Ai生成该次请求的Pool（缓存池？）-> Ai调用命令解析器 -> 命令解析器分析请求 -> 生成Memory0放入Pool，其中包含请求的`理解`和根据请求生成的`行为流程图` -> Ai根据流程图执行 -> Ai调用工具1 -> 工具1向Ai发出`参数请求方法`获取需要的参数 -> Ai收到工具的请求，根据请求内的参数类型向Memory0中的"output"中检索有效信息返回给工具1（若此时Pool中已经存在Memory n，则Ai可以在Pool中的多个Memory中检索工具需要的参数） -> 工具1收到参数，检查是否收到所有必要参数（如果没收到就向Ai发出请求，由Ai向用户发出参数请求） -> 工具1执行其职责，并将结果发送给Ai，Ai将以上步骤作为Memory1放入Pool中 -> Ai根据流程图执行下一步 ···
+
+![流程图](./Image/image.png)
+
+Pool中的数据应该包含：
+```json
+    NewPool:{
+        Memory0: {
+            "tools": CommandParser,
+            "input": {"写一个简短故事，并用女声朗读"},
+            "output": {
+                "Keyword": ["写", "一个", "简短", "故事", "女声", "朗读"]
+                "Flowchart": flowchart_command
+            }
+        }
+    
+        Memory1: {
+            "tool": story_generator,
+
+            # story_generator需要的参数
+            "input": {"写", "一个", "简短", "故事"},
+
+            # story_generator的输出
+            "output": {"story": "..." }
+        }
+        Memory2: {
+            "tool": voice_synthesizer,
+
+            # voice_synthesizer需要的参数
+            "input": {"story": "...", Voice_kind:"女声"},
+
+            # voice_synthesizer的输出
+            "output": {"voice": "..." }
+        }
+
+        ····
+    }
+```
+
+
+```python
+class CommandParser:
+    def __init__(self):
+        # 解析用户请求，生成行为流程图
+        pass
+```
+
+```python
+class Tool:
+    def __init__(self):
+        # 工具初始化
+        # 工具属性, 需要的参数包括必要参数、可选参数和默认参数。
+        pass
+
+    def get_params(self):
+        # 向Ai发送参数请求
+        pass
+```
