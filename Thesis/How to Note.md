@@ -11,3 +11,25 @@ This is a guide on how to note.
 ## Don't forget to record the problem which the method solved and the disvantage of the method. use `###` to create a new section in Innovation section.
 
 ## Copy the main content of this section to the specified area, and summarize it under the area. To neccassary, use `###` to note them.
+
+
+
+## Example
+
+```
+# Title
+
+## Abstract
+
+## Method
+
+## Conclusion
+
+## Innovation
+
+### Solved Problem
+
+### Disvantages
+
+## Links
+```
