@@ -9,7 +9,11 @@ The depth of representations is of central importance for many visual recognitio
 残差网络在...比赛...数据集上取得了...样的优异成绩。
 ## Method
 
-1. **Batch Normalization(BN)**：
+1. **Batch Normalization(BN)**
+解决梯度消失和梯度爆炸问题。
+
+2. **Residual Block(RB)**
+解决深层网络的退化问题。
 
 ## Conclusion
 
