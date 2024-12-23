@@ -1,5 +1,7 @@
 import pyperclip
 
+# conda install conda-forge::pyperclip
+
 # 这个脚本是用来把pdf中论文复制下来的句子中的换行符去掉，然后复制到剪贴板中。
 
 lines = []
