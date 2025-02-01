@@ -46,3 +46,12 @@ ReAct是一个提示工程框架，它为语言模型提供一种思维过程策
 以上推理技术，Agent可以使用其中一种或多种，以此为给定的用户请求选择下一个最佳的行动。
 
 虽然模型可以根据其先验知识猜测答案（即产生幻觉），但是它还是选择使用工具（Flight）来搜索实时外部信息。这些额外的信息被提供给模型，使其能够基于真实数据做出更明智的决策，并将这些信息总结反馈给用户。
+
+### Extension（拓展）
+希望Agent直接通过调用APP API来实现用户需求需要处理复杂多变的参数，如用户的位置、时间、设备、语音、图像、文本等。因此，引入Extension（拓展）的概念，作为Agent和API之间的桥梁，Agent直接选择合适的Extension来实现用户需求。  
+Extension可以独立于Agent进行开发，但开发目的是作为Agent的配置组成部分。
+![Agent、Extension和API之间的关系](./image/Agent、Extension和API之间的关系.png)
+<p style="text-align: center;">Agent、Extension和API之间的关系</p>
+例如，需要导航到目的地A，程序员事先写好Guide Extension，该拓展包含了a、b、c三种导航APP的API，每个API都有不同的参数,拓展根据Agent分析的用户需求，将参数传入参数形式相匹配的API，由该API执行导航操作。  
+实际上，是Extension在执行具体的行动，Agent只是作为一个传话者（将用户的需求转换为参数，并将参数告诉Extension），行动细则由Extension根据内置的API进行选择和执行。
+
