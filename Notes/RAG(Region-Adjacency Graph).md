@@ -1,6 +1,6 @@
 # RAG(Region-Adjacency Graph)模型总结
 
-## 1. RAG模型
+## 1. RAG
 
 RAG模型是一种基于图的网络分析方法，它将网络中的节点划分为三个层次：
 
