@@ -45,7 +45,7 @@ pytorch              * D:\Miniconda\envs\pytorch
 
  `conda env update -f environment.yml` 更新当前环境的依赖关系。完整指令为：`conda env update -f environment.yml`。
 
- `conda env remove -n env_name` 删除名为env_name的环境。
+ `conda env remove -n env_name` 彻底删除名为env_name的环境。
 
  `conda env list` 列出所有环境。
 
