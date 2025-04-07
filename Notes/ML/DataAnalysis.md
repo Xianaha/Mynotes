@@ -1761,8 +1761,52 @@ df.plot(kind='area', y='Salary', title='Salary Density')
 ![密度图](/Notes/ML/image/area.png)
 
 
+## Parquet
+Parquet是一种高效的列式存储文件格式，最初由Apache Hadoop项目中的Apache Hive和Apache Drill开发。它的特点包括支持复杂的嵌套数据结构、高效的压缩和编码方案，以及优化存储空间和查询性能等。
+parquet一般作为储存手段，可以用来存储大量的数据，并且parquet库方法可以快速读取和写入大批量数据。一般情况下，parquet文件可以比csv文件更加节省存储空间，并且可以更快的读取数据。
+我们可以通过parquet库从`.parquet`文件中读取数据，然后转换成pandas的数据类型进行数据处理，最后通过parquet库方法将数据写入到`.parquet`文件中，这个过程对超大规模数据处理非常有用。
+
+### 安装
+
+```Python
+## 对parquet文件进行读写需要安装pyarrow库或者fastparquet库作为引擎
+! pip install pyarrow
+
+! pip install fastparquet
+```
+
+安装完成后，你可以通过pandas的read_parquet函数来读取Parquet文件，也可以直接使用pyarrow的read_table函数来读取，然后再将其转换为pandas的DataFrame对象进行进一步的分析和处理.
 
 
+### 方法
+
+`.read_parquet(path, engine='auto', columns=None, **kwargs)`
+- path：Parquet文件路径。
+- engine：引擎，默认为 'auto'，可选 'pyarrow' 或 'fastparquet'。
+- columns：读取的列名列表，默认为 None。
+- **kwargs：其他关键字参数。
+
+```python
+import pandas as pd
+
+# 读取Parquet文件
+df = pd.read_parquet('data.parquet')
+print(df)
+```
+
+`.to_parquet(path, engine='auto', compression='snappy', **kwargs)`
+- path：Parquet文件路径。
+- engine：引擎，默认为 'auto'，可选 'pyarrow' 或 'fastparquet'。
+- compression：压缩方式，默认为'snappy'，可选 'gzip'、'snappy'、'brotli'、'lz4'。
+- **kwargs：其他关键字参数。
+
+```python
+import pandas as pd
+
+# 写入Parquet文件
+df = pd.DataFrame({'ID': [1, 2, 3, 4], 'Salary': [22000, 19000, 12000, 3500]})
+df.to_parquet('data.parquet')
+```
 
 
 ## Matplotlib(Matlab的Python版本)
