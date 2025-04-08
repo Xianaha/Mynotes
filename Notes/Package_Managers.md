@@ -104,6 +104,39 @@ uv pip install --parallel package_name
 uv pip install --upgrade --all
 ```
 
+### 项目初始化流程
+
+1. 创建项目目录：
+```bash
+mkdir my_project
+cd my_project
+```
+
+2. 初始化虚拟环境：
+```bash
+uv venv
+```
+
+3. 激活环境：
+```bash
+.\.venv\Scripts\activate
+```
+
+4. 初始化Python项目：
+```bash
+uv init
+```
+
+5. 安装依赖：
+```bash
+uv add "package[extra]"
+```
+
+6. 开发完成后冻结依赖：
+```bash
+uv pip freeze > requirements.txt
+```
+
 ### 高级功能
 
 1. 依赖解析缓存：
