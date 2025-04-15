@@ -28,6 +28,71 @@ MCP(Model Context Protocol)是一种用于AI系统与外部服务通信的协议
 - 管理工具和资源的生命周期
 - 可以同时服务多个Client
 
+## MCP Inspector 使用指南
+
+### 概述
+MCP Inspector 是 Model Context Protocol (MCP) 的图形化调试工具，用于开发和测试 MCP 服务器。
+
+### 基本用法
+
+#### 启动方式
+```bash
+mcp dev server.py  # 开发模式启动
+mcp dev server.py --port 8080  # 指定端口
+mcp dev server.py --with pandas  # 添加依赖
+```
+
+#### 访问地址
+默认访问地址：
+```
+http://localhost:8000
+```
+
+### 界面功能解析
+
+#### 1. 左侧面板
+- **工具列表**：显示所有注册的 @mcp.tool() 方法
+- **资源列表**：显示所有 @mcp.resource() 注册的资源
+- **服务器信息**：显示服务器名称/版本等元数据
+
+#### 2. 右侧面板
+- **请求/响应区**：
+  - 参数输入框
+  - 执行按钮
+  - 响应结果显示
+- **消息监控**：实时显示原始协议消息
+- **历史记录**：保存的测试用例
+
+### 核心功能详解
+
+#### 工具测试
+1. 在工具列表选择工具
+2. 输入 JSON 格式参数：
+```json
+{"param1": "value1", "param2": 123}
+```
+3. 点击"Execute"执行
+4. 查看返回结果
+
+#### 高级功能
+- **消息追踪**：点击"Raw Messages"查看协议细节
+- **测试代码生成**：右键工具→"Generate Test Code"
+- **性能分析**："Timing"选项卡显示各阶段耗时
+
+### 典型工作流
+```mermaid
+graph TD
+A[编写服务器代码] --> B[启动Inspector]
+B --> C[测试工具调用]
+C --> D[分析协议消息]
+D --> E[优化实现]
+```
+
+### 注意事项
+1. 确保 Python ≥ 3.8
+2. 复杂参数需严格遵循 JSON 格式
+3. 网络资源需要正确处理异步
+
 ## MCP架构
 
 ```mermaid
