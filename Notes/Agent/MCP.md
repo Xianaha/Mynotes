@@ -103,6 +103,139 @@ graph TD
     B --> E[Resource 1]
 ```
 
+## MCP Server 安装与连接方式指南
+
+### 安装方式详解
+
+#### 1. uvx安装 (推荐)
+```bash
+uvx install mcp-server-[服务名]
+```
+**默认连接协议**: stdio  
+**特点**:
+- 自动管理依赖和版本
+- 内置虚拟环境隔离
+- 支持热更新
+
+**配置示例**:
+```json
+{
+  "servers": {
+    "time": {
+      "command": "uvx",
+      "args": ["mcp-server-time"]
+    }
+  }
+}
+```
+
+**修改为SSE连接**:
+```json
+{
+  "servers": {
+    "time": {
+      "command": "uvx",
+      "args": ["mcp-server-time"],
+      "protocol": "sse",
+      "port": 3002
+    }
+  }
+}
+```
+
+#### 2. pip安装
+```bash
+pip install mcp-server-[服务名]
+```
+**默认连接协议**: stdio  
+**特点**:
+- 需要手动管理依赖
+- 全局或虚拟环境安装
+
+**配置示例**:
+```json
+{
+  "servers": {
+    "time": {
+      "command": "python",
+      "args": ["-m", "mcp_server_time"]
+    }
+  }
+}
+```
+
+#### 3. Docker安装
+```bash
+docker pull mcp/[服务名]
+```
+**默认连接协议**: SSE (端口8080)  
+**特点**:
+- 隔离性最好
+- 需要Docker环境
+
+**配置示例**:
+```json
+{
+  "servers": {
+    "time": {
+      "command": "docker",
+      "args": ["run", "-p", "3002:8080", "mcp/time"]
+    }
+  }
+}
+```
+
+### 连接协议对比
+
+| 协议  | 适用安装方式       | 性能   | 跨主机 | 配置复杂度 |
+|-------|------------------|--------|--------|------------|
+| stdio | uvx/pip         | 极高   | 不支持 | 简单       |
+| SSE   | Docker/手动配置 | 中等   | 支持   | 中等       |
+| WS    | 自定义部署       | 高     | 支持   | 复杂       |
+
+### 协议切换指南
+
+#### stdio → SSE
+1. 停止当前服务
+2. 修改配置文件：
+```json
+"protocol": "sse",
+"port": [自定义端口]
+```
+3. 添加防火墙规则(如果需要)
+
+#### SSE → stdio
+1. 确保客户端和服务在同一主机
+2. 修改配置文件：
+```json
+"protocol": "stdio"
+```
+3. 移除端口配置
+
+### 调试技巧
+
+1. 检查活动连接：
+```bash
+uvx inspect mcp-server-[服务名]
+```
+
+2. 查看协议类型：
+```bash
+netstat -ano | findstr [端口]
+```
+
+3. 强制使用指定协议运行：
+```bash
+uvx run mcp-server-time --protocol sse --port 3002
+```
+
+### 最佳实践建议
+
+1. 开发环境优先使用uvx+stdio组合
+2. 生产环境推荐Docker+SSE组合
+3. 跨主机通信必须使用SSE/WS协议
+4. 性能敏感场景使用stdio协议
+
 ## 构建MCP Server示例
 
 ```typescript
