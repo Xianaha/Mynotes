@@ -1,0 +1,861 @@
+[
+    {
+        "type": "text",
+        "text": "PAPER • OPEN ACCESS",
+        "bbox": [
+            60,
+            131,
+            240,
+            144
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "SewerOD: A visual sewer disease detection dataset for machine learning",
+        "text_level": 1,
+        "bbox": [
+            60,
+            157,
+            586,
+            203
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "To cite this article: Wei Wei et al 2023 J. Phys.: Conf. Ser. 2646 012011",
+        "bbox": [
+            60,
+            218,
+            490,
+            232
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "View the article online for updates and enhancements.",
+        "bbox": [
+            60,
+            273,
+            389,
+            286
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "You may also like",
+        "text_level": 1,
+        "bbox": [
+            673,
+            131,
+            836,
+            149
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "list",
+        "sub_type": "text",
+        "list_items": [
+            "- A sewer disease grading method based on entropy power theory\nShuai Chen, Ce Li, Qin Han et al.",
+            "Comparison Between Circular Sewer Pipe and Non-Circular Sewer Cross Sections Alend Wirya Abdulrazaq and Mohamed M. Arbili",
+            "- A Dimensional Analysis of Local Sandy Soil Erosion Induced By Leaky Sewer Pipes Basim Kh. Nile, Jabbar H. Al-Baidhani and Ali N. Ghulam"
+        ],
+        "bbox": [
+            699,
+            157,
+            934,
+            289
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "image",
+        "img_path": "images/7c52e96f200ef7eff20e9d96dc1a7595c3767fccd989593975613648979319b4.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            60,
+            538,
+            468,
+            938
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "image",
+        "img_path": "images/e6575c0b8b1be34ca9a87770c74b2e20f7d8b42c36b4a32e5ded9256269f3d9b.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            470,
+            538,
+            937,
+            938
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "header",
+        "text": "Journal of Physics: Conference Series",
+        "bbox": [
+            60,
+            42,
+            235,
+            76
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "header",
+        "text": "PURPOSE-LED PUBLISHING",
+        "bbox": [
+            794,
+            43,
+            934,
+            68
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "footer",
+        "text": "This content was downloaded from IP address 114.43.140.130 on 30/12/2025 at 03:06",
+        "bbox": [
+            236,
+            942,
+            757,
+            954
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "SewerOD: A visual sewer disease detection dataset for machine learning",
+        "text_level": 1,
+        "bbox": [
+            114,
+            205,
+            781,
+            252
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Wei Wei $^{1}$ , Ce Li $^{1,2,3}$ , Shuo Li $^{1}$ , Zheng Chen $^{1}$ , Feng Yang $^{1}$",
+        "bbox": [
+            231,
+            283,
+            678,
+            301
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "<sup>1</sup> China University of Mining & Technology, School of Mechanical Electronic & Information Engineering, Department of Computer Science and Technology, Xueyuan Rd, Haidian District, Beijing, China, 100089",
+        "bbox": [
+            231,
+            305,
+            882,
+            350
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "$^{2}$  Peking University, School of Electronics Engineering and Computer Science, Department of Computer Science and Technology, Yiheyuan Rd, Haidian District, Beijing, China, 100871",
+        "bbox": [
+            231,
+            351,
+            880,
+            396
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "3 celi@cumbtb.edu.cn",
+        "bbox": [
+            233,
+            425,
+            394,
+            441
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Abstract. The underground sewer pipeline is an essential urban infrastructure that undertakes the vital responsibility of discharging sewage. The location and type of diseases in the pipeline often need to be checked manually by inspectors, which cannot be completed efficiently due to labor costs and time requirements. With the development of computer vision, the use of detection technology to maintain sewer pipelines has extremely high research value. However, image data of pipelines are often regarded as commercial secrets, and these studies are greatly limited due to the scarcity of open-source pipeline disease datasets. To solve this problem, we present a public large-scale object detection dataset for sewer disease detection named SewerOD in this work. The dataset contains about 47K images, annotated by professional researchers, and includes two of the most widespread structural disease types: Corrosion and Crack. Our dataset is available at https://github.com/SewerOD.",
+        "bbox": [
+            231,
+            454,
+            884,
+            608
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Keywords: dataset, disease detection, large scale, sewer monitoring, machine learning.",
+        "bbox": [
+            233,
+            631,
+            823,
+            648
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "1. Introduction",
+        "text_level": 1,
+        "bbox": [
+            114,
+            673,
+            243,
+            686
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "In recent years, urban underground space disasters have occurred frequently in China, while the development of urban underground space is further increasing in the meantime, such as the construction of pipe gallery, subway, underground emporium and so on. Urban underground sewer pipes are the main channel to discharge domestic sewage and rainwater, located at the bottom of other pipelines under the road. As the working years increase, the pipes in extended service are easy to be corrosion by the damp environments, most of them are seriously aging and damaged. Therefore, the occurrence of urban underground space disasters is closely related to the damage of sewer pipes, to ensure the security of urban underground space and the safety of people's lives, the detection of sewer diseases is the essential work of modern urban road safety monitoring and road network structure detection and the key to ensuring the safety of urban road underground space as well. So, how to accomplish this work efficiently and accurately is of great research value.",
+        "bbox": [
+            112,
+            688,
+            882,
+            852
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Disease detection based on closed-circuit television is the mainstream method at present. It can easily collect the pipe inside video through the pipeline robot equipped with CCTV, locate the disaster",
+        "bbox": [
+            112,
+            853,
+            882,
+            884
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "header",
+        "text": "International Conference on Software Engineering and Machine Learning",
+        "bbox": [
+            112,
+            65,
+            615,
+            80
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "header",
+        "text": "IOP Publishing",
+        "bbox": [
+            774,
+            65,
+            880,
+            79
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "header",
+        "text": "Journal of Physics: Conference Series",
+        "bbox": [
+            112,
+            81,
+            373,
+            96
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "header",
+        "text": "2646 (2023) 012011 doi:10.1088/1742-6596/2646/1/012011",
+        "bbox": [
+            455,
+            81,
+            880,
+            96
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "footer",
+        "text": "CC BY",
+        "bbox": [
+            112,
+            913,
+            198,
+            934
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "footer",
+        "text": "Content from this work may be used under the terms of the Creative Commons Attribution 3.0 licence. Any further distribution of this work must maintain attribution to the author(s) and the title of the work, journal citation and DOI.",
+        "bbox": [
+            198,
+            913,
+            880,
+            935
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "footer",
+        "text": "Published under licence by IOP Publishing Ltd",
+        "bbox": [
+            112,
+            938,
+            371,
+            950
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_number",
+        "text": "1",
+        "bbox": [
+            497,
+            940,
+            507,
+            948
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "and analyze the disease type more directly [1-3]. The progress of computing power has promoted the development of deep learning technology, and the application of convolutional neural networks to detect diseases in CCTV videos has become a research hotspot [4-8]. Haurume et al. have provided an overview of sewer inspection technology based on CCTV and SSET technology in the past twenty-five years [9]. They are classified into Detection and Segmentation, Feature Description, Classification, and Temporal Filtering. Wang et al. proposed a general detection framework based on deep learning, which integrated disease classification detection and semantic segmentation module, then took Faster-RCNN as an offline video detection model, obtained remarkable disease grading detection results [10]. Yin et al. designed a disease detection system based on CCTV, which takes a raw video as input and can output a marked video and disease information for inspection and evaluation [11]. The system is portable, and other algorithms can replace the detection module. In 2020, a semantic segmentation network named PipeUnet for pipeline diseases was proposed by Pan et al., which can perform semantic segmentation for typical diseases such as joint offset, crack, infiltration, intruding lateral [12]. Although the accuracy is not satisfactory, it basically achieves real-time availability. Kumar et al. studied the performance of three classical algorithms on diseases detection, SSD, Faster-RCNN and YOLOv3, and gave suggestions on algorithm application by considering efficiency and accuracy [13]. But the research mainly focused on two functional defects, root intrusions and deposits, while did not support the detection of structural defects. Deep learning technology has been widely studied and applied in the classification, detection and segmentation tasks of pipeline health inspection.",
+        "bbox": [
+            115,
+            133,
+            884,
+            419
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The training of deep learning models often requires a large amount of image data, but there are few excellent open-source datasets for sewer disease detection. In one hand, urban underground pipeline data is often regarded as confidential information or commercial data, with a conservative attitude towards open source. In the other hand, it is expertise intensive and time-consuming to annotate the public videos. So we release the first open-source dataset in disease detection domain, SewerOD.",
+        "bbox": [
+            112,
+            420,
+            882,
+            495
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The dataset contains 47,112 images that have been labeled by professional researchers, and the two most common diseases in pipelines, Corrosion and Crack, have been labeled while avoid unbalanced distribution of labels. This dataset is collected from a city in south China over a period of half a year. The disease distribution in real pipeline scene is shown in Fig. 1, which indicates that disease detection based on video frames also faces some challenges: large variety in disease scale, context blur, complex backgrounds, meaningless clutters, etc.",
+        "bbox": [
+            112,
+            495,
+            882,
+            586
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "image",
+        "img_path": "images/0985075d0bdc25cac32d458e8ccd7c8b8c923133db2756ff5d4aad628e35111c.jpg",
+        "image_caption": [
+            "Figure 1. Overview of dataset. Diseases of the Crack(PL) and Corrosion(FS) are respectively marked in blue and red."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            309,
+            590,
+            690,
+            859
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "header",
+        "text": "International Conference on Software Engineering and Machine Learning",
+        "bbox": [
+            112,
+            65,
+            613,
+            79
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "header",
+        "text": "IOP Publishing",
+        "bbox": [
+            774,
+            65,
+            880,
+            79
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "header",
+        "text": "Journal of Physics: Conference Series",
+        "bbox": [
+            112,
+            81,
+            373,
+            96
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "header",
+        "text": "2646 (2023) 012011 doi:10.1088/1742-6596/2646/1/012011",
+        "bbox": [
+            455,
+            81,
+            880,
+            96
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "page_number",
+        "text": "2",
+        "bbox": [
+            497,
+            939,
+            507,
+            948
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "2. Sewer Dataset",
+        "text_level": 1,
+        "bbox": [
+            114,
+            134,
+            255,
+            148
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "2.1. Image Acquisition and Annotation",
+        "text_level": 1,
+        "bbox": [
+            112,
+            163,
+            413,
+            178
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "All the videos of sewer pipeline were collected from a coastal city in southern China. The city is highly urbanized with frequent human settlement activities, thus the city's underground sewer pipelines are heavily burdened and at risk of aging. These videos were obtained by using pipeline robot with independent intellectual property rights developed by China University of Mining and Technology (Beijing). The robot is equipped with a variety of sensors, such as three-channel radar, video sensor, gyroscope and ranging encoder. Based on the technology of synchronous information acquisition and remote transmission, it can overcome the difficulty of traditional separate acquisition equipment cannot achieve synchronous transmission of various information.",
+        "bbox": [
+            112,
+            178,
+            882,
+            298
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "How to accurately annotate the disease with a bounding-box is critical to the quality of the dataset. Our datasets are all annotated by researchers in related fields. After completing the primary training of them, we divide all the images into multiple rounds to annotate. We checked their work to ensure the accuracy of categories after each round of annotation. As for the disputed areas, we specially set the criteria, re-associate all the images that do not meet the criteria, and finally submit all the annotation work to professional pipeline inspectors for review.",
+        "bbox": [
+            112,
+            298,
+            884,
+            388
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We invited a professional sewer inspector to re-announce  $1\\%$  of the images of the dataset, and the statistic of bbox quality is shown in Table 1. The imprecise annotations mainly come from Corrosion defects due to the overlaps of corrosion areas. The inspectors have an inconsistent understanding on whether annotate them with a whole bbox or separately, resulting in the geometrical imprecise. When the pipeline is severely corroded, there are often cracks in the corrosion area, thus causing a small number of annotation errors. Different disease classification criteria will lead to different annotations, so it is very necessary to introduce grading information.",
+        "bbox": [
+            112,
+            389,
+            882,
+            495
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "table",
+        "img_path": "images/798e12ca9182326499be60da938da5b52eeda27abae6b370b13bcc62702d4436.jpg",
+        "table_caption": [
+            "Table 1. Statistic of bbox quality."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td colspan=\"2\">Precision: 96.4%</td><td>Recall: 97.3%</td></tr><tr><td>Imprecise: 2.7%</td><td>Wrong class: 0.9%</td><td>-</td></tr></table>",
+        "bbox": [
+            146,
+            519,
+            850,
+            570
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "2.2. Bbox Statistics",
+        "text_level": 1,
+        "bbox": [
+            114,
+            581,
+            265,
+            596
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "SewerOD is a dataset focusing on sewer disease detection. Not all diseases have the same size and position, so the distribution of the bboxes on images is not similar. To study the distribution of bboxes, we analyzed the statistics on these two aspects, for the guide of domain-related design.",
+        "bbox": [
+            112,
+            597,
+            882,
+            643
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "image",
+        "img_path": "images/c98094c17f689aae6a4cb76fcc0257edc4a74235fffdd02f9bde18d6753b8dce.jpg",
+        "image_caption": [
+            "(a)",
+            "Figure 2. Distribution of the bboxes with different sizes on the dataset."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            129,
+            657,
+            489,
+            838
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "image",
+        "img_path": "images/bd3fcde129f141ac63e8c9cf175222a9963b4abab8c1095710431921a2d7cced.jpg",
+        "image_caption": [
+            "(b)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            510,
+            657,
+            870,
+            838
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "header",
+        "text": "International Conference on Software Engineering and Machine Learning",
+        "bbox": [
+            112,
+            65,
+            613,
+            80
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "header",
+        "text": "IOP Publishing",
+        "bbox": [
+            774,
+            65,
+            880,
+            79
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "header",
+        "text": "Journal of Physics: Conference Series",
+        "bbox": [
+            112,
+            81,
+            373,
+            96
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "header",
+        "text": "2646 (2023) 012011 doi:10.1088/1742-6596/2646/1/012011",
+        "bbox": [
+            455,
+            81,
+            880,
+            93
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "page_number",
+        "text": "3",
+        "bbox": [
+            497,
+            939,
+            507,
+            948
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Figure 2 shows the distribution of the bboxes with different sizes on the dataset. The left chart shows the area and perimeter distribution of bbox. Its left vertical axis shows the area of bbox, which is expressed in scientific notation. The right vertical axis shows the perimeter of bbox. For an intuitive comparison, the areas of all bboxes are arranged in descending order and the perimeter is arranged in ascending order. About  $8\\%$  of the bboxes have an area of more than 2000 pixels, and  $30\\%$  of the bboxes have an area of less than 200 pixels. For the perimeter,  $90\\%$  of the bboxes have a perimeter less than 600 pixels positions. The right chart shows the quantity distribution of bboxes with different sizes. The horizontal axis shows the proportion of the area or perimeter of bboxes in the whole image. There are about 1500 bboxes whose area accounts for less than  $1\\%$  of the image. Due to the different magnitudes of these two indicators, there are about 1200 bboxes whose perimeter accounts for less than  $10\\%$ . The distribution of the bboxes shows that SewerOD has challenges in small object detection, and it can be applied to scenarios with minor damage to the pipeline.",
+        "bbox": [
+            110,
+            134,
+            882,
+            315
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "image",
+        "img_path": "images/2dcca694039931812df6c625f5f2479a7c0518b1e5e148fe9ab4cc162c6f68cb.jpg",
+        "image_caption": [
+            "Figure 3. Joint distribution of the coordinates of the bbox centre point."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            319,
+            317,
+            675,
+            554
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Another way to measure the density and diversity of bboxes is to study the distribution of its centre points. Figure 3 shows the joint distribution of centre points. Taking the x-coordinate and y-coordinate of the centre point of the bbox as an independent variable to examine their joint distribution, the position distribution of the bbox on the image can be measured. To conform to the habit of computer vision, the upper left corner is used as the coordinate origin. Owing to the fixed viewing angle of the video capture device in the pipe, the centre points of the bbox are mainly located on the upper and both sides of the image, and the lower part of the image is the sewage area. Obviously, the top of the pipe is prone to structural defects due to the action of water vapor, which is easy to cause the soil above the pipeline to be eroded, resulting in the collapse of the road above. The areas on both sides are affected by the change of the water level in the pipeline are easily damaged when exposed to the air after being damp.",
+        "bbox": [
+            110,
+            585,
+            882,
+            737
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "3. Conclusions",
+        "text_level": 1,
+        "bbox": [
+            112,
+            750,
+            238,
+            763
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Sewer pipe disease can cause poor drainage, road collapse, rupture of the overlying pipeline, and leakage of the overlying subway, etc., which are important sources of underground space disasters, and once a disaster occurs, it will cause urban environmental pollution and affect people's livelihood. Therefore, municipal departments and pipeline companies consume a lot of resources to inspect pipelines every year, and the application of detection technology can effectively solve this problem. Due to the lack of high-quality open-source pipeline datasets, computer vision researchers can only design models on the datasets collected by themselves, which often lack generalization and are not comparable to each other. Therefore, we have open sourced a dataset SewerOD that focuses on sewer disease detection, while no other similar datasets are currently open source. The dataset is collected from multiple segments of",
+        "bbox": [
+            110,
+            764,
+            884,
+            902
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "header",
+        "text": "International Conference on Software Engineering and Machine Learning",
+        "bbox": [
+            112,
+            65,
+            613,
+            79
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "header",
+        "text": "IOP Publishing",
+        "bbox": [
+            774,
+            65,
+            880,
+            79
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "header",
+        "text": "Journal of Physics: Conference Series",
+        "bbox": [
+            112,
+            81,
+            373,
+            96
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "header",
+        "text": "2646 (2023) 012011 doi:10.1088/1742-6596/2646/1/012011",
+        "bbox": [
+            455,
+            81,
+            880,
+            96
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "page_number",
+        "text": "4",
+        "bbox": [
+            497,
+            939,
+            507,
+            948
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "underground sewage pipelines, and the diseases are annotated by professional researchers, including two types of structural diseases, Corrosion and Crack, that are widely present and are more harmful to pipelines. We give detailed statistics on the dataset to guide domain-related model design, which indicates that some detection models that introduce disease clustering as supervised information may have better performance. Based on the study on area distribution of the disease area, the disease detection model is required to have the ability to detect small objects. We hope that this dataset will advance the field of pipeline disease detection research, at the same time, according to the disease grading standards formulated by government departments and industry leading companies, we will release a larger dataset containing disease grading information.",
+        "bbox": [
+            110,
+            133,
+            882,
+            270
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "References",
+        "text_level": 1,
+        "bbox": [
+            115,
+            283,
+            206,
+            296
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "[1] Y. Mano, R. Ishikawa, Y. Yamada and T. Nakamura 2018 Development of Contraction Force Control System of Peristaltic Crawling Robot for Sewer Pipe Inspection IEEE/ASME International Conference on Advanced Intelligent Mechatronics pp 936-941",
+            "[2] D. Alejo, F. Caballero and L. Merino 2019 A Robust Localization System for Inspection Robots in Sewer Networks Sensors vol. 19, no. 22",
+            "[3] J. Lu and D. Zhu 2018 Design of city sewer dredging robot with variable diameter Journal of Physics: Conference Series vol. 1074, pp. 26-28",
+            "[4] S. I. Hassan, L. M. Dang, I. Mehmood and et al 2019 Underground sewer pipe condition assessment based on convolutional neural networks Automation in Construction vol. 106",
+            "[5] D. Li, A. Cong and S. Guo 2019 Sewer damage detection from imbalanced CCTV inspection data using deep convolutional neural networks with hierarchical classification Automation in Construction vol. 101, pp. 199-208",
+            "[6] Y. Tan, R. Cai, J. Li, P. Chen and M. Wang 2021 Automatic detection of sewer defects based on improved you only look once algorithm Automation in Construction vol. 131",
+            "[7] A. Hawari, M. Alamin, F. Alkadour, M. Elmasry and T. Zayed 2018 Automated defect detection tool for closed circuit television (cctv) inspected sewer pipelines Automation in Construction vol. 89, pp. 99-109",
+            "[8] X. FANG, W. GUO, Q. LI et al. 2020 Sewer Pipeline Fault Identification Using Anomaly Detection Algorithms on Video Sequences IEEE Access vol. 8, pp. 39574-39586",
+            "[9] J. B. Haurum and T. B. Moeslund 2020 A Survey on Image-Based Automation of CCTV and SSET Sewer Inspections Automation in Construction vol. 111",
+            "[10] M. Wang, H. Luo and J. C. Cheng 2021 Towards an automated condition assessment framework of underground sewer pipes based on closed-circuit television (CCTV) images Tunnelling and Underground Space Technology vol. 110",
+            "[11] X. Yin, Y. Chen, A. Bouferguene, H. Zaman, M. Al-Hussein and L. Kurach 2020 A deep learning-based framework for an automated defect detection system for sewer pipes Automation in Construction vol. 109",
+            "[12] G. Pan, Y. Zheng, S. Guo and Y. Lv 2020 Automatic sewer pipe defect semantic segmentation based on improved U-Net Automation in Construction vol. 119",
+            "[13] S. S. Kumar, M. Wang, P. Dulcy M. Abraham, M. R. Jahanshahi, T. Iseley and a. J. C. P. Cheng 2020 Deep learning-based automated detection of sewer defects in CCTV videos Journal of Computing in Civil Engineering vol. 34"
+        ],
+        "bbox": [
+            115,
+            298,
+            884,
+            780
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Acknowledgments",
+        "text_level": 1,
+        "bbox": [
+            115,
+            794,
+            265,
+            808
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "This work is supported by the Beijing Municipal Natural Science Foundation (4202065), Beijing Nova Program of Science and Technology (Z191100001119106, Z211100002121147), National Key Research and Development Program of China (2021YFC3090304), National Natural Science Foundation of China (62076016, 61972016, 62176260), and supported by the Fundamental Research Funds for the Central Universities (J210409). This work is implemented during the domestic visiting scholar program supported by School of Continuing Education of Peking University (2022-2023).",
+        "bbox": [
+            110,
+            809,
+            882,
+            899
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "header",
+        "text": "International Conference on Software Engineering and Machine Learning",
+        "bbox": [
+            112,
+            65,
+            613,
+            79
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "header",
+        "text": "IOP Publishing",
+        "bbox": [
+            774,
+            65,
+            880,
+            79
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "header",
+        "text": "Journal of Physics: Conference Series",
+        "bbox": [
+            112,
+            81,
+            373,
+            96
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "header",
+        "text": "2646 (2023) 012011 doi:10.1088/1742-6596/2646/1/012011",
+        "bbox": [
+            455,
+            81,
+            880,
+            96
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "page_number",
+        "text": "5",
+        "bbox": [
+            497,
+            940,
+            507,
+            948
+        ],
+        "page_idx": 5
+    }
+]

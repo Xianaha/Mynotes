@@ -1,0 +1,3474 @@
+{
+    "pdf_info": [
+        {
+            "para_blocks": [
+                {
+                    "bbox": [
+                        36,
+                        111,
+                        143,
+                        122
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                36,
+                                111,
+                                143,
+                                122
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        36,
+                                        111,
+                                        143,
+                                        122
+                                    ],
+                                    "type": "text",
+                                    "content": "PAPER • OPEN ACCESS"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 2
+                },
+                {
+                    "bbox": [
+                        36,
+                        133,
+                        349,
+                        171
+                    ],
+                    "type": "title",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                36,
+                                133,
+                                349,
+                                171
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        36,
+                                        133,
+                                        349,
+                                        171
+                                    ],
+                                    "type": "text",
+                                    "content": "SewerOD: A visual sewer disease detection dataset for machine learning"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 3
+                },
+                {
+                    "bbox": [
+                        36,
+                        184,
+                        292,
+                        196
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                36,
+                                184,
+                                292,
+                                196
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        36,
+                                        184,
+                                        292,
+                                        196
+                                    ],
+                                    "type": "text",
+                                    "content": "To cite this article: Wei Wei et al 2023 J. Phys.: Conf. Ser. 2646 012011"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 4
+                },
+                {
+                    "bbox": [
+                        36,
+                        230,
+                        232,
+                        241
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                36,
+                                230,
+                                232,
+                                241
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        36,
+                                        230,
+                                        232,
+                                        241
+                                    ],
+                                    "type": "text",
+                                    "content": "View the article online for updates and enhancements."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 5
+                },
+                {
+                    "bbox": [
+                        401,
+                        111,
+                        498,
+                        126
+                    ],
+                    "type": "title",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                401,
+                                111,
+                                498,
+                                126
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        401,
+                                        111,
+                                        498,
+                                        126
+                                    ],
+                                    "type": "text",
+                                    "content": "You may also like"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 6
+                },
+                {
+                    "bbox": [
+                        416,
+                        133,
+                        556,
+                        244
+                    ],
+                    "type": "list",
+                    "angle": 0,
+                    "index": 10,
+                    "blocks": [
+                        {
+                            "bbox": [
+                                416,
+                                133,
+                                556,
+                                157
+                            ],
+                            "type": "text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        416,
+                                        133,
+                                        556,
+                                        157
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                416,
+                                                133,
+                                                556,
+                                                157
+                                            ],
+                                            "type": "text",
+                                            "content": "- A sewer disease grading method based on entropy power theory\nShuai Chen, Ce Li, Qin Han et al."
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 7
+                        },
+                        {
+                            "bbox": [
+                                416,
+                                164,
+                                555,
+                                197
+                            ],
+                            "type": "text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        416,
+                                        164,
+                                        555,
+                                        197
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                416,
+                                                164,
+                                                555,
+                                                197
+                                            ],
+                                            "type": "text",
+                                            "content": "Comparison Between Circular Sewer Pipe and Non-Circular Sewer Cross Sections Alend Wirya Abdulrazaq and Mohamed M. Arbili"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 8
+                        },
+                        {
+                            "bbox": [
+                                416,
+                                203,
+                                555,
+                                244
+                            ],
+                            "type": "text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        416,
+                                        203,
+                                        555,
+                                        244
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                416,
+                                                203,
+                                                555,
+                                                244
+                                            ],
+                                            "type": "text",
+                                            "content": "- A Dimensional Analysis of Local Sandy Soil Erosion Induced By Leaky Sewer Pipes Basim Kh. Nile, Jabbar H. Al-Baidhani and Ali N. Ghulam"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 9
+                        }
+                    ],
+                    "sub_type": "text"
+                },
+                {
+                    "type": "image",
+                    "bbox": [
+                        36,
+                        453,
+                        279,
+                        790
+                    ],
+                    "blocks": [
+                        {
+                            "bbox": [
+                                36,
+                                453,
+                                279,
+                                790
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        36,
+                                        453,
+                                        279,
+                                        790
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                36,
+                                                453,
+                                                279,
+                                                790
+                                            ],
+                                            "type": "image",
+                                            "image_path": "7c52e96f200ef7eff20e9d96dc1a7595c3767fccd989593975613648979319b4.jpg"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 11,
+                            "angle": 0,
+                            "type": "image_body"
+                        }
+                    ],
+                    "index": 11
+                },
+                {
+                    "type": "image",
+                    "bbox": [
+                        280,
+                        453,
+                        558,
+                        790
+                    ],
+                    "blocks": [
+                        {
+                            "bbox": [
+                                280,
+                                453,
+                                558,
+                                790
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        280,
+                                        453,
+                                        558,
+                                        790
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                280,
+                                                453,
+                                                558,
+                                                790
+                                            ],
+                                            "type": "image",
+                                            "image_path": "e6575c0b8b1be34ca9a87770c74b2e20f7d8b42c36b4a32e5ded9256269f3d9b.jpg"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 12,
+                            "angle": 0,
+                            "type": "image_body"
+                        }
+                    ],
+                    "index": 12
+                }
+            ],
+            "discarded_blocks": [
+                {
+                    "bbox": [
+                        36,
+                        36,
+                        140,
+                        64
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                36,
+                                36,
+                                140,
+                                64
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        36,
+                                        36,
+                                        140,
+                                        64
+                                    ],
+                                    "type": "text",
+                                    "content": "Journal of Physics: Conference Series"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 0
+                },
+                {
+                    "bbox": [
+                        473,
+                        37,
+                        556,
+                        58
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                473,
+                                37,
+                                556,
+                                58
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        473,
+                                        37,
+                                        556,
+                                        58
+                                    ],
+                                    "type": "text",
+                                    "content": "PURPOSE-LED PUBLISHING"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 1
+                },
+                {
+                    "bbox": [
+                        141,
+                        794,
+                        451,
+                        804
+                    ],
+                    "type": "footer",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                141,
+                                794,
+                                451,
+                                804
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        141,
+                                        794,
+                                        451,
+                                        804
+                                    ],
+                                    "type": "text",
+                                    "content": "This content was downloaded from IP address 114.43.140.130 on 30/12/2025 at 03:06"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 13
+                }
+            ],
+            "page_size": [
+                595,
+                842
+            ],
+            "page_idx": 0
+        },
+        {
+            "para_blocks": [
+                {
+                    "bbox": [
+                        68,
+                        173,
+                        465,
+                        213
+                    ],
+                    "type": "title",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                68,
+                                173,
+                                465,
+                                213
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        68,
+                                        173,
+                                        465,
+                                        213
+                                    ],
+                                    "type": "text",
+                                    "content": "SewerOD: A visual sewer disease detection dataset for machine learning"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 4
+                },
+                {
+                    "bbox": [
+                        138,
+                        239,
+                        404,
+                        254
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                138,
+                                239,
+                                404,
+                                254
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        138,
+                                        239,
+                                        404,
+                                        254
+                                    ],
+                                    "type": "text",
+                                    "content": "Wei Wei"
+                                },
+                                {
+                                    "bbox": [
+                                        138,
+                                        239,
+                                        404,
+                                        254
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "^{1}"
+                                },
+                                {
+                                    "bbox": [
+                                        138,
+                                        239,
+                                        404,
+                                        254
+                                    ],
+                                    "type": "text",
+                                    "content": ", Ce Li"
+                                },
+                                {
+                                    "bbox": [
+                                        138,
+                                        239,
+                                        404,
+                                        254
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "^{1,2,3}"
+                                },
+                                {
+                                    "bbox": [
+                                        138,
+                                        239,
+                                        404,
+                                        254
+                                    ],
+                                    "type": "text",
+                                    "content": ", Shuo Li"
+                                },
+                                {
+                                    "bbox": [
+                                        138,
+                                        239,
+                                        404,
+                                        254
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "^{1}"
+                                },
+                                {
+                                    "bbox": [
+                                        138,
+                                        239,
+                                        404,
+                                        254
+                                    ],
+                                    "type": "text",
+                                    "content": ", Zheng Chen"
+                                },
+                                {
+                                    "bbox": [
+                                        138,
+                                        239,
+                                        404,
+                                        254
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "^{1}"
+                                },
+                                {
+                                    "bbox": [
+                                        138,
+                                        239,
+                                        404,
+                                        254
+                                    ],
+                                    "type": "text",
+                                    "content": ", Feng Yang"
+                                },
+                                {
+                                    "bbox": [
+                                        138,
+                                        239,
+                                        404,
+                                        254
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "^{1}"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 5
+                },
+                {
+                    "bbox": [
+                        138,
+                        257,
+                        525,
+                        295
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                138,
+                                257,
+                                525,
+                                295
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        138,
+                                        257,
+                                        525,
+                                        295
+                                    ],
+                                    "type": "text",
+                                    "content": "<sup>1</sup> China University of Mining & Technology, School of Mechanical Electronic & Information Engineering, Department of Computer Science and Technology, Xueyuan Rd, Haidian District, Beijing, China, 100089"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 6
+                },
+                {
+                    "bbox": [
+                        138,
+                        296,
+                        524,
+                        334
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                138,
+                                296,
+                                524,
+                                334
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        138,
+                                        296,
+                                        524,
+                                        334
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "^{2}"
+                                },
+                                {
+                                    "bbox": [
+                                        138,
+                                        296,
+                                        524,
+                                        334
+                                    ],
+                                    "type": "text",
+                                    "content": " Peking University, School of Electronics Engineering and Computer Science, Department of Computer Science and Technology, Yiheyuan Rd, Haidian District, Beijing, China, 100871"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 7
+                },
+                {
+                    "bbox": [
+                        139,
+                        358,
+                        235,
+                        372
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                139,
+                                358,
+                                235,
+                                372
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        139,
+                                        358,
+                                        235,
+                                        372
+                                    ],
+                                    "type": "text",
+                                    "content": "3 celi@cumbtb.edu.cn"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 8
+                },
+                {
+                    "bbox": [
+                        138,
+                        383,
+                        526,
+                        512
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                138,
+                                383,
+                                526,
+                                512
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        138,
+                                        383,
+                                        526,
+                                        512
+                                    ],
+                                    "type": "text",
+                                    "content": "Abstract. The underground sewer pipeline is an essential urban infrastructure that undertakes the vital responsibility of discharging sewage. The location and type of diseases in the pipeline often need to be checked manually by inspectors, which cannot be completed efficiently due to labor costs and time requirements. With the development of computer vision, the use of detection technology to maintain sewer pipelines has extremely high research value. However, image data of pipelines are often regarded as commercial secrets, and these studies are greatly limited due to the scarcity of open-source pipeline disease datasets. To solve this problem, we present a public large-scale object detection dataset for sewer disease detection named SewerOD in this work. The dataset contains about 47K images, annotated by professional researchers, and includes two of the most widespread structural disease types: Corrosion and Crack. Our dataset is available at https://github.com/SewerOD."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 9
+                },
+                {
+                    "bbox": [
+                        139,
+                        532,
+                        490,
+                        546
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                139,
+                                532,
+                                490,
+                                546
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        139,
+                                        532,
+                                        490,
+                                        546
+                                    ],
+                                    "type": "text",
+                                    "content": "Keywords: dataset, disease detection, large scale, sewer monitoring, machine learning."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 10
+                },
+                {
+                    "bbox": [
+                        68,
+                        567,
+                        145,
+                        578
+                    ],
+                    "type": "title",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                68,
+                                567,
+                                145,
+                                578
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        68,
+                                        567,
+                                        145,
+                                        578
+                                    ],
+                                    "type": "text",
+                                    "content": "1. Introduction"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 11
+                },
+                {
+                    "bbox": [
+                        67,
+                        580,
+                        525,
+                        718
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                580,
+                                525,
+                                718
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        580,
+                                        525,
+                                        718
+                                    ],
+                                    "type": "text",
+                                    "content": "In recent years, urban underground space disasters have occurred frequently in China, while the development of urban underground space is further increasing in the meantime, such as the construction of pipe gallery, subway, underground emporium and so on. Urban underground sewer pipes are the main channel to discharge domestic sewage and rainwater, located at the bottom of other pipelines under the road. As the working years increase, the pipes in extended service are easy to be corrosion by the damp environments, most of them are seriously aging and damaged. Therefore, the occurrence of urban underground space disasters is closely related to the damage of sewer pipes, to ensure the security of urban underground space and the safety of people's lives, the detection of sewer diseases is the essential work of modern urban road safety monitoring and road network structure detection and the key to ensuring the safety of urban road underground space as well. So, how to accomplish this work efficiently and accurately is of great research value."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 12
+                },
+                {
+                    "bbox": [
+                        67,
+                        719,
+                        525,
+                        745
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                719,
+                                525,
+                                745
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        719,
+                                        525,
+                                        745
+                                    ],
+                                    "type": "text",
+                                    "content": "Disease detection based on closed-circuit television is the mainstream method at present. It can easily collect the pipe inside video through the pipeline robot equipped with CCTV, locate the disaster"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 13
+                }
+            ],
+            "discarded_blocks": [
+                {
+                    "bbox": [
+                        67,
+                        55,
+                        366,
+                        68
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                55,
+                                366,
+                                68
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        55,
+                                        366,
+                                        68
+                                    ],
+                                    "type": "text",
+                                    "content": "International Conference on Software Engineering and Machine Learning"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 0
+                },
+                {
+                    "bbox": [
+                        461,
+                        55,
+                        524,
+                        67
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                461,
+                                55,
+                                524,
+                                67
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        461,
+                                        55,
+                                        524,
+                                        67
+                                    ],
+                                    "type": "text",
+                                    "content": "IOP Publishing"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 1
+                },
+                {
+                    "bbox": [
+                        67,
+                        69,
+                        222,
+                        81
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                69,
+                                222,
+                                81
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        69,
+                                        222,
+                                        81
+                                    ],
+                                    "type": "text",
+                                    "content": "Journal of Physics: Conference Series"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 2
+                },
+                {
+                    "bbox": [
+                        271,
+                        69,
+                        524,
+                        81
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                271,
+                                69,
+                                524,
+                                81
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        271,
+                                        69,
+                                        524,
+                                        81
+                                    ],
+                                    "type": "text",
+                                    "content": "2646 (2023) 012011 doi:10.1088/1742-6596/2646/1/012011"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 3
+                },
+                {
+                    "bbox": [
+                        67,
+                        769,
+                        118,
+                        787
+                    ],
+                    "type": "footer",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                769,
+                                118,
+                                787
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        769,
+                                        118,
+                                        787
+                                    ],
+                                    "type": "text",
+                                    "content": "CC BY"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 14
+                },
+                {
+                    "bbox": [
+                        118,
+                        769,
+                        524,
+                        788
+                    ],
+                    "type": "footer",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                118,
+                                769,
+                                524,
+                                788
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        118,
+                                        769,
+                                        524,
+                                        788
+                                    ],
+                                    "type": "text",
+                                    "content": "Content from this work may be used under the terms of the Creative Commons Attribution 3.0 licence. Any further distribution of this work must maintain attribution to the author(s) and the title of the work, journal citation and DOI."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 15
+                },
+                {
+                    "bbox": [
+                        67,
+                        790,
+                        221,
+                        800
+                    ],
+                    "type": "footer",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                790,
+                                221,
+                                800
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        790,
+                                        221,
+                                        800
+                                    ],
+                                    "type": "text",
+                                    "content": "Published under licence by IOP Publishing Ltd"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 16
+                },
+                {
+                    "bbox": [
+                        296,
+                        792,
+                        302,
+                        799
+                    ],
+                    "type": "page_number",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                296,
+                                792,
+                                302,
+                                799
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        296,
+                                        792,
+                                        302,
+                                        799
+                                    ],
+                                    "type": "text",
+                                    "content": "1"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 17
+                }
+            ],
+            "page_size": [
+                595,
+                842
+            ],
+            "page_idx": 1
+        },
+        {
+            "para_blocks": [
+                {
+                    "bbox": [
+                        69,
+                        112,
+                        526,
+                        353
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                69,
+                                112,
+                                526,
+                                353
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        112,
+                                        526,
+                                        353
+                                    ],
+                                    "type": "text",
+                                    "content": "and analyze the disease type more directly [1-3]. The progress of computing power has promoted the development of deep learning technology, and the application of convolutional neural networks to detect diseases in CCTV videos has become a research hotspot [4-8]. Haurume et al. have provided an overview of sewer inspection technology based on CCTV and SSET technology in the past twenty-five years [9]. They are classified into Detection and Segmentation, Feature Description, Classification, and Temporal Filtering. Wang et al. proposed a general detection framework based on deep learning, which integrated disease classification detection and semantic segmentation module, then took Faster-RCNN as an offline video detection model, obtained remarkable disease grading detection results [10]. Yin et al. designed a disease detection system based on CCTV, which takes a raw video as input and can output a marked video and disease information for inspection and evaluation [11]. The system is portable, and other algorithms can replace the detection module. In 2020, a semantic segmentation network named PipeUnet for pipeline diseases was proposed by Pan et al., which can perform semantic segmentation for typical diseases such as joint offset, crack, infiltration, intruding lateral [12]. Although the accuracy is not satisfactory, it basically achieves real-time availability. Kumar et al. studied the performance of three classical algorithms on diseases detection, SSD, Faster-RCNN and YOLOv3, and gave suggestions on algorithm application by considering efficiency and accuracy [13]. But the research mainly focused on two functional defects, root intrusions and deposits, while did not support the detection of structural defects. Deep learning technology has been widely studied and applied in the classification, detection and segmentation tasks of pipeline health inspection."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 4
+                },
+                {
+                    "bbox": [
+                        67,
+                        354,
+                        525,
+                        417
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                354,
+                                525,
+                                417
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        354,
+                                        525,
+                                        417
+                                    ],
+                                    "type": "text",
+                                    "content": "The training of deep learning models often requires a large amount of image data, but there are few excellent open-source datasets for sewer disease detection. In one hand, urban underground pipeline data is often regarded as confidential information or commercial data, with a conservative attitude towards open source. In the other hand, it is expertise intensive and time-consuming to annotate the public videos. So we release the first open-source dataset in disease detection domain, SewerOD."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 5
+                },
+                {
+                    "bbox": [
+                        67,
+                        417,
+                        525,
+                        494
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                417,
+                                525,
+                                494
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        417,
+                                        525,
+                                        494
+                                    ],
+                                    "type": "text",
+                                    "content": "The dataset contains 47,112 images that have been labeled by professional researchers, and the two most common diseases in pipelines, Corrosion and Crack, have been labeled while avoid unbalanced distribution of labels. This dataset is collected from a city in south China over a period of half a year. The disease distribution in real pipeline scene is shown in Fig. 1, which indicates that disease detection based on video frames also faces some challenges: large variety in disease scale, context blur, complex backgrounds, meaningless clutters, etc."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 6
+                },
+                {
+                    "type": "image",
+                    "bbox": [
+                        184,
+                        497,
+                        411,
+                        724
+                    ],
+                    "blocks": [
+                        {
+                            "bbox": [
+                                184,
+                                497,
+                                411,
+                                724
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        184,
+                                        497,
+                                        411,
+                                        724
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                184,
+                                                497,
+                                                411,
+                                                724
+                                            ],
+                                            "type": "image",
+                                            "image_path": "0985075d0bdc25cac32d458e8ccd7c8b8c923133db2756ff5d4aad628e35111c.jpg"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 7,
+                            "angle": 0,
+                            "type": "image_body"
+                        },
+                        {
+                            "bbox": [
+                                173,
+                                730,
+                                421,
+                                754
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        173,
+                                        730,
+                                        421,
+                                        754
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                173,
+                                                730,
+                                                421,
+                                                754
+                                            ],
+                                            "type": "text",
+                                            "content": "Figure 1. Overview of dataset. Diseases of the Crack(PL) and Corrosion(FS) are respectively marked in blue and red."
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 8,
+                            "angle": 0,
+                            "type": "image_caption"
+                        }
+                    ],
+                    "index": 7
+                }
+            ],
+            "discarded_blocks": [
+                {
+                    "bbox": [
+                        67,
+                        55,
+                        365,
+                        67
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                55,
+                                365,
+                                67
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        55,
+                                        365,
+                                        67
+                                    ],
+                                    "type": "text",
+                                    "content": "International Conference on Software Engineering and Machine Learning"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 0
+                },
+                {
+                    "bbox": [
+                        461,
+                        55,
+                        524,
+                        67
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                461,
+                                55,
+                                524,
+                                67
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        461,
+                                        55,
+                                        524,
+                                        67
+                                    ],
+                                    "type": "text",
+                                    "content": "IOP Publishing"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 1
+                },
+                {
+                    "bbox": [
+                        67,
+                        69,
+                        222,
+                        81
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                69,
+                                222,
+                                81
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        69,
+                                        222,
+                                        81
+                                    ],
+                                    "type": "text",
+                                    "content": "Journal of Physics: Conference Series"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 2
+                },
+                {
+                    "bbox": [
+                        271,
+                        69,
+                        524,
+                        81
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                271,
+                                69,
+                                524,
+                                81
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        271,
+                                        69,
+                                        524,
+                                        81
+                                    ],
+                                    "type": "text",
+                                    "content": "2646 (2023) 012011 doi:10.1088/1742-6596/2646/1/012011"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 3
+                },
+                {
+                    "bbox": [
+                        296,
+                        791,
+                        302,
+                        799
+                    ],
+                    "type": "page_number",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                296,
+                                791,
+                                302,
+                                799
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        296,
+                                        791,
+                                        302,
+                                        799
+                                    ],
+                                    "type": "text",
+                                    "content": "2"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 9
+                }
+            ],
+            "page_size": [
+                595,
+                842
+            ],
+            "page_idx": 2
+        },
+        {
+            "para_blocks": [
+                {
+                    "bbox": [
+                        68,
+                        113,
+                        152,
+                        125
+                    ],
+                    "type": "title",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                68,
+                                113,
+                                152,
+                                125
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        68,
+                                        113,
+                                        152,
+                                        125
+                                    ],
+                                    "type": "text",
+                                    "content": "2. Sewer Dataset"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 4
+                },
+                {
+                    "bbox": [
+                        67,
+                        138,
+                        246,
+                        150
+                    ],
+                    "type": "title",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                138,
+                                246,
+                                150
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        138,
+                                        246,
+                                        150
+                                    ],
+                                    "type": "text",
+                                    "content": "2.1. Image Acquisition and Annotation"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 5
+                },
+                {
+                    "bbox": [
+                        67,
+                        150,
+                        525,
+                        251
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                150,
+                                525,
+                                251
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        150,
+                                        525,
+                                        251
+                                    ],
+                                    "type": "text",
+                                    "content": "All the videos of sewer pipeline were collected from a coastal city in southern China. The city is highly urbanized with frequent human settlement activities, thus the city's underground sewer pipelines are heavily burdened and at risk of aging. These videos were obtained by using pipeline robot with independent intellectual property rights developed by China University of Mining and Technology (Beijing). The robot is equipped with a variety of sensors, such as three-channel radar, video sensor, gyroscope and ranging encoder. Based on the technology of synchronous information acquisition and remote transmission, it can overcome the difficulty of traditional separate acquisition equipment cannot achieve synchronous transmission of various information."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 6
+                },
+                {
+                    "bbox": [
+                        67,
+                        251,
+                        526,
+                        327
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                251,
+                                526,
+                                327
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        251,
+                                        526,
+                                        327
+                                    ],
+                                    "type": "text",
+                                    "content": "How to accurately annotate the disease with a bounding-box is critical to the quality of the dataset. Our datasets are all annotated by researchers in related fields. After completing the primary training of them, we divide all the images into multiple rounds to annotate. We checked their work to ensure the accuracy of categories after each round of annotation. As for the disputed areas, we specially set the criteria, re-associate all the images that do not meet the criteria, and finally submit all the annotation work to professional pipeline inspectors for review."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 7
+                },
+                {
+                    "bbox": [
+                        67,
+                        328,
+                        525,
+                        417
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                328,
+                                525,
+                                417
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        328,
+                                        525,
+                                        417
+                                    ],
+                                    "type": "text",
+                                    "content": "We invited a professional sewer inspector to re-announce "
+                                },
+                                {
+                                    "bbox": [
+                                        67,
+                                        328,
+                                        525,
+                                        417
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "1\\%"
+                                },
+                                {
+                                    "bbox": [
+                                        67,
+                                        328,
+                                        525,
+                                        417
+                                    ],
+                                    "type": "text",
+                                    "content": " of the images of the dataset, and the statistic of bbox quality is shown in Table 1. The imprecise annotations mainly come from Corrosion defects due to the overlaps of corrosion areas. The inspectors have an inconsistent understanding on whether annotate them with a whole bbox or separately, resulting in the geometrical imprecise. When the pipeline is severely corroded, there are often cracks in the corrosion area, thus causing a small number of annotation errors. Different disease classification criteria will lead to different annotations, so it is very necessary to introduce grading information."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 8
+                },
+                {
+                    "type": "table",
+                    "bbox": [
+                        87,
+                        437,
+                        506,
+                        480
+                    ],
+                    "blocks": [
+                        {
+                            "bbox": [
+                                220,
+                                422,
+                                372,
+                                436
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        220,
+                                        422,
+                                        372,
+                                        436
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                220,
+                                                422,
+                                                372,
+                                                436
+                                            ],
+                                            "type": "text",
+                                            "content": "Table 1. Statistic of bbox quality."
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 9,
+                            "angle": 0,
+                            "type": "table_caption"
+                        },
+                        {
+                            "bbox": [
+                                87,
+                                437,
+                                506,
+                                480
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        87,
+                                        437,
+                                        506,
+                                        480
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                87,
+                                                437,
+                                                506,
+                                                480
+                                            ],
+                                            "type": "table",
+                                            "html": "<table><tr><td colspan=\"2\">Precision: 96.4%</td><td>Recall: 97.3%</td></tr><tr><td>Imprecise: 2.7%</td><td>Wrong class: 0.9%</td><td>-</td></tr></table>",
+                                            "image_path": "798e12ca9182326499be60da938da5b52eeda27abae6b370b13bcc62702d4436.jpg"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 10,
+                            "angle": 0,
+                            "type": "table_body"
+                        }
+                    ],
+                    "index": 10
+                },
+                {
+                    "bbox": [
+                        68,
+                        490,
+                        158,
+                        502
+                    ],
+                    "type": "title",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                68,
+                                490,
+                                158,
+                                502
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        68,
+                                        490,
+                                        158,
+                                        502
+                                    ],
+                                    "type": "text",
+                                    "content": "2.2. Bbox Statistics"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 11
+                },
+                {
+                    "bbox": [
+                        67,
+                        503,
+                        525,
+                        542
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                503,
+                                525,
+                                542
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        503,
+                                        525,
+                                        542
+                                    ],
+                                    "type": "text",
+                                    "content": "SewerOD is a dataset focusing on sewer disease detection. Not all diseases have the same size and position, so the distribution of the bboxes on images is not similar. To study the distribution of bboxes, we analyzed the statistics on these two aspects, for the guide of domain-related design."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 12
+                },
+                {
+                    "type": "image",
+                    "bbox": [
+                        77,
+                        554,
+                        291,
+                        706
+                    ],
+                    "blocks": [
+                        {
+                            "bbox": [
+                                77,
+                                554,
+                                291,
+                                706
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        77,
+                                        554,
+                                        291,
+                                        706
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                77,
+                                                554,
+                                                291,
+                                                706
+                                            ],
+                                            "type": "image",
+                                            "image_path": "c98094c17f689aae6a4cb76fcc0257edc4a74235fffdd02f9bde18d6753b8dce.jpg"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 13,
+                            "angle": 0,
+                            "type": "image_body"
+                        },
+                        {
+                            "bbox": [
+                                177,
+                                710,
+                                190,
+                                720
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        177,
+                                        710,
+                                        190,
+                                        720
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                177,
+                                                710,
+                                                190,
+                                                720
+                                            ],
+                                            "type": "text",
+                                            "content": "(a)"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 14,
+                            "angle": 0,
+                            "type": "image_caption"
+                        },
+                        {
+                            "bbox": [
+                                152,
+                                727,
+                                441,
+                                739
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        152,
+                                        727,
+                                        441,
+                                        739
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                152,
+                                                727,
+                                                441,
+                                                739
+                                            ],
+                                            "type": "text",
+                                            "content": "Figure 2. Distribution of the bboxes with different sizes on the dataset."
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 17,
+                            "angle": 0,
+                            "type": "image_caption"
+                        }
+                    ],
+                    "index": 13
+                },
+                {
+                    "type": "image",
+                    "bbox": [
+                        304,
+                        554,
+                        518,
+                        706
+                    ],
+                    "blocks": [
+                        {
+                            "bbox": [
+                                304,
+                                554,
+                                518,
+                                706
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        304,
+                                        554,
+                                        518,
+                                        706
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                304,
+                                                554,
+                                                518,
+                                                706
+                                            ],
+                                            "type": "image",
+                                            "image_path": "bd3fcde129f141ac63e8c9cf175222a9963b4abab8c1095710431921a2d7cced.jpg"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 15,
+                            "angle": 0,
+                            "type": "image_body"
+                        },
+                        {
+                            "bbox": [
+                                404,
+                                710,
+                                417,
+                                720
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        404,
+                                        710,
+                                        417,
+                                        720
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                404,
+                                                710,
+                                                417,
+                                                720
+                                            ],
+                                            "type": "text",
+                                            "content": "(b)"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 16,
+                            "angle": 0,
+                            "type": "image_caption"
+                        }
+                    ],
+                    "index": 15
+                }
+            ],
+            "discarded_blocks": [
+                {
+                    "bbox": [
+                        67,
+                        55,
+                        365,
+                        68
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                55,
+                                365,
+                                68
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        55,
+                                        365,
+                                        68
+                                    ],
+                                    "type": "text",
+                                    "content": "International Conference on Software Engineering and Machine Learning"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 0
+                },
+                {
+                    "bbox": [
+                        461,
+                        55,
+                        524,
+                        67
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                461,
+                                55,
+                                524,
+                                67
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        461,
+                                        55,
+                                        524,
+                                        67
+                                    ],
+                                    "type": "text",
+                                    "content": "IOP Publishing"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 1
+                },
+                {
+                    "bbox": [
+                        67,
+                        69,
+                        222,
+                        81
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                69,
+                                222,
+                                81
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        69,
+                                        222,
+                                        81
+                                    ],
+                                    "type": "text",
+                                    "content": "Journal of Physics: Conference Series"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 2
+                },
+                {
+                    "bbox": [
+                        271,
+                        69,
+                        524,
+                        79
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                271,
+                                69,
+                                524,
+                                79
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        271,
+                                        69,
+                                        524,
+                                        79
+                                    ],
+                                    "type": "text",
+                                    "content": "2646 (2023) 012011 doi:10.1088/1742-6596/2646/1/012011"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 3
+                },
+                {
+                    "bbox": [
+                        296,
+                        791,
+                        302,
+                        799
+                    ],
+                    "type": "page_number",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                296,
+                                791,
+                                302,
+                                799
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        296,
+                                        791,
+                                        302,
+                                        799
+                                    ],
+                                    "type": "text",
+                                    "content": "3"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 18
+                }
+            ],
+            "page_size": [
+                595,
+                842
+            ],
+            "page_idx": 3
+        },
+        {
+            "para_blocks": [
+                {
+                    "bbox": [
+                        66,
+                        113,
+                        525,
+                        266
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                113,
+                                525,
+                                266
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        113,
+                                        525,
+                                        266
+                                    ],
+                                    "type": "text",
+                                    "content": "Figure 2 shows the distribution of the bboxes with different sizes on the dataset. The left chart shows the area and perimeter distribution of bbox. Its left vertical axis shows the area of bbox, which is expressed in scientific notation. The right vertical axis shows the perimeter of bbox. For an intuitive comparison, the areas of all bboxes are arranged in descending order and the perimeter is arranged in ascending order. About "
+                                },
+                                {
+                                    "bbox": [
+                                        66,
+                                        113,
+                                        525,
+                                        266
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "8\\%"
+                                },
+                                {
+                                    "bbox": [
+                                        66,
+                                        113,
+                                        525,
+                                        266
+                                    ],
+                                    "type": "text",
+                                    "content": " of the bboxes have an area of more than 2000 pixels, and "
+                                },
+                                {
+                                    "bbox": [
+                                        66,
+                                        113,
+                                        525,
+                                        266
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "30\\%"
+                                },
+                                {
+                                    "bbox": [
+                                        66,
+                                        113,
+                                        525,
+                                        266
+                                    ],
+                                    "type": "text",
+                                    "content": " of the bboxes have an area of less than 200 pixels. For the perimeter, "
+                                },
+                                {
+                                    "bbox": [
+                                        66,
+                                        113,
+                                        525,
+                                        266
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "90\\%"
+                                },
+                                {
+                                    "bbox": [
+                                        66,
+                                        113,
+                                        525,
+                                        266
+                                    ],
+                                    "type": "text",
+                                    "content": " of the bboxes have a perimeter less than 600 pixels positions. The right chart shows the quantity distribution of bboxes with different sizes. The horizontal axis shows the proportion of the area or perimeter of bboxes in the whole image. There are about 1500 bboxes whose area accounts for less than "
+                                },
+                                {
+                                    "bbox": [
+                                        66,
+                                        113,
+                                        525,
+                                        266
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "1\\%"
+                                },
+                                {
+                                    "bbox": [
+                                        66,
+                                        113,
+                                        525,
+                                        266
+                                    ],
+                                    "type": "text",
+                                    "content": " of the image. Due to the different magnitudes of these two indicators, there are about 1200 bboxes whose perimeter accounts for less than "
+                                },
+                                {
+                                    "bbox": [
+                                        66,
+                                        113,
+                                        525,
+                                        266
+                                    ],
+                                    "type": "inline_equation",
+                                    "content": "10\\%"
+                                },
+                                {
+                                    "bbox": [
+                                        66,
+                                        113,
+                                        525,
+                                        266
+                                    ],
+                                    "type": "text",
+                                    "content": ". The distribution of the bboxes shows that SewerOD has challenges in small object detection, and it can be applied to scenarios with minor damage to the pipeline."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 4
+                },
+                {
+                    "type": "image",
+                    "bbox": [
+                        190,
+                        267,
+                        402,
+                        467
+                    ],
+                    "blocks": [
+                        {
+                            "bbox": [
+                                190,
+                                267,
+                                402,
+                                467
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        190,
+                                        267,
+                                        402,
+                                        467
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                190,
+                                                267,
+                                                402,
+                                                467
+                                            ],
+                                            "type": "image",
+                                            "image_path": "2dcca694039931812df6c625f5f2479a7c0518b1e5e148fe9ab4cc162c6f68cb.jpg"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 5,
+                            "angle": 0,
+                            "type": "image_body"
+                        },
+                        {
+                            "bbox": [
+                                153,
+                                475,
+                                440,
+                                488
+                            ],
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        153,
+                                        475,
+                                        440,
+                                        488
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                153,
+                                                475,
+                                                440,
+                                                488
+                                            ],
+                                            "type": "text",
+                                            "content": "Figure 3. Joint distribution of the coordinates of the bbox centre point."
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 6,
+                            "angle": 0,
+                            "type": "image_caption"
+                        }
+                    ],
+                    "index": 5
+                },
+                {
+                    "bbox": [
+                        66,
+                        493,
+                        525,
+                        621
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                493,
+                                525,
+                                621
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        493,
+                                        525,
+                                        621
+                                    ],
+                                    "type": "text",
+                                    "content": "Another way to measure the density and diversity of bboxes is to study the distribution of its centre points. Figure 3 shows the joint distribution of centre points. Taking the x-coordinate and y-coordinate of the centre point of the bbox as an independent variable to examine their joint distribution, the position distribution of the bbox on the image can be measured. To conform to the habit of computer vision, the upper left corner is used as the coordinate origin. Owing to the fixed viewing angle of the video capture device in the pipe, the centre points of the bbox are mainly located on the upper and both sides of the image, and the lower part of the image is the sewage area. Obviously, the top of the pipe is prone to structural defects due to the action of water vapor, which is easy to cause the soil above the pipeline to be eroded, resulting in the collapse of the road above. The areas on both sides are affected by the change of the water level in the pipeline are easily damaged when exposed to the air after being damp."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 7
+                },
+                {
+                    "bbox": [
+                        67,
+                        632,
+                        142,
+                        643
+                    ],
+                    "type": "title",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                632,
+                                142,
+                                643
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        632,
+                                        142,
+                                        643
+                                    ],
+                                    "type": "text",
+                                    "content": "3. Conclusions"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 8
+                },
+                {
+                    "bbox": [
+                        66,
+                        644,
+                        526,
+                        760
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                644,
+                                526,
+                                760
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        644,
+                                        526,
+                                        760
+                                    ],
+                                    "type": "text",
+                                    "content": "Sewer pipe disease can cause poor drainage, road collapse, rupture of the overlying pipeline, and leakage of the overlying subway, etc., which are important sources of underground space disasters, and once a disaster occurs, it will cause urban environmental pollution and affect people's livelihood. Therefore, municipal departments and pipeline companies consume a lot of resources to inspect pipelines every year, and the application of detection technology can effectively solve this problem. Due to the lack of high-quality open-source pipeline datasets, computer vision researchers can only design models on the datasets collected by themselves, which often lack generalization and are not comparable to each other. Therefore, we have open sourced a dataset SewerOD that focuses on sewer disease detection, while no other similar datasets are currently open source. The dataset is collected from multiple segments of"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 9
+                }
+            ],
+            "discarded_blocks": [
+                {
+                    "bbox": [
+                        67,
+                        55,
+                        365,
+                        67
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                55,
+                                365,
+                                67
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        55,
+                                        365,
+                                        67
+                                    ],
+                                    "type": "text",
+                                    "content": "International Conference on Software Engineering and Machine Learning"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 0
+                },
+                {
+                    "bbox": [
+                        461,
+                        55,
+                        524,
+                        67
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                461,
+                                55,
+                                524,
+                                67
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        461,
+                                        55,
+                                        524,
+                                        67
+                                    ],
+                                    "type": "text",
+                                    "content": "IOP Publishing"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 1
+                },
+                {
+                    "bbox": [
+                        67,
+                        69,
+                        222,
+                        81
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                69,
+                                222,
+                                81
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        69,
+                                        222,
+                                        81
+                                    ],
+                                    "type": "text",
+                                    "content": "Journal of Physics: Conference Series"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 2
+                },
+                {
+                    "bbox": [
+                        271,
+                        69,
+                        524,
+                        81
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                271,
+                                69,
+                                524,
+                                81
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        271,
+                                        69,
+                                        524,
+                                        81
+                                    ],
+                                    "type": "text",
+                                    "content": "2646 (2023) 012011 doi:10.1088/1742-6596/2646/1/012011"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 3
+                },
+                {
+                    "bbox": [
+                        296,
+                        791,
+                        302,
+                        799
+                    ],
+                    "type": "page_number",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                296,
+                                791,
+                                302,
+                                799
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        296,
+                                        791,
+                                        302,
+                                        799
+                                    ],
+                                    "type": "text",
+                                    "content": "4"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 10
+                }
+            ],
+            "page_size": [
+                595,
+                842
+            ],
+            "page_idx": 4
+        },
+        {
+            "para_blocks": [
+                {
+                    "bbox": [
+                        66,
+                        112,
+                        525,
+                        228
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                112,
+                                525,
+                                228
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        112,
+                                        525,
+                                        228
+                                    ],
+                                    "type": "text",
+                                    "content": "underground sewage pipelines, and the diseases are annotated by professional researchers, including two types of structural diseases, Corrosion and Crack, that are widely present and are more harmful to pipelines. We give detailed statistics on the dataset to guide domain-related model design, which indicates that some detection models that introduce disease clustering as supervised information may have better performance. Based on the study on area distribution of the disease area, the disease detection model is required to have the ability to detect small objects. We hope that this dataset will advance the field of pipeline disease detection research, at the same time, according to the disease grading standards formulated by government departments and industry leading companies, we will release a larger dataset containing disease grading information."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 4
+                },
+                {
+                    "bbox": [
+                        69,
+                        239,
+                        123,
+                        250
+                    ],
+                    "type": "title",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                69,
+                                239,
+                                123,
+                                250
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        239,
+                                        123,
+                                        250
+                                    ],
+                                    "type": "text",
+                                    "content": "References"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 5
+                },
+                {
+                    "bbox": [
+                        69,
+                        251,
+                        526,
+                        657
+                    ],
+                    "type": "list",
+                    "angle": 0,
+                    "index": 19,
+                    "blocks": [
+                        {
+                            "bbox": [
+                                69,
+                                251,
+                                525,
+                                290
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        251,
+                                        525,
+                                        290
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                251,
+                                                525,
+                                                290
+                                            ],
+                                            "type": "text",
+                                            "content": "[1] Y. Mano, R. Ishikawa, Y. Yamada and T. Nakamura 2018 Development of Contraction Force Control System of Peristaltic Crawling Robot for Sewer Pipe Inspection IEEE/ASME International Conference on Advanced Intelligent Mechatronics pp 936-941"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 6
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                291,
+                                525,
+                                315
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        291,
+                                        525,
+                                        315
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                291,
+                                                525,
+                                                315
+                                            ],
+                                            "type": "text",
+                                            "content": "[2] D. Alejo, F. Caballero and L. Merino 2019 A Robust Localization System for Inspection Robots in Sewer Networks Sensors vol. 19, no. 22"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 7
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                316,
+                                526,
+                                341
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        316,
+                                        526,
+                                        341
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                316,
+                                                526,
+                                                341
+                                            ],
+                                            "type": "text",
+                                            "content": "[3] J. Lu and D. Zhu 2018 Design of city sewer dredging robot with variable diameter Journal of Physics: Conference Series vol. 1074, pp. 26-28"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 8
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                341,
+                                524,
+                                365
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        341,
+                                        524,
+                                        365
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                341,
+                                                524,
+                                                365
+                                            ],
+                                            "type": "text",
+                                            "content": "[4] S. I. Hassan, L. M. Dang, I. Mehmood and et al 2019 Underground sewer pipe condition assessment based on convolutional neural networks Automation in Construction vol. 106"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 9
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                366,
+                                525,
+                                405
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        366,
+                                        525,
+                                        405
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                366,
+                                                525,
+                                                405
+                                            ],
+                                            "type": "text",
+                                            "content": "[5] D. Li, A. Cong and S. Guo 2019 Sewer damage detection from imbalanced CCTV inspection data using deep convolutional neural networks with hierarchical classification Automation in Construction vol. 101, pp. 199-208"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 10
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                405,
+                                524,
+                                429
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        405,
+                                        524,
+                                        429
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                405,
+                                                524,
+                                                429
+                                            ],
+                                            "type": "text",
+                                            "content": "[6] Y. Tan, R. Cai, J. Li, P. Chen and M. Wang 2021 Automatic detection of sewer defects based on improved you only look once algorithm Automation in Construction vol. 131"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 11
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                430,
+                                525,
+                                467
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        430,
+                                        525,
+                                        467
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                430,
+                                                525,
+                                                467
+                                            ],
+                                            "type": "text",
+                                            "content": "[7] A. Hawari, M. Alamin, F. Alkadour, M. Elmasry and T. Zayed 2018 Automated defect detection tool for closed circuit television (cctv) inspected sewer pipelines Automation in Construction vol. 89, pp. 99-109"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 12
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                468,
+                                524,
+                                492
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        468,
+                                        524,
+                                        492
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                468,
+                                                524,
+                                                492
+                                            ],
+                                            "type": "text",
+                                            "content": "[8] X. FANG, W. GUO, Q. LI et al. 2020 Sewer Pipeline Fault Identification Using Anomaly Detection Algorithms on Video Sequences IEEE Access vol. 8, pp. 39574-39586"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 13
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                493,
+                                524,
+                                516
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        493,
+                                        524,
+                                        516
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                493,
+                                                524,
+                                                516
+                                            ],
+                                            "type": "text",
+                                            "content": "[9] J. B. Haurum and T. B. Moeslund 2020 A Survey on Image-Based Automation of CCTV and SSET Sewer Inspections Automation in Construction vol. 111"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 14
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                517,
+                                525,
+                                555
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        517,
+                                        525,
+                                        555
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                517,
+                                                525,
+                                                555
+                                            ],
+                                            "type": "text",
+                                            "content": "[10] M. Wang, H. Luo and J. C. Cheng 2021 Towards an automated condition assessment framework of underground sewer pipes based on closed-circuit television (CCTV) images Tunnelling and Underground Space Technology vol. 110"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 15
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                555,
+                                525,
+                                592
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        555,
+                                        525,
+                                        592
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                555,
+                                                525,
+                                                592
+                                            ],
+                                            "type": "text",
+                                            "content": "[11] X. Yin, Y. Chen, A. Bouferguene, H. Zaman, M. Al-Hussein and L. Kurach 2020 A deep learning-based framework for an automated defect detection system for sewer pipes Automation in Construction vol. 109"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 16
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                593,
+                                524,
+                                618
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        593,
+                                        524,
+                                        618
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                593,
+                                                524,
+                                                618
+                                            ],
+                                            "type": "text",
+                                            "content": "[12] G. Pan, Y. Zheng, S. Guo and Y. Lv 2020 Automatic sewer pipe defect semantic segmentation based on improved U-Net Automation in Construction vol. 119"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 17
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                619,
+                                525,
+                                657
+                            ],
+                            "type": "ref_text",
+                            "angle": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        619,
+                                        525,
+                                        657
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                69,
+                                                619,
+                                                525,
+                                                657
+                                            ],
+                                            "type": "text",
+                                            "content": "[13] S. S. Kumar, M. Wang, P. Dulcy M. Abraham, M. R. Jahanshahi, T. Iseley and a. J. C. P. Cheng 2020 Deep learning-based automated detection of sewer defects in CCTV videos Journal of Computing in Civil Engineering vol. 34"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 18
+                        }
+                    ],
+                    "sub_type": "ref_text"
+                },
+                {
+                    "bbox": [
+                        69,
+                        669,
+                        158,
+                        681
+                    ],
+                    "type": "title",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                69,
+                                669,
+                                158,
+                                681
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        669,
+                                        158,
+                                        681
+                                    ],
+                                    "type": "text",
+                                    "content": "Acknowledgments"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 20
+                },
+                {
+                    "bbox": [
+                        66,
+                        682,
+                        525,
+                        757
+                    ],
+                    "type": "text",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                682,
+                                525,
+                                757
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        682,
+                                        525,
+                                        757
+                                    ],
+                                    "type": "text",
+                                    "content": "This work is supported by the Beijing Municipal Natural Science Foundation (4202065), Beijing Nova Program of Science and Technology (Z191100001119106, Z211100002121147), National Key Research and Development Program of China (2021YFC3090304), National Natural Science Foundation of China (62076016, 61972016, 62176260), and supported by the Fundamental Research Funds for the Central Universities (J210409). This work is implemented during the domestic visiting scholar program supported by School of Continuing Education of Peking University (2022-2023)."
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 21
+                }
+            ],
+            "discarded_blocks": [
+                {
+                    "bbox": [
+                        67,
+                        55,
+                        365,
+                        67
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                55,
+                                365,
+                                67
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        55,
+                                        365,
+                                        67
+                                    ],
+                                    "type": "text",
+                                    "content": "International Conference on Software Engineering and Machine Learning"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 0
+                },
+                {
+                    "bbox": [
+                        461,
+                        55,
+                        524,
+                        67
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                461,
+                                55,
+                                524,
+                                67
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        461,
+                                        55,
+                                        524,
+                                        67
+                                    ],
+                                    "type": "text",
+                                    "content": "IOP Publishing"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 1
+                },
+                {
+                    "bbox": [
+                        67,
+                        69,
+                        222,
+                        81
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                67,
+                                69,
+                                222,
+                                81
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        67,
+                                        69,
+                                        222,
+                                        81
+                                    ],
+                                    "type": "text",
+                                    "content": "Journal of Physics: Conference Series"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 2
+                },
+                {
+                    "bbox": [
+                        271,
+                        69,
+                        524,
+                        81
+                    ],
+                    "type": "header",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                271,
+                                69,
+                                524,
+                                81
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        271,
+                                        69,
+                                        524,
+                                        81
+                                    ],
+                                    "type": "text",
+                                    "content": "2646 (2023) 012011 doi:10.1088/1742-6596/2646/1/012011"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 3
+                },
+                {
+                    "bbox": [
+                        296,
+                        792,
+                        302,
+                        799
+                    ],
+                    "type": "page_number",
+                    "angle": 0,
+                    "lines": [
+                        {
+                            "bbox": [
+                                296,
+                                792,
+                                302,
+                                799
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        296,
+                                        792,
+                                        302,
+                                        799
+                                    ],
+                                    "type": "text",
+                                    "content": "5"
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 22
+                }
+            ],
+            "page_size": [
+                595,
+                842
+            ],
+            "page_idx": 5
+        }
+    ],
+    "_backend": "vlm",
+    "_version_name": "2.6.4"
+}

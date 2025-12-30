@@ -1,0 +1,3683 @@
+[
+    {
+        "type": "text",
+        "text": "A REAL-TIME CONCRETE CRACK DETECTION AND SEGMENTATION MODEL BASED ON YOLOv11",
+        "text_level": 1,
+        "bbox": [
+            189,
+            119,
+            805,
+            165
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Shaoze Huang*",
+        "bbox": [
+            171,
+            229,
+            285,
+            243
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "MSE, AHUT, China",
+        "bbox": [
+            158,
+            244,
+            295,
+            256
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "szhuang0601@163.com",
+        "bbox": [
+            147,
+            257,
+            307,
+            271
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Qi Liu",
+        "bbox": [
+            383,
+            229,
+            433,
+            243
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "IoT, AHUT, China",
+        "bbox": [
+            346,
+            244,
+            470,
+            256
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "liuqi04@126.com",
+        "bbox": [
+            348,
+            257,
+            468,
+            271
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Chao Chen",
+        "bbox": [
+            542,
+            229,
+            624,
+            242
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "IST, SDUST, China",
+        "bbox": [
+            517,
+            244,
+            650,
+            256
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "cchen1107@126.com",
+        "bbox": [
+            511,
+            257,
+            656,
+            270
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Yuhang Chen",
+        "bbox": [
+            723,
+            229,
+            821,
+            243
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "MSE, AHUT, China",
+        "bbox": [
+            705,
+            244,
+            841,
+            256
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "yhchen2508@163.com",
+        "bbox": [
+            694,
+            257,
+            849,
+            271
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "ABSTRACT",
+        "text_level": 1,
+        "bbox": [
+            449,
+            321,
+            545,
+            335
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Accelerated aging of transportation infrastructure in the rapidly developing Yangtze River Delta region necessitates efficient concrete crack detection, as crack deterioration critically compromises structural integrity and regional economic growth. To overcome the limitations of inefficient manual inspection and the suboptimal performance of existing deep learning models, particularly for small-target crack detection within complex backgrounds, this paper proposes YOLOv11-KW-TA-FP, a multi-task concrete crack detection and segmentation model based on the YOLOv11n architecture. The proposed model integrates a three-stage optimization framework: (1) Embedding dynamic KernelWarehouse convolution (KWConv) within the backbone network to enhance feature representation through a dynamic kernel sharing mechanism; (2) Incorporating a triple attention mechanism (TA) into the feature pyramid to strengthen channel-spatial interaction modeling; and (3) Designing an FP-IoU loss function to facilitate adaptive bounding box regression penalization. Experimental validation demonstrates that the enhanced model achieves significant performance improvements over the baseline, attaining  $91.3\\%$  precision,  $76.6\\%$  recall, and  $86.4\\%$  mAP@50. Ablation studies confirm the synergistic efficacy of the proposed modules. Furthermore, robustness tests indicate stable performance under conditions of data scarcity and noise interference. This research delivers an efficient computer vision solution for automated infrastructure inspection, exhibiting substantial practical engineering value.",
+        "bbox": [
+            169,
+            343,
+            823,
+            579
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Keywords Concrete cracks, YOLOv11n, Real-time detection, Robustness.",
+        "bbox": [
+            111,
+            598,
+            604,
+            613
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "1 Introduction",
+        "text_level": 1,
+        "bbox": [
+            112,
+            640,
+            253,
+            656
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "The Yangtze River Delta, situated at the estuary of the Yangtze River, encompasses Shanghai, Jiangsu Province, Zhejiang Province, and Anhui Province. As one of the most economically vibrant and dynamic regions in China, it plays a pivotal role in the country's economic development and is a crucial area for research and innovation. In the early days, the transportation infrastructure in this area mainly consisted of stone bridges and dirt roads. Later, with the development of industry, railway bridges and highway bridges were gradually built to meet the transportation needs. Rapid urbanization in the Yangtze River Delta has accelerated infrastructure aging. Critical structures like bridges and tunnels now face deterioration issues while supporting transportation demands. Concrete crack issues, as a common type of damage, seriously affect the structural safety and durability. Therefore, timely and accurate detection of cracks has become an important task for infrastructure maintenance and safety management[1, 2].",
+        "bbox": [
+            109,
+            676,
+            883,
+            801
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Traditional concrete crack detection mainly relies on visual inspection by humans. However, this method is time-consuming, labor-intensive, and easily affected by human factors, leading to subjectivity and inconsistency in the detection results[3, 4]. Moreover, it is difficult to inspect special locations such as bridge piers and the interiors of tunnels, which increases safety hazards[5].",
+        "bbox": [
+            109,
+            806,
+            883,
+            864
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "In recent years, deep learning has achieved remarkable advancements in the field of computer vision, with object detection being a prime example. YOLO, serving as an efficient real-time object detection framework, has found extensive applications in traffic monitoring, security surveillance, and industrial detection[6, 7]. As the latest iteration,",
+        "bbox": [
+            109,
+            869,
+            883,
+            912
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "aside_text",
+        "text": "arXiv:2508.11517v1 [cs.CV] 15 Aug 2025",
+        "bbox": [
+            22,
+            273,
+            60,
+            722
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "image",
+        "img_path": "images/bdda919abd43acbf37068822d76b8ac9162017d2dc70aeb3403abe017417008a.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            127,
+            88,
+            486,
+            292
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "image",
+        "img_path": "images/87afdac5383ed1ae510966b4f61557a36a053e8c57d0f05f6a88f9d6a13a87b5.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            493,
+            93,
+            867,
+            292
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "image",
+        "img_path": "images/5faf1f7e3160ddd7a2b2486e554fa6c4bc8647198c7356f095790b3c847d4457.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            127,
+            297,
+            485,
+            343
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "image",
+        "img_path": "images/4e0cc6f2cfd337a37a21f9ea0c5149e71823d711786af53b7e62dd7826c5ba91.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            493,
+            296,
+            867,
+            342
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "image",
+        "img_path": "images/95f2324ed73af9c849caa7ce3ad2495a7434b4c71ec48a7fa8a40b5e737c84b4.jpg",
+        "image_caption": [
+            "Figure 1: YOLOv11 Model Architecture."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            127,
+            345,
+            486,
+            392
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "image",
+        "img_path": "images/4730b0dcb4543bcc38b45f1795921241828fd5709c873025cb277265173faf7c.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            493,
+            345,
+            867,
+            392
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "YOLOv11 has emerged as a preferred solution for concrete crack detection, thanks to its efficient feature extraction capability and superior real-time processing performance[8, 9]. Its model structure is shown in Figure 1.",
+        "bbox": [
+            109,
+            460,
+            883,
+            489
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "This research, leveraging the YOLOv11 model, has developed an intelligent system dedicated to crack detection in the infrastructure within the Yangtze River Delta region. The system is capable of swiftly and precisely identifying concrete cracks in bridges, tunnels, and water conservancy facilities, offering a more efficient and accurate approach in comparison with traditional methods. The datasets utilized encompass a diverse range of crack images from the Yangtze River Delta, guaranteeing the model's generalization ability and precision[10, 11]. This study holds substantial importance for enhancing detection efficiency and offers theoretical and technical backing for intelligent infrastructure maintenance[4, 12]. Through this research, it is intended to present an innovative solution for the safety management of infrastructure not only in the Yangtze River Delta but also in broader regions, and to advance intelligent detection and maintenance[13, 14]. Against the backdrop of rapid urbanization, expansive transportation networks, and the limitations of visual inspection, this study strives to tackle the challenge of concrete crack detection in complex backgrounds by creating an efficient deep convolutional neural network (CNN) model. The key contributions of this paper are as follows:",
+        "bbox": [
+            109,
+            494,
+            883,
+            660
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "list",
+        "sub_type": "text",
+        "list_items": [
+            "- Backbone network: Replace the original convolution with KernelWarehouse (KW) convolution, dynamically adjust the convolution kernel weights, enhance feature representation, reduce computational complexity, and improve the model's robustness as well as its ability to capture fine-grained features and perform multiscale fusion;",
+            "- Feature pyramid network: Integrate a triple attention (TA) mechanism to enhance feature extraction and optimize multiscale object detection, thereby improving the detection capabilities for small and occluded objects; strengthen pixel-level feature representation, enhance the utilization efficiency of contextual information, and optimize the segmentation performance for small objects and complex backgrounds, thus improving the overall model performance and robustness;",
+            "- Loss function: Construct an FP-IoU loss function for the object detection task. By employing adaptive penalty factors and interval mapping, it improves the precision of bounding box regression and pixel-level localization, enhances the detection and segmentation capabilities for small objects and low-quality samples, accelerates model convergence, increases training efficiency, and strengthens generalization and robustness."
+        ],
+        "bbox": [
+            156,
+            686,
+            883,
+            912
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_number",
+        "text": "2",
+        "bbox": [
+            493,
+            935,
+            504,
+            946
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "2 Related Work",
+        "text_level": 1,
+        "bbox": [
+            116,
+            89,
+            264,
+            106
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "With the advancement of computer science, a substantial number of computer vision algorithms have been proposed and applied across multiple domains. Current crack detection models can be categorized into two main approaches: classical-based methods and deep learning-based methods[15],[47].",
+        "bbox": [
+            116,
+            125,
+            885,
+            167
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "2.1 Traditional Crack Detection Methods",
+        "text_level": 1,
+        "bbox": [
+            116,
+            191,
+            415,
+            208
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "In the field of crack detection, traditional image processing methods have formed a complete technical system. In early research, algorithms based on edge detection were widely explored. Dorafshan et al. compared the performance of spatial domain gradient detection and mathematical morphology gradient detection in concrete crack identification, and the results showed that the latter had better response efficiency under complex background conditions[16]. To address the limitations of the Sobel operator, Zhang et al. increased six directional templates and improved the threshold segmentation algorithm, effectively improving the positioning accuracy and continuity of crack edges[17]. The combination of morphological operations and threshold segmentation has also been proven to be effective. Jia's research on traditional methods showed that adaptive local thresholding combined with dilation and erosion operations could effectively suppress light interference and enhance crack features[19]. Xu et al. used iterative threshold segmentation combined with morphological dilation to connect cracks, successfully eliminating the interference of pseudo-edges[18]. Otsu's method has been widely used in threshold selection; for example, Fan optimized edge detection in noisy environments by combining Gaussian filtering with Otsu's method[20]. In terms of algorithm performance evaluation, Li et al. used support vector machines (SVM) to classify crack shapes, combined with adaptive gray-scale transformation and geometric feature extraction, significantly improving the accuracy of distinguishing diagonal and mesh cracks[21]. The inherent limitations of traditional methods have led to the emergence of multi-technology integration strategies. For example, Shi et al. combined pulsed eddy currents with electromagnetic acoustic transducers to achieve quantitative detection of cracks in metal components, effectively overcoming the limitations of single eddy current detection, which is susceptible to lift-off effects[22].",
+        "bbox": [
+            116,
+            220,
+            885,
+            470
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Although traditional crack detection methods play a fundamental role, they have inherent limitations: they heavily rely on manual feature engineering (such as hand-designed filters and thresholds), making it difficult to adapt to diverse crack shapes; they lack the ability to model complex contextual interactions, leading to false detections in noisy environments such as rebar shadows or surface stains; and they have poor generalization to different infrastructure scenarios, especially for low-contrast or blurry cracks. To overcome these challenges, the proposed YOLOv11-KW-TA-FP model introduces three synergistic innovations: KernelWarehouse convolution (KWConv) dynamically adjusts convolutional kernel weights at the unit level, autonomously capturing multi-scale crack features without human intervention; the triple attention mechanism (TA) coordinates spatial, channel, and long-range dependencies to suppress background interference while enhancing key crack features; and the FP-IoU loss function, combined with adaptive geometric penalties and non-monotonic attention mechanisms, improves the localization accuracy of low-quality samples. These innovations collectively break through the limitations of traditional methods, providing a robust automated detection solution for modern infrastructure.",
+        "bbox": [
+            116,
+            476,
+            885,
+            642
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "2.2 YOLO for Crack Detection",
+        "text_level": 1,
+        "bbox": [
+            116,
+            667,
+            346,
+            681
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "In recent years, deep learning models have made breakthrough progress in the field of computer vision. Although the concept of deep learning was proposed long ago, its widespread application began with the introduction of graphics processing units (GPUs) in 2009[23]. The remarkable parallel computing capabilities of GPUs have significantly accelerated the training process of deep neural networks in image classification and recognition tasks[24]. As infrastructure continues to age, crack detection has become increasingly crucial for ensuring the safety of structures such as roads and buildings. Benefiting from its efficient and real-time detection characteristics, the YOLO series of models have been widely adopted in the field of crack detection.",
+        "bbox": [
+            116,
+            696,
+            885,
+            792
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The YOLO-DL framework[25] integrates the YOLO and DeepLabv3+ network architectures, proposing a model suitable for multi-task recognition of concrete cracks. By introducing attention mechanisms and feature calibration modules, the model significantly improves its performance in crack classification, localization, and segmentation tasks, especially showing advantages in real-time detection. Hu et al. proposed a wind turbine damage detection method based on YOLO, which combines deep learning with UAV inspection technology to achieve high-precision, real-time damage detection and segmentation[26]. In the field of concrete crack detection, compared with other mainstream algorithms such as Faster R-CNN and SSD, YOLO demonstrates stronger robustness and accuracy, especially in dealing with tiny cracks and imbalanced data distributions, where its performance is more stable[27].",
+        "bbox": [
+            116,
+            799,
+            885,
+            910
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "page_number",
+        "text": "3",
+        "bbox": [
+            493,
+            936,
+            503,
+            946
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "image",
+        "img_path": "images/59c35a6fd719109aa3b963d472b7abc24aa147369d5914e219cdeaafc01dc5ec.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            114,
+            88,
+            486,
+            301
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "image",
+        "img_path": "images/ad0f64982ce19b38d1172c3b758462b958cc9918778a3f9b880da5e8e7f63aee.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            490,
+            93,
+            880,
+            301
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "image",
+        "img_path": "images/ef4b29d8f7b7ebbaeb92eecbb28be2d01fbb03233e3fa2dd388a0df6ed59e033.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            112,
+            303,
+            486,
+            349
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "image",
+        "img_path": "images/aad123716dbd0b95f7496a25e21f4b5414de6027a824d6334fe6b21ee8f2e555.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            490,
+            303,
+            880,
+            349
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "image",
+        "img_path": "images/77fbb97c59db71f8ea6a9bb5026abf06d304e2f720ae048602013645c1a954ae.jpg",
+        "image_caption": [
+            "Figure 2: YOLOv11-KW-TA-FP Model Architecture."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            114,
+            352,
+            486,
+            402
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "image",
+        "img_path": "images/dd900f45abcbe1152830ce41b321e73146ccba1c96ec881ba1a3098fc575b6b7.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            490,
+            352,
+            880,
+            402
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "To optimize the performance of YOLO in road defect detection, researchers have proposed a series of improved algorithms. For example, the improved method that combines a partial Transformer structure with multi-focus attention mechanism effectively improves detection accuracy while ensuring real-time performance[28]. In the scenario of rock crack detection, the YOLO-based method successfully meets the challenges of complex underground environments and achieves accurate identification of crack types and features[29]. DAPONet proposes an improved YOLO model that integrates a dual-attention mechanism for real-time road damage detection and achieves excellent performance on multiple public datasets[30]. The CL-PSDD model, which utilizes contrastive learning techniques and the YOLO framework, demonstrates strong crack detection capabilities under the unsupervised learning paradigm[31].",
+        "bbox": [
+            109,
+            452,
+            883,
+            564
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "However, challenges persist. Current models exhibit reduced precision in high-noise environments (e.g., construction sites with debris interference) and struggle with low-contrast micro-cracks. The requirement for extensive labeled datasets increases implementation costs, and further optimization is needed to balance precision with computational efficiency in resource-constrained field deployments.",
+        "bbox": [
+            109,
+            569,
+            883,
+            626
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3 Proposed Method",
+        "text_level": 1,
+        "bbox": [
+            112,
+            643,
+            294,
+            660
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "YOLOv11n, by streamlining network layers and reducing parameters and computations, delivers faster inference and a more compact model, fitting for resource - limited devices[32, 33]. Therefore, this paper selects it as the baseline model. Despite its excellent detection performance, YOLOv11n still has room for improvement in the concrete crack detection scenario. Based on YOLOv11n, this paper proposes the YOLOv11-KW-TA-FP model for concrete crack detection, the structure of which is shown in Figure 2. The red modules mark the key improvements to YOLOv11 in this study: swapping standard convolution in the backbone network with KernelWarehouse Convolution (KWConv), adding a TA mechanism module after each upsample module in the feature pyramid network (Neck), and substituting the original CIOU loss function with the FP-IoU loss function in the detection head (Head).",
+        "bbox": [
+            109,
+            675,
+            883,
+            787
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3.1 KernelWarehouse Dynamic Convolution",
+        "text_level": 1,
+        "bbox": [
+            112,
+            801,
+            434,
+            816
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "In object detection tasks, background interference remains a persistent challenge. To enhance the model's capacity to handle complex scenes and improve detection precision, this study integrates KernelWarehouse[34] into the backbone network. Developed by Intel in August 2023, KernelWarehouse represents a generalized dynamic convolution framework that achieves an optimal equilibrium between parameter efficiency and representational power. As illustrated in Figure 3, the method comprises three core components: (1) adaptive kernel partitioning, (2) cross-layer warehouse sharing, and (3) the normalized attention function (NAF) for dynamic kernel fusion.",
+        "bbox": [
+            109,
+            827,
+            883,
+            912
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "page_number",
+        "text": "4",
+        "bbox": [
+            493,
+            936,
+            503,
+            946
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3.1.1 Kernel partition",
+        "text_level": 1,
+        "bbox": [
+            112,
+            90,
+            279,
+            104
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Traditional dynamic convolution directly mixes complete convolution kernels, resulting in a linear increase in parameters with the number of kernels. KernelWarehouse innovatively splits a single convolution kernel evenly along the channel dimension into m non-overlapping kernel units, with each unit having a dimension of only  $1 / \\mathrm{m}$  of the original kernel. For example, when m=16, the number of parameters for each kernel unit is reduced to 1/16 of the original kernel. By refining the mixing granularity from the complete kernel to the kernel unit level, this method allows a significant increase in the number n of kernel units stored in the warehouse under the same parameter budget (e.g., n=108), breaking through the traditional method's limit of n<10. Each kernel unit is dynamically generated through linear combination, significantly improving parameter efficiency and feature representation capability.",
+        "bbox": [
+            109,
+            114,
+            883,
+            227
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "3.1.2 Warehouse sharing",
+        "text_level": 1,
+        "bbox": [
+            112,
+            239,
+            302,
+            255
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "To enhance cross-layer parameter reuse, KernelWarehouse designs a hierarchical sharing mechanism: convolution layers in the same stage share the same warehouse E, while different stages use independent warehouses. In modern convolutional networks (such as ResNet and MobileNet), layers in the same stage usually have the same kernel size. The dimension of the unified kernel unit is determined by calculating the greatest common divisor of the kernel sizes of each layer. For example, the kernels of adjacent layers with sizes  $3 \\times 3 \\times 64 \\times 128$  and  $3 \\times 3 \\times 128 \\times 256$  can be uniformly split into kernel units of size  $1 \\times 1 \\times 64 \\times 64$ . This strategy explicitly enhances the inter-layer parameter dependency, allowing the model to keep the overall parameter increase controllable when the total number of kernel units n increases. Experiments show that the wider the sharing range (cross-layer > single layer), the more significant the performance improvement.",
+        "bbox": [
+            109,
+            263,
+            883,
+            388
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "3.1.3 Normalized Attention Function",
+        "text_level": 1,
+        "bbox": [
+            112,
+            402,
+            383,
+            417
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "The new attention function (NAF) proposed by KernelWarehouse optimizes the dynamic learning process of large-scale kernel unit mixing through three mechanisms. The core innovation of this function is the use of a linear normalization method instead of the traditional Softmax, dividing the original attention score  $z_{ij}$  by the sum of the absolute values of all candidate kernel unit scores. This breaks the traditional attention's non-negative weight constraint, allowing negative values to participate in the mixing calculation to enhance the adversarial interaction between different kernel units. To alleviate the optimization difficulties of large-scale parameter mixing in the early stages of training, a temperature annealing mechanism is introduced: within the first 20 training epochs, the temperature coefficient  $\\tau$  linearly decays from 1 to 0, enabling the model to gradually transition from deterministic initialization to dynamic attention adjustment. During the initialization phase, a strong association between kernel units and mixing positions is established through predefined binary masks  $\\beta_{ij}$ . When the parameter budget  $b \\geq 1$ , each mixing unit is forced to bind at least one exclusive kernel unit, while when  $b < 1$ , each kernel unit is limited to serving at most one mixing position, ensuring the interpretability and training stability of the mixing system.",
+        "bbox": [
+            109,
+            426,
+            883,
+            594
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "3.2 Triple Attention Mechanism",
+        "text_level": 1,
+        "bbox": [
+            112,
+            608,
+            352,
+            625
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "To address the diversity and morphological specificity of concrete crack detection targets, the network requires adaptive feature attention allocation that dynamically adjusts focus regions based on spatial distribution and geometric characteristics. This prevents information conflicts while maintaining robust feature learning across heterogeneous targets. Our refined Triple Attention (TA)[35] mechanism, as depicted in Figure 4, specifically addresses scattered and multi-scale crack patterns through three parallel branches:",
+        "bbox": [
+            109,
+            633,
+            883,
+            705
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "list",
+        "sub_type": "text",
+        "list_items": [
+            "1. Spatial Attention Branch: Prioritizes crack regions via 2D positional encoding;",
+            "2. Channel Attention Branch: Amplifies crack-relevant feature channels using squeeze-excitation;",
+            "3. Cross-Dimensional Fusion Branch: Harmonizes multi-scale features through learnable gating."
+        ],
+        "bbox": [
+            148,
+            715,
+            808,
+            766
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Each branch independently captures inter-dimensional interactions while preserving parameter efficiency through shared kernel warehouses.",
+        "bbox": [
+            109,
+            779,
+            883,
+            808
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "In the proposed network architecture, the first two branches focus on modeling interactions between channel (C) and spatial (H/W) dimensions, enabling precise adjustment of feature weights to prioritize critical crack characteristics. For dispersed targets such as low-density crack distributions, this channel-spatial attention mechanism enhances discriminative features while enriching contextual information from peripheral regions, effectively addressing dispersion challenges. The third branch integrates an LSTM-inspired design to establish long-range spatial attention, capturing contextual dependencies across extended spatial ranges (up to 100 pixels) for dynamic weight adjustment in distant regions[36].",
+        "bbox": [
+            109,
+            814,
+            883,
+            912
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "page_number",
+        "text": "5",
+        "bbox": [
+            493,
+            935,
+            504,
+            946
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "image",
+        "img_path": "images/93ee38cb8e82b8ab8be5c66dbe6d8c33b72f8b372f9351bab3f44afc51038adb.jpg",
+        "image_caption": [
+            "Figure 3: Schematic illustration of KernelWarehouse."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            120,
+            85,
+            877,
+            397
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "image",
+        "img_path": "images/ce387f4537fb57ae1c976b8a27db8d16ef52e7403383ca96638da254d0584a51.jpg",
+        "image_caption": [
+            "Figure 4: Schematic illustration of Triple Attention Mechanism."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            117,
+            439,
+            872,
+            724
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Conventional triple attention mechanisms often exhibit localized bias, overemphasizing specific high-contrast regions while neglecting sparse or morphologically diverse cracks[37]. The mechanism effectively enhances the detection of complex targets by jointly optimizing feature details and global information.",
+        "bbox": [
+            109,
+            779,
+            883,
+            824
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "3.2.1 First Branch: Channel Attention",
+        "text_level": 1,
+        "bbox": [
+            112,
+            843,
+            397,
+            858
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "First, global max pooling and global average pooling are operated on the input feature map of size  $\\mathrm{C} \\times \\mathrm{H} \\times \\mathrm{W}$  to compress the spatial dimensions, resulting in two feature maps of size  $1 \\times 1 \\times \\mathrm{C}$ . Then, these two feature maps are input into a shared multilayer perceptron (MLP) to obtain two new feature maps of size  $1 \\times 1 \\times \\mathrm{C}$ . Finally, the outputs of the MLP",
+        "bbox": [
+            109,
+            869,
+            883,
+            912
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "page_number",
+        "text": "6",
+        "bbox": [
+            493,
+            936,
+            504,
+            946
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "are added together and processed through a Sigmoid activation function to generate the final channel attention weight matrix  $M_{c}$ . The formula for this is:",
+        "bbox": [
+            111,
+            90,
+            885,
+            122
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nM _ {c} \\in R ^ {C \\times 1 \\times 1} \\tag {1}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            444,
+            138,
+            885,
+            157
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "where the first layer of the MLP has C/r neurons with a ReLU activation function, and the second layer has C neurons. To reduce the computational parameters, the MLP introduces a dimensionality reduction factor r, which is represented by the formula:",
+        "bbox": [
+            111,
+            167,
+            887,
+            210
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nM _ {c} \\in R ^ {C / r \\times 1 \\times 1} \\tag {2}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            439,
+            228,
+            885,
+            247
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Combining the above steps, the formula for channel attention can be summarized as:",
+        "bbox": [
+            112,
+            257,
+            671,
+            273
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nM _ {c} (F) = \\sigma \\left(\\operatorname {M L P} \\left(\\operatorname {A v g P o o l} (F)\\right) + \\operatorname {M L P} \\left(\\operatorname {M a x P o o l} (F)\\right)\\right) \\tag {3}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            303,
+            291,
+            885,
+            316
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Using  $F_{avg}^{c}$  and  $F_{\\max}^{c}$  to represent the global average pooling feature and the global max pooling feature respectively, the formula can be simplified as:",
+        "bbox": [
+            111,
+            325,
+            885,
+            356
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nM _ {c} (F) = \\sigma \\left(\\mathrm {M L P} \\left(F _ {\\text {a v g}} ^ {c}\\right) + \\mathrm {M L P} \\left(F _ {\\max } ^ {c}\\right)\\right) \\tag {4}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            354,
+            373,
+            885,
+            400
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The first branch decouples the processing of spatial and channel features while establishing cross-dimensional interactions. Spatial features, such as crack morphology and positional patterns, undergo coordinate-sensitive recalibration through deformable convolutions. Concurrently, channel features including texture gradients and chromatic characteristics are adaptively weighted via squeeze-excitation mechanisms. A cross-attention module synthesizes these decoupled representations by aligning spatial discontinuities with anomalous channel responses, prioritizing fracture-critical regions where material properties and geometric anomalies exhibit strong correlations. This joint optimization enables precise localization of crack boundaries while suppressing background interference from similar textures.",
+        "bbox": [
+            111,
+            409,
+            888,
+            508
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "3.2.2 Second Branch: Spatial Attention",
+        "text_level": 1,
+        "bbox": [
+            112,
+            522,
+            403,
+            537
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "During the channel compression stage, the input feature tensor (with dimensions  $\\mathrm{C}\\times \\mathrm{H}\\times \\mathrm{W}$ ) is first subjected to global maximum pooling and global average pooling. This reduces the dimensionality along the channel axis to generate two two-dimensional feature maps (each with size  $\\mathrm{H}\\times \\mathrm{W}\\times 1$ ). These two channel-compressed results are then concatenated along the channel axis to form a composite feature tensor containing dual spatial information (with dimensions  $\\mathrm{H}\\times \\mathrm{W}\\times 2$ ). Finally, after being processed by the Sigmoid function for nonlinear normalization, the spatial attention weight matrix  $M_{s}$  is derived. Its mathematical representation is as follows:",
+        "bbox": [
+            111,
+            546,
+            887,
+            632
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nM _ {s} (F) \\in R ^ {H, W} \\tag {5}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            437,
+            648,
+            885,
+            667
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Similarly, the pooling methods in the spatial dimension generate two-dimensional feature maps, with the formulas for average pooling and max pooling being:",
+        "bbox": [
+            111,
+            676,
+            885,
+            708
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nF _ {\\text {a v g}} ^ {s} \\in R ^ {1 \\times H \\times W} \\tag {6}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            436,
+            724,
+            885,
+            744
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nF _ {\\max } ^ {s} \\in R ^ {1 \\times H \\times W} \\tag {7}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            434,
+            750,
+            883,
+            768
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Finally, based on the formulas for average pooling and max pooling, the formula for spatial attention can be derived as:",
+        "bbox": [
+            111,
+            779,
+            885,
+            796
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nM _ {s} (F) = \\sigma \\left(f ^ {7 \\times 7} \\left[ F _ {\\mathrm {a v g}} ^ {s}; F _ {\\mathrm {m a x}} ^ {s} \\right]\\right) \\tag {8}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            383,
+            811,
+            885,
+            834
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The second branch enhances the first branch through differentiated weighting strategies for spatial and channel features, optimizing multi-scale feature representation. In scenarios with dispersed targets, spatial recalibration prioritizes target distribution patterns, while channel modulation adaptively emphasizes discriminative attributes. The synergistic interplay between these dimensions generates more discriminative feature embeddings by resolving spatial-channel misalignments in low-contrast regions.",
+        "bbox": [
+            111,
+            840,
+            885,
+            914
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "page_number",
+        "text": "7",
+        "bbox": [
+            493,
+            935,
+            504,
+            946
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "3.2.3 Third Branch: Temporal Attention",
+        "text_level": 1,
+        "bbox": [
+            112,
+            90,
+            410,
+            104
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The tertiary pathway incorporates an LSTM-inspired architecture comprising three operational phases. The forget gate mechanism selectively filters obsolete data elements from the memory state. Subsequently, the input gate governs the integration of novel information into the updated cellular state. Concurrently, the output gate modulates information propagation through sigmoidal gating operations, ensuring contextually relevant feature transmission.",
+        "bbox": [
+            111,
+            114,
+            883,
+            172
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Forget Gate: The forget gate takes the previous layer's output  $h_{t-1}$  and the current layer's input sequence data  $x_t$  as inputs. It passes these inputs through a sigmoid activation function to produce an output  $f_t$ , which controls the extent to which the previous layer's cell state  $C_{t-1}$  is forgotten. The calculation formula is:",
+        "bbox": [
+            111,
+            176,
+            883,
+            219
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nf _ {t} = \\sigma \\left(W _ {f} \\cdot \\left[ h _ {t - 1}, x _ {t} \\right] + b _ {f}\\right) \\tag {9}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            397,
+            238,
+            883,
+            256
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Input Gate: The input gate incorporates dual computational stages: the initial stage employs a sigmoidal gating mechanism to regulate information flow, generating the input modulation factor  $i_{t}$ , while the subsequent stage utilizes hyperbolic tangent normalization to process state updates, yielding the candidate state vector  $C_{t-1}$ . These complementary operations are mathematically formalized as:",
+        "bbox": [
+            111,
+            263,
+            883,
+            319
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\ni _ {t} = \\sigma \\left(W _ {i} \\cdot \\left[ h _ {t - 1}, x _ {t} \\right] + b _ {i}\\right) \\tag {10}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            401,
+            324,
+            883,
+            340
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nC _ {t} = \\tanh  \\left(W _ {c} \\cdot \\left[ h _ {t - 1}, x _ {t} \\right] + b _ {c}\\right) \\tag {11}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            385,
+            344,
+            883,
+            361
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The product of  $i_{t} * C_{t}$  represents the amount of new information to be retained. Together, these two gates determine how the new information updates the cell state  $C_{t}$  of this layer, with the expression formula being:",
+        "bbox": [
+            111,
+            369,
+            883,
+            398
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nC _ {t} = f _ {t} * C _ {t - 1} + i _ {t} * C _ {t} \\tag {12}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            411,
+            417,
+            883,
+            433
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Output Gate: The output gate controls the amount of information to be filtered from the cell state of this layer. First, a value  $o_t$  within the range [0,1] is obtained using the sigmoid activation function, with the expression formula being:",
+        "bbox": [
+            111,
+            441,
+            883,
+            470
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\no _ {t} = \\sigma \\left(W _ {o} \\left[ h _ {t - 1}, x _ {t} \\right] + b _ {o}\\right) \\tag {13}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            403,
+            489,
+            883,
+            506
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Finally, the cell state  $C_t$  is processed through the tanh activation function and then multiplied with  $o_t$  to obtain the output  $h_t$  of this layer, with the expression formula being:",
+        "bbox": [
+            111,
+            513,
+            883,
+            544
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nh _ {t} = o _ {t} * \\tanh  \\left(C _ {t}\\right) \\tag {14}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            428,
+            561,
+            883,
+            578
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The third branch specializes in long-range spatial context modeling, distinct from the local feature weighting strategies of the first two branches. The LSTM-inspired spatial attention mechanism dynamically recalibrates spatial attention weights across extended receptive fields, enabling joint optimization of local discriminative features and global contextual cues. This proves particularly effective when targets appear distant from focal regions or blend with complex backgrounds, enhancing detection robustness in occluded scenarios.",
+        "bbox": [
+            111,
+            587,
+            883,
+            657
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The enhanced TA mechanism integrates LSTM-based sequential attention propagation with cross-dimensional interaction refinement, significantly improving detection performance for spatially dispersed and morphologically heterogeneous targets. Experimental validation demonstrates superior performance compared to conventional TA designs in high-clutter environments, particularly excelling in cases involving partial occlusion or low-contrast crack patterns.",
+        "bbox": [
+            111,
+            662,
+            883,
+            734
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "3.3 Loss Function",
+        "text_level": 1,
+        "bbox": [
+            112,
+            748,
+            253,
+            762
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Our proposed framework employs a composite loss architecture with dual optimization objectives: image segmentation and object detection. The segmentation component employs a modified cross-entropy criterion addressing class imbalance. Specifically, as crack pixels constitute minimal proportions in typical infrastructure imagery (often  $< 5\\%$  pixel coverage), conventional loss calculations become dominated by background regions. To address this inherent class imbalance, we implement a class-aware weighting mechanism within the pixel-wise cross-entropy framework[25]. The enhanced weighted cross-entropy loss  $L_{wce}$  is formulated as:",
+        "bbox": [
+            111,
+            773,
+            883,
+            857
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nL _ {w c e} = - \\frac {1}{N} \\times \\sum_ {n = 1} ^ {N} \\sum_ {c = 1} ^ {2} w _ {c} \\times \\log \\frac {\\exp \\left(y _ {n , c}\\right)}{\\exp \\left(y _ {n , i}\\right)} \\times y _ {n, c} \\tag {15}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            321,
+            875,
+            883,
+            915
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "page_number",
+        "text": "8",
+        "bbox": [
+            493,
+            935,
+            503,
+            946
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "where  $y$  represents the input,  $y'$  represents the target,  $w$  represents the weight, and  $N$  represents the number of samples across the mini-batch dimension, which is set to 8 in this study.",
+        "bbox": [
+            109,
+            90,
+            885,
+            122
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "The proposed FP-IoU loss tackles crack detection challenges in concrete imagery—edge blurring and surface complexity—by synergistically integrating Focaler IoU's sample imbalance mitigation[39] and PIoUv2's anchor dilation correction[40]. Replacing static penalties[38] with adaptive interval mapping, it suppresses regression-induced box expansion while applying difficulty-aware weighting to low-contrast cracks. This dual mechanism accelerates convergence and enhances precision through defect-aligned gradient updates.",
+        "bbox": [
+            109,
+            126,
+            887,
+            196
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "The Focaler IoU function is shown in Equation 16, which constructs IoU in the form of a piecewise function to improve the regression effect of bounding boxes.",
+        "bbox": [
+            109,
+            200,
+            885,
+            232
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nL _ {\\mathrm {I o U f o c a l e r}} = \\left\\{ \\begin{array}{c} 0, L _ {\\mathrm {I o U}} <   d \\\\ \\frac {L _ {\\mathrm {I o U}} - d}{u - d}, d \\leqslant L _ {\\mathrm {I o U}} \\leqslant u \\\\ 1, L _ {\\mathrm {I o U}} > u \\end{array} \\right. \\tag {16}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            357,
+            244,
+            885,
+            297
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "In the equation,  $L_{\\mathrm{IoU}}$  refers to the original value, and d and u are both within the interval of 0 to 1. Different regression samples correspond to different d and u. The loss is defined as shown in Equation 17:",
+        "bbox": [
+            109,
+            304,
+            885,
+            335
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nX _ {\\text {I o U f o c a l e r}} = 1 - L _ {\\text {I o U f o c a l e r}} \\tag {17}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            398,
+            353,
+            883,
+            369
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "By examining the Focaler IoU formula, it can be seen that when  $L_{\\mathrm{IoU}}$  is less than a specific value,  $L_{\\mathrm{IoUfocaler}}$  is zero. However, the research object of this paper is concrete cracks, which are mostly low-quality target defects and do not match the original loss function. The improved loss function adopts a piecewise function form, eliminating the original parameters, which allows for more efficient use of sample data, better handling of low-quality defects, comprehensive analysis of sample positions, and promotes the stable convergence of the model. This enhances the performance on the dataset of this paper. The loss definitions are given in Equations 18-19:",
+        "bbox": [
+            109,
+            378,
+            888,
+            464
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nL _ {\\mathrm {I o U}} = \\left\\{ \\begin{array}{c} \\frac {L _ {\\mathrm {I o U}}}{u}, L _ {\\mathrm {I o U}} \\leqslant u \\\\ 1, L _ {\\mathrm {I o U}} > u \\end{array} \\right. \\tag {18}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            401,
+            479,
+            883,
+            513
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nX _ {\\mathrm {I o U} ^ {\\mathrm {f}}} = 1 - L _ {\\mathrm {I o U} ^ {\\mathrm {f}}} \\tag {19}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            433,
+            515,
+            883,
+            531
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "PIoU loss addresses inefficiencies in conventional anchor box regression by introducing adaptive penalty factors and gradient reshaping to optimize update trajectories. Instead of inducing sequential expansion-shrink cycles, it directly minimizes inter-edge distances between anchors and ground-truth boxes (Equations 20-21). This dual mechanism enables near-linear regression paths through quality-aware gradient modulation, accelerating convergence while maintaining aspect ratio consistency—particularly crucial for slender targets like cracks. By dynamically adjusting penalties based on target dimensions and spatial context, PIoU bypasses suboptimal intermediate states, achieving precise localization through geometrically coherent updates.",
+        "bbox": [
+            109,
+            541,
+            887,
+            642
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\np = \\frac {1}{4} \\left(\\frac {d w _ {1}}{w _ {\\mathrm {g t}}} + \\frac {d w _ {2}}{w _ {\\mathrm {g t}}} + \\frac {d h _ {1}}{h _ {\\mathrm {g t}}} + \\frac {d h _ {2}}{h _ {\\mathrm {g t}}}\\right) \\tag {20}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            369,
+            655,
+            883,
+            689
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nX _ {\\mathrm {P I o U}} = L _ {\\mathrm {I o U}} + 1 - \\mathrm {e} ^ {- p ^ {2}} \\tag {21}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            406,
+            693,
+            883,
+            712
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "where  $\\mathrm{P}$  is the penalty factor, and the defined variables are shown in Figure 5.",
+        "bbox": [
+            109,
+            722,
+            622,
+            738
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Building upon the PIoU framework, a non-monotonic attention layer  $\\mathrm{m(x)}$  is introduced to refine the focus mechanism through dynamic optimization weight adjustment. By integrating this attention layer with PIoU, the PIoUv2 loss function is developed to prioritize medium-quality anchor boxes that exhibit ambiguous regression characteristics. Unlike its predecessor, PIoUv2 employs quality-aware gradient modulation to balance optimization efforts between high-quality anchors (precise localization) and low-quality outliers (robust error suppression), effectively addressing the oversight of transitional-state samples in standard implementations. This dual-balancing mechanism, mathematically formalized in Equations 22-24, enhances detection stability for edge-blurred cracks by adaptively recalibrating penalty intensities based on anchor box positioning confidence and spatial coherence with ground-truth boundaries.",
+        "bbox": [
+            109,
+            742,
+            887,
+            856
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nq = \\mathrm {e} ^ {- p}, q \\in (0, 1 ] \\tag {22}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            433,
+            873,
+            883,
+            888
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nm (x) = 3 x \\cdot \\mathrm {e} ^ {- x ^ {2}} \\tag {23}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            434,
+            893,
+            883,
+            912
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "page_number",
+        "text": "9",
+        "bbox": [
+            493,
+            935,
+            504,
+            946
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "image",
+        "img_path": "images/5ac1897e28823a133ecfd32a6b44a701e7493f99d38b660b18aa8ee5b04434b5.jpg",
+        "image_caption": [
+            "Figure 5: Variables defined in PIoU."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            334,
+            87,
+            656,
+            335
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nX _ {\\mathrm {P I o U v} 2} = 3 m (\\lambda q) \\cdot X _ {\\mathrm {P I o U}} \\tag {24}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            401,
+            386,
+            883,
+            402
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "From Equation 22, an increase in  $p$  corresponds to a decrease in  $q$ .  $q$  signifies the quality of an anchor box. When  $p$  is 0,  $q$  equals 1, indicating a perfect overlap between the ground-truth box and the predicted box at that moment.  $\\lambda$  is a hyperparameter that regulates the attention.",
+        "bbox": [
+            109,
+            412,
+            883,
+            455
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "This paper proposes the FP-IoU loss function by integrating the Focaler IoU and PIoUv2 loss functions. The definition of the loss is as follows:",
+        "bbox": [
+            109,
+            460,
+            883,
+            489
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nX _ {\\mathrm {F P} - \\mathrm {I o U}} = 3 m (\\lambda q) \\left(X _ {\\mathrm {I o U ^ {f}}} + 1 - \\mathrm {e} ^ {- p ^ {2}}\\right) \\tag {25}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            354,
+            507,
+            883,
+            532
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "The FP-IoU loss function proposed in this study synergistically integrates design principles from two distinct loss function paradigms. By dynamically modulating penalty factors in proportion to target dimensions[38] and implementing a holistic positional encoding strategy that encapsulates both edge-level geometric relationships and region-wise spatial coherence[39], FP-IoU establishes a quality-aware gradient redistribution mechanism. This integrated approach enables simultaneous optimization of spatial-spectral feature disentanglement for high-quality anchors while suppressing error propagation from low-confidence proposals. Compared to CIoU variants, FP-IoU introduces three key enhancements: adaptive curvature adjustment based on crack width/length ratios, multi-scale penalty factor fusion through attention-weighted feature pyramids, and dynamic gradient clipping thresholds to prevent over-penalization of partially occluded targets. Tests show our dual-path design achieves higher accuracy than standard CIoU loss, with stable performance on both dense and sparse cracks.",
+        "bbox": [
+            109,
+            542,
+            883,
+            681
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "4 Experiment and Results",
+        "text_level": 1,
+        "bbox": [
+            109,
+            702,
+            346,
+            719
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "4.1 Datasets",
+        "text_level": 1,
+        "bbox": [
+            112,
+            733,
+            212,
+            746
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "To ensure that the YOLOv11-KW-TA-FP model has high generalization ability and performance, this paper selects three public datasets for experiments, namely the Crack-Seg dataset, the Surface Crack Detection dataset, and the Crack Segmentation dataset. Among them, the Crack-Seg dataset is mainly used in the model training stage. The Surface Crack Detection dataset and the Crack Segmentation dataset are mainly used in the generalization experiment part. To ensure the reliability of the model training process and the generalization ability of the model, the above three datasets have been preprocessed. First, we use the perceptual hash algorithm to calculate the 64-bit hash fingerprint of each image and set the Hamming distance threshold to 5 for similarity detection. For the detected duplicate images, only the earliest sample is retained, and the rest are removed from the dataset. Then, according to the standard data allocation protocol, the Crack-Seg dataset is divided into training, validation, and test sets in the ratio of 7:2:1. The detailed analysis of the Crack-Seg dataset is shown in Figure 6. In (a), from left to right, grid 1 shows the data volume of the training set, displaying the number of samples contained in each category. Grid 2 shows the size and number",
+        "bbox": [
+            109,
+            758,
+            883,
+            912
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "page_number",
+        "text": "10",
+        "bbox": [
+            488,
+            935,
+            508,
+            946
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "image",
+        "img_path": "images/76931486829fb8b438fda010c1686f703557d73c6705697df80f2b8b438733be.jpg",
+        "image_caption": [
+            "Figure 6: Visualization of the detailed analysis of the Crack-Seg dataset; (a)labels; (b)labels-correlogram."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            122,
+            92,
+            478,
+            386
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "image",
+        "img_path": "images/45b7d933f953edcd3f0a12006723dc2fad1fd2961465d64982ebcd5f590687cd.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            521,
+            95,
+            880,
+            385
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "of boxes, displaying the size distribution and corresponding number of bounding boxes in the training set. Grid 3 shows the position of the center point relative to the entire image, describing the distribution of the center points of the bounding boxes in the image. Grid 4 shows the height-to-width ratio of the target in the image relative to the entire image, reflecting the distribution of the height-to-width ratio of the targets in the training set. (b) shows the modeling of the correlation between labels by the object detection algorithm during the training process. Each matrix cell represents the label used in model training, and the color depth of the cell reflects the correlation between the corresponding labels.",
+        "bbox": [
+            109,
+            439,
+            888,
+            525
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "4.2 Experimental Settings",
+        "text_level": 1,
+        "bbox": [
+            112,
+            540,
+            312,
+            556
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "4.2.1 Experimental Environment and Hyperparameter Settings",
+        "text_level": 1,
+        "bbox": [
+            111,
+            560,
+            570,
+            575
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "The experiment is based on the Windows 10 22H2 operating system, using a 12th Gen Intel(R) Core(TM) i5-12600KF CPU, an Nvidia RTX 4070Ti Super 16G GPU, the deep learning framework PyTorch version 1.13.1, a Python environment of 3.12.2, and CUDA version 12.6. The experimental hyperparameter settings are shown in table 1.",
+        "bbox": [
+            109,
+            584,
+            885,
+            628
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "table",
+        "img_path": "images/7e1a0809df039ad33fd68150694a4894a48c7de463666027f7ffc48f8b67fe8d.jpg",
+        "table_caption": [
+            "Table 1: Hyperparameter Settings."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Epoch</td><td>Batch Size</td><td>Optimizer</td><td>Momentum</td><td>Ir0</td><td>Image Size</td></tr><tr><td>200</td><td>16</td><td>SGD</td><td>0.937</td><td>0.01</td><td>640×640</td></tr></table>",
+        "bbox": [
+            114,
+            660,
+            885,
+            707
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "4.2.2 Model Evaluation Metrics",
+        "text_level": 1,
+        "bbox": [
+            112,
+            728,
+            349,
+            742
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "To systematically validate the model's comprehensive performance, this study employs an integrated evaluation framework combining qualitative visual analysis and quantitative metric benchmarking. The qualitative assessment involves visual comparisons between detection results from the proposed YOLOv11-KW-TA-FP model and state-of-the-art baselines, with focused analysis on three critical aspects: localization precision of crack boundaries, consistency in detecting multi-scale cracks, and reduction rates of false positives (e.g., misclassified concrete textures) and false negatives (e.g., overlooked hairline fractures). This visualization-driven approach provides intuitive insights into the model's capability to handle edge-blurred cracks under complex background interference.",
+        "bbox": [
+            109,
+            752,
+            887,
+            851
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Quantitative evaluation adopts standard object detection metrics including precision (P), recall (R), and mean average precision (mAP). The mAP metric is further decomposed into mAP 50(calculated at an FP-IoU threshold of 0.5) and mAP 50:95(averaged across FP-IoU thresholds from 0.5 to 0.95 with 0.05 increments), as mathematically formalized in Equations 26-29. These metrics systematically quantify the model's ability to balance detection sensitivity (minimizing",
+        "bbox": [
+            109,
+            854,
+            885,
+            912
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "page_number",
+        "text": "11",
+        "bbox": [
+            488,
+            935,
+            506,
+            946
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "missed cracks) and specificity (reducing false alarms), particularly critical for infrastructure inspection scenarios where over-detection could lead to unnecessary maintenance costs. By integrating visual interpretability with statistical rigor, this dual evaluation paradigm ensures reliable performance validation for field-deployable crack detection systems.",
+        "bbox": [
+            111,
+            90,
+            885,
+            133
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nP = \\frac {T _ {P}}{T _ {P} + F _ {P}} \\tag {26}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            444,
+            150,
+            883,
+            181
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nR = \\frac {T _ {P}}{T _ {P} + F _ {N}} \\tag {27}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            444,
+            186,
+            883,
+            218
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "In Equation 26, TP denotes the number of true positive samples detected, and FP denotes the number of false positive samples predicted. In Equation 27, FN represents the number of positive samples that were not detected.",
+        "bbox": [
+            111,
+            227,
+            883,
+            257
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nA P = \\int_ {0} ^ {1} P \\cdot R d R \\tag {28}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            429,
+            273,
+            883,
+            306
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\nm A P = \\frac {\\sum_ {i = 0} ^ {n} A P _ {i}}{n} \\tag {29}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            428,
+            311,
+            883,
+            344
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "In Equation 29,  $n$  denotes the number of detected object categories.",
+        "bbox": [
+            112,
+            353,
+            555,
+            369
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "4.3 Results and Disscussions",
+        "text_level": 1,
+        "bbox": [
+            112,
+            385,
+            326,
+            398
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "4.3.1 Experimental Results of YOLOv11-KW-TA-FP model",
+        "text_level": 1,
+        "bbox": [
+            112,
+            405,
+            542,
+            420
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "The evaluation metrics of the developed YOLOv11-KW-TA-FP model all performed well. This section presents the experimental results of the YOLOv11-KW-TA-FP model after 200 training epochs, as shown in Figure 7. It displays the loss curves, precision curves, recall curves, and mAP50 curves of the training dataset and validation dataset. It can be seen that the model began to converge significantly after 25 training epochs. After 180 epochs with mosaic augmentation turned off, the curves remained stable, demonstrating good robustness.",
+        "bbox": [
+            111,
+            429,
+            885,
+            501
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "To visually demonstrate the model's classification performance, we visualized the confusion matrix of the YOLOv11-KW-TA-FP model's prediction results. As shown in Figure 8. The model has a high precision rate of  $89\\%$  in identifying crack and non-crack areas, indicating that it can correctly recognize most cracks and background areas. The relatively small number of background areas misidentified as cracks shows that the model performs well in terms of false positives and false negatives. The visualization of the confusion matrix further helps to understand the model's classification performance and provides references for optimization and improvement. The initial experimental analysis indicates that the model has a misclassification phenomenon for background-class samples. Specifically, the results shown in Figure 8 indicate that the model incorrectly classified 28 background images as crack images. After in-depth analysis, this issue is attributed to two key factors: (1) the insufficient diversity of background samples in the training dataset; (2) the loss function design lacks sufficient regularization constraints for background regions. To enhance the model's discrimination ability, future research plans to explore the introduction of a background penalty weight mechanism or the use of data augmentation techniques to enrich the diversity of training backgrounds.",
+        "bbox": [
+            111,
+            505,
+            885,
+            674
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Figure 9 records the evaluation metric curves of the model in detection and segmentation tasks during training, including the F1 confidence curve, PR curve, recall confidence curve, and precision curve. The first row in Figure 9 shows the evaluation metric curves for the object detection task, while the second row shows the evaluation metric curves for the segmentation task.",
+        "bbox": [
+            111,
+            676,
+            885,
+            736
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "4.3.2 Comparative Experiments of Different YOLOv11-KW-TA-FP Models",
+        "text_level": 1,
+        "bbox": [
+            111,
+            750,
+            653,
+            763
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "The YOLOv11-KW-TA-FP model proposed in this paper demonstrates significant advantages in both concrete crack detection and segmentation tasks. As shown in Table 2, in the crack detection task, the model achieves a precision (P) of  $91.3\\%$  and an mAP50 of  $86.4\\%$ , surpassing all YOLO series models. Compared with DDBNet[41], CrackFormer[42], SSD[43], and Faster R-CNN[44] models, the mAP50 is increased by  $9.9\\%$ ,  $14\\%$ ,  $8.8\\%$ , and  $8.7\\%$ , respectively. In the segmentation task, the model leads most models with a precision of  $86.2\\%$  and an mAP50 of  $76.3\\%$ , which is  $9.2\\%$  and  $10.9\\%$  higher than the baseline model YOLOv11n. Meanwhile, compared with FCN[45] and Deeplabv3[46] models that focus on segmentation tasks, the mAP50 is increased by  $4\\%$  and  $2.5\\%$ , respectively. The results indicate that the dynamic convolution (KWConv) optimizes the extraction of multi-scale crack features, the triple attention (TA) effectively suppresses complex background interference, and the FP-IoU loss function significantly improves the regression precision of low-quality samples. The combined effect of these three factors enables the model to achieve a",
+        "bbox": [
+            111,
+            772,
+            885,
+            912
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "page_number",
+        "text": "12",
+        "bbox": [
+            488,
+            935,
+            508,
+            946
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "image",
+        "img_path": "images/76d494c93511ca9650b60d067993212c49a32871be6d365d1018c2f7cd65c913.jpg",
+        "image_caption": [
+            "(a)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            196,
+            88,
+            488,
+            193
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "image",
+        "img_path": "images/7aa8d3cecd8298ab0a8f0a361e451c5ff45e76e115a2de528bed026578ec22d3.jpg",
+        "image_caption": [
+            "(b)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            501,
+            90,
+            789,
+            195
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "image",
+        "img_path": "images/7b792802fec9dd81ae9cf2eea44d1613813b3ca057c6f1bea8e16a1fa64d8265.jpg",
+        "image_caption": [
+            "(c)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            196,
+            215,
+            789,
+            348
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "image",
+        "img_path": "images/e1017d4fd7abe1fbdff0b325deac9e05e7c62e1fff558085c2d03bb62352f3c1.jpg",
+        "image_caption": [
+            "(d)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            189,
+            368,
+            790,
+            503
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "image",
+        "img_path": "images/85750119f5af7748d54b38ae9adcb1d0b73a96e8c4d8fe630eaa98510dce8e0f.jpg",
+        "image_caption": [
+            "(e)",
+            "Figure 7: Model training results (B and M represent Box and Mask respectively). (a) Box loss, classification loss, DFL loss, and segmentation loss curves on the training dataset; (b) Box loss, classification loss, DFL loss, and segmentation loss curves on the validation dataset; (c) Precision curve during training; (d) Recall curve during training; (e) mAP@50 curve during training."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            196,
+            523,
+            787,
+            656
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "balance between precision and generalization ability while maintaining a high recall rate. In addition, to demonstrate the advantages of the YOLOv11-KW-TA-FP model over other YOLO series models during training, this paper visualizes the evaluation metrics of precision, recall, and mAP50 for each training round of the YOLOv5s, YOLOv8n, YOLOv8s, YOLOv11n, and YOLOv11-KW-TA-FP models, as shown in Figure 10.",
+        "bbox": [
+            109,
+            779,
+            883,
+            835
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "To comprehensively assess the overall performance of the improved model, Table 3 provides a comprehensive comparison of YOLOv11-KW-TA-FP with mainstream object detection/segmentation models in terms of crack detection accuracy, segmentation performance, and computational efficiency. The evaluation metrics for object detection tasks include FPS, Latency, and GFLOPs; the evaluation metric for segmentation tasks is Inference time. Finally, the number of parameters for all models is provided.",
+        "bbox": [
+            109,
+            840,
+            883,
+            912
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "page_number",
+        "text": "13",
+        "bbox": [
+            488,
+            935,
+            506,
+            946
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "image",
+        "img_path": "images/1bd6fc49a2cf3c7fcb6363392b22b5f0ffcec88c796964a79289b46c4d42b999.jpg",
+        "image_caption": [
+            "(a)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            135,
+            117,
+            491,
+            356
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "image",
+        "img_path": "images/9f0adad23c06af413388a7a013ebe052df807e12de3ebef2da5f9185a370ac2a.jpg",
+        "image_caption": [
+            "(b)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            517,
+            117,
+            877,
+            356
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "image",
+        "img_path": "images/2e00a8cf82926dedc267317abebdfa946d9a08c39e9a29472b165f83422cce6b.jpg",
+        "image_caption": [
+            "Figure 8: Confusion Matrix of the Developed YOLOv11-KW-TA-FP Model. (a) Confusion matrix; (b) Normalized confusion matrix.",
+            "Figure 9: The evaluation metric curves for detection and segmentation tasks."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            122,
+            450,
+            888,
+            712
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "The localization performance of the YOLOv11-KW-TA-FP model is validated through confusion matrix analysis in Figure 11, which compares the validation set results of YOLOv5n, YOLOv5s, YOLOv8n, YOLOv8s, YOLOv11n, and the proposed model. The improved model exhibits higher values along the main diagonal and lower values on the secondary diagonal compared to other architectures, demonstrating enhanced capability in precisely localizing bridge cracks while minimizing misclassification errors. This pattern confirms the model's superior performance in crack localization tasks.",
+        "bbox": [
+            109,
+            779,
+            883,
+            864
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "To more intuitively demonstrate the performance of different models in the task of concrete crack detection and segmentation, we selected six representative images from the Surface Crack Detection dataset for testing and compared the detection results of each model. The results are shown in Figure 12.",
+        "bbox": [
+            109,
+            869,
+            883,
+            912
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "page_number",
+        "text": "14",
+        "bbox": [
+            488,
+            935,
+            506,
+            946
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "table",
+        "img_path": "images/24a4429afc1afab8fc653f4170f6f7ad085fa38a9cf66ebfdd1c8a2230344dc1.jpg",
+        "table_caption": [
+            "Table 2: Comparison of evaluation metrics across different models."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">Network</td><td colspan=\"3\">Evaluation metrics of crack detection</td><td colspan=\"3\">Evaluation metrics of crack segmentation</td></tr><tr><td>P%</td><td>R%</td><td>mAP50%</td><td>P%</td><td>R%</td><td>mAP50%</td></tr><tr><td>YOLOv5n</td><td>85.3</td><td>72.2</td><td>78.2</td><td>74.3</td><td>68.7</td><td>66.4</td></tr><tr><td>YOLOv5s</td><td>86.6</td><td>70.0</td><td>79.7</td><td>75.0</td><td>62.7</td><td>63.3</td></tr><tr><td>YOLOv8n</td><td>85.8</td><td>72.9</td><td>78.7</td><td>81.0</td><td>67.1</td><td>71.2</td></tr><tr><td>YOLOv8s</td><td>85.8</td><td>73.5</td><td>79.6</td><td>83.5</td><td>68.3</td><td>71.5</td></tr><tr><td>YOLOv11n</td><td>87.1</td><td>73.3</td><td>79.2</td><td>77.0</td><td>69.9</td><td>65.4</td></tr><tr><td>SSD</td><td>86.5</td><td>72.3</td><td>77.6</td><td>73.2</td><td>63.8</td><td>64.3</td></tr><tr><td>Faster</td><td>87.3</td><td>72.8</td><td>77.7</td><td>68.3</td><td>62.3</td><td>63.8</td></tr><tr><td>R-CNN</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>FCN</td><td>-</td><td>-</td><td>-</td><td>82.8</td><td>69.5</td><td>72.3</td></tr><tr><td>Deeplabv3</td><td>-</td><td>-</td><td>-</td><td>83.2</td><td>70.1</td><td>73.8</td></tr><tr><td>DDBNet</td><td>68.7</td><td>63.9</td><td>76.5</td><td>82.1</td><td>70.2</td><td>73.1</td></tr><tr><td>CrackFormer</td><td>82.2</td><td>69.3</td><td>72.4</td><td>84.3</td><td>69.2</td><td>72.6</td></tr><tr><td>Ours</td><td>91.3</td><td>76.6</td><td>86.4</td><td>86.2</td><td>72.6</td><td>76.3</td></tr></table>",
+        "bbox": [
+            114,
+            109,
+            883,
+            338
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "image",
+        "img_path": "images/810aa534afc950a725e961910c608526d08d8d8aaed3fc9d64f1ac86743acc88.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            116,
+            352,
+            470,
+            494
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "image",
+        "img_path": "images/f4f039e06badaeaa1728f85a45ab46387ddc19a368f5e966754961253d0aafbe.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            501,
+            352,
+            849,
+            494
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "image",
+        "img_path": "images/9258bc7cf1ce68810c131b62bae68f89e6376a60ab5cf8f8312b4e9a3f5885a0.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            114,
+            502,
+            465,
+            643
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "image",
+        "img_path": "images/ff3ba78198feee74ca1cfd074159e0c84e805af89c44361e8ffea2efd1d9b3e0.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            501,
+            502,
+            849,
+            642
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "image",
+        "img_path": "images/f94d319837a00e81b486fe181453b39aa4f10c27f08c87a39aa143416b37913a.jpg",
+        "image_caption": [
+            "(a)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            116,
+            648,
+            464,
+            791
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "image",
+        "img_path": "images/da59f3493a870545f1760ee5cc0a1a8cb7f0ca53d2d1b4a5c4d9c5a9f4b6c23f.jpg",
+        "image_caption": [
+            "(b)",
+            "Figure 10: Evaluation metrics for the two types of tasks. (a) Evaluation metrics for object detection; (b) Evaluation metrics for segmentation tasks."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            501,
+            648,
+            849,
+            791
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "In the concrete crack detection task, the improved YOLOv11-KW-TA-FP model achieves the highest confidence scores across image groups (a), (b), (c), (e), and (f) compared to other models. For image group (d), it demonstrates the most",
+        "bbox": [
+            111,
+            883,
+            883,
+            912
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "page_number",
+        "text": "15",
+        "bbox": [
+            488,
+            935,
+            506,
+            946
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "table",
+        "img_path": "images/b85dbb4df0eccd0204ef4d789537d158c22b2fe1999b92b72ac2bf525d28c1eb.jpg",
+        "table_caption": [
+            "Table 3: Comprehensive comparison of performance across different Models."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">Network</td><td colspan=\"3\">Evaluation metrics of crack detection</td><td>Segmentation</td><td rowspan=\"2\">Params(M)</td></tr><tr><td>FPS (f/s)</td><td>Latency (ms)</td><td>GFLOPs</td><td>Inference(ms)</td></tr><tr><td>YOLOv5n</td><td>81</td><td>1.62</td><td>4.2</td><td>98.3</td><td>2.18</td></tr><tr><td>YOLOv5s</td><td>96</td><td>2.11</td><td>15.8</td><td>78.6</td><td>7.23</td></tr><tr><td>YOLOv8n</td><td>85</td><td>1.35</td><td>8.1</td><td>74.8</td><td>3.01</td></tr><tr><td>YOLOv8s</td><td>113</td><td>2.87</td><td>28.8</td><td>63.2</td><td>11.23</td></tr><tr><td>YOLOv11n</td><td>88</td><td>1.36</td><td>6.7</td><td>45.3</td><td>2.66</td></tr><tr><td>SSD</td><td>63</td><td>12.13</td><td>121.3</td><td>383.4</td><td>28.67</td></tr><tr><td>Faster R-CNN</td><td>18</td><td>123.84</td><td>258</td><td>180.5</td><td>45.32</td></tr><tr><td>FCN</td><td>-</td><td>-</td><td>-</td><td>5682.2</td><td>134.86</td></tr><tr><td>Deeplabv3</td><td>-</td><td>-</td><td>-</td><td>3220.7</td><td>48.32</td></tr><tr><td>DDBNet</td><td>36</td><td>36.81</td><td>58.5</td><td>93.2</td><td>18.37</td></tr><tr><td>CrackFormer</td><td>24</td><td>64.32</td><td>145.6</td><td>63.8</td><td>78.29</td></tr><tr><td>Ours</td><td>128</td><td>3.21</td><td>8.8</td><td>58.2</td><td>5.83</td></tr></table>",
+        "bbox": [
+            114,
+            109,
+            883,
+            325
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "image",
+        "img_path": "images/3b6aa3457196bc3731415a7527f7d51acb1cfba5958cf13ae86d8469d77e4147.jpg",
+        "image_caption": [
+            "(a)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            127,
+            369,
+            330,
+            525
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "image",
+        "img_path": "images/f23646e736c0da1eec5f8e48115333e8d33b4ac365eeb2cb73378a668b36db45.jpg",
+        "image_caption": [
+            "(b)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            334,
+            369,
+            598,
+            525
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "image",
+        "img_path": "images/35ab61293cf91f6014d65ec28598698cd47fe3749e3835718fcaaa69a7f9bebd.jpg",
+        "image_caption": [
+            "(c)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            607,
+            371,
+            841,
+            525
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "image",
+        "img_path": "images/eb707684e9d281aa66e7a698738e46d9f1d0587bf280463dae4a1a8f5249ea22.jpg",
+        "image_caption": [
+            "(d)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            127,
+            547,
+            330,
+            700
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "image",
+        "img_path": "images/dccb4bcd0f74b9604c360c4aa7d24d16f8420b82b33b119be9b99bfccdfa0d80.jpg",
+        "image_caption": [
+            "(e)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            334,
+            547,
+            598,
+            702
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "image",
+        "img_path": "images/fdd1971d92d986c50110ec7112e683133fef3fb3f9af6f2e5e18b61de8fa0a7a.jpg",
+        "image_caption": [
+            "(f)",
+            "Figure 11: Comparison of confusion matrices. (a) YOLOv11-KW-TA-FP; (b) YOLOv11n; (c) YOLOv8s; (d) YOLOv8n; (e) YOLOv5s; (f) YOLOv5n."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            607,
+            547,
+            841,
+            702
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "precise boundary delineation of crack regions. In segmentation tasks, image group (e) reveals that the model produces the finest segmentation details, accurately extracting complete crack structures from complex backgrounds.",
+        "bbox": [
+            109,
+            806,
+            883,
+            837
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "To intuitively demonstrate the impact weight distribution of different rock feature regions on the results of recognition and segmentation tasks, this study employs the Grad-CAM feature visualization technique to generate heatmaps for six crack samples in the validation set, thereby comparing different series of YOLO models. This visualization technique can effectively highlight the key areas that the model focuses on when making decisions, with high-brightness areas indicating that these pixels have a stronger positive promoting effect on the output. As shown in Figure 13.",
+        "bbox": [
+            109,
+            840,
+            883,
+            912
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "page_number",
+        "text": "16",
+        "bbox": [
+            488,
+            935,
+            508,
+            946
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "image",
+        "img_path": "images/696ca65bce45436b19c1e1b5c87033aa7d8b1bc7c53d209f4649db9d19d23f45.jpg",
+        "image_caption": [
+            "Figure 12: Model Result Comparison. (a)-(f) represent six different sets of images."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            116,
+            85,
+            885,
+            580
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "In Figure 13, (a) is the original image, (b) is YOLOv5n, (c) is YOLOv5s, (d) is YOLOv8n, (e) is YOLOv8s, (f) is YOLOv11, and (g) is YOLOv11-KW-TA-FP. As can be seen from Figure 13, the heatmap of the model constructed in this study shows that the model's feature focus is on the crack body area. The introduced TA module effectively enhances the extraction ability of key features, prompting the model to produce a significant activation response to the crack area. The comparison results show that the model integrated with the TA module can accurately locate the crack feature areas that contribute, significantly improving the interpretability of feature representation.",
+        "bbox": [
+            109,
+            642,
+            883,
+            727
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "4.3.3 Ablation Experiment",
+        "text_level": 1,
+        "bbox": [
+            112,
+            741,
+            315,
+            757
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "To investigate the effectiveness of the enhanced KWConv, the incorporated TA mechanism, and the refined loss function, and to analyze their influence on the precision of the YOLOv11-KW-TA-FP model, this paper carries out ablation experiments with YOLOv11n as the baseline model. The experimental results are presented in Table 4. To more intuitively verify the effectiveness of each module, we visualize the results of the ablation experiments for the eight groups in Table 4, as shown in Figure 14. It can be seen from the figure that the crack recognition effect of the eighth group (ours) is the best, outperforming the other seven groups.",
+        "bbox": [
+            109,
+            766,
+            883,
+            851
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "The experimental results demonstrate that KWConv, TA, and FP-IoU each contribute to model performance, while their combined implementation collectively enhances precision across key metrics such as mAP50:95, confirming the effectiveness of these enhancements. The proposed modifications simultaneously maintain model efficiency, establishing an optimal balance between detection precision and computational demands.",
+        "bbox": [
+            109,
+            854,
+            883,
+            912
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "page_number",
+        "text": "17",
+        "bbox": [
+            488,
+            935,
+            506,
+            946
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "image",
+        "img_path": "images/8ed96e729162d5c8fa4c5b4b181a41d0525b5843466b7d2ca290818e18ad71c9.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            114,
+            99,
+            207,
+            172
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/fc0b2c124f6e581315a91f8625d27254703e83638e0b8856a1dff046b6da0ee7.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            220,
+            99,
+            316,
+            172
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/2edd1d140a74a001945d97069fc8c3bc88c294ee48cdf04a4df51a0305f6b063.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            331,
+            99,
+            426,
+            172
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/ab5fbadc01e400703fa5bc415b27d46c1aa9de4009bf45b1f23e1e2e5218c449.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            441,
+            99,
+            535,
+            172
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/a519e104019cde3ec269f001f5a03548d2a8a2ae18e4ea949dcd3f9c29efe703.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            550,
+            99,
+            645,
+            172
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/974f2f93d066ace9e33fbc765f286e14a8e23abba0b7817c57c53447dda78f26.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            663,
+            99,
+            759,
+            172
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/3c68fd0f659f241545d42a2f088c8051395a3eefe9f1700f7531534c67cfd80f.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            774,
+            99,
+            870,
+            172
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/f2c936f56ce019e9a0fef16d63c74dca2eed00936e9aecaea20840886e449499.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            114,
+            185,
+            207,
+            257
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/11093fb8096d4b800c3d4ac44e0b07d72d856e02db07ef0893acdbd7b562c00e.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            220,
+            184,
+            316,
+            257
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/140df18a75c5a3647792ea4e6d0d095cf5ef5baf1f0afff9427867f514eebc1c.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            331,
+            184,
+            426,
+            257
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/b743efd0e7a84498e79cbef5cee62c015d703a20afe74ce355ae3da7863e1218.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            441,
+            184,
+            535,
+            257
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/da7deb53ba43646ff879a6d1213f0ad041d2ee546949853032a0912d1321d805.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            550,
+            184,
+            645,
+            257
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/cdc6cb450db2e3cfbfde580a0a118349fb3cf080252be5ad1d6949f1baa169b4.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            663,
+            184,
+            758,
+            257
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/7ef7c22ef9d3f57c74fe457545f984cc700247a10bd0e32f0faf013b92594439.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            774,
+            184,
+            870,
+            257
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/3531166ae5ac880e37f0aed26582448fc3736606b27b258e75434d8a9ac9d31e.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            114,
+            271,
+            207,
+            342
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/8097b433b84ce5917538d37f2537f2d580d4c6a418f2b12b9ebc364257fcaaea.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            220,
+            270,
+            316,
+            343
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/b9ef6d4c708ecc2adbb7d964490774c9a030ff3663a78bde1e47c7737bafc112.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            331,
+            270,
+            426,
+            343
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/91e7772db0effc5785e272dfe395877cb1c1db2791cf5a34e4066c69d3faf138.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            441,
+            270,
+            535,
+            343
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/cc6a409bf0c3d9e63ad99b3f9c3ef92c72182cef28fba69718d8f650dabd769c.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            550,
+            270,
+            645,
+            343
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/56457060f53c3eb4927fe359a49f368e4f050f9254985745a5a74aebfa4de5be.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            663,
+            270,
+            758,
+            343
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/91443240e034a767535093a3a2234eef78fcae4cead70a4841f34ceb5e9da511.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            774,
+            270,
+            870,
+            343
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/89ff5527fd6cb20321260ce98ee0b0db1c91b24fa82ac40580b88dd840aa74c8.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            114,
+            356,
+            207,
+            426
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/b46704c0eb665d66ce7785a17b6d00d11d9ac9f53e77d8c9e8c2f10d150cd1f8.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            220,
+            354,
+            316,
+            429
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/a42d9b20c0a1db39cffaacfb927e4eb063f779b9acd2385704ada22d7702f413.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            331,
+            354,
+            426,
+            429
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/66fd85a12cb53ef292aca4b9ff8774f61ad2b303df197abe711eb1c6de8f5467.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            441,
+            354,
+            535,
+            429
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/a38ce0c3601258289e0647a16a72132ec1388f3bb3421f0ccd6598412c7f19b8.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            550,
+            354,
+            645,
+            429
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/b6afa0ebf1c6f820e20636e5dad1ea96314fcdd3b7a4fb7e7f1c21e246fde0a5.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            663,
+            354,
+            758,
+            429
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/e7244f827700050520b66197c4cc00c14a67a6c42f28479743e315da29f83108.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            774,
+            354,
+            870,
+            429
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/e56ce2da21889dff2205866bd2618b0141f074d608bfaaf7bf042fe46e5be7bb.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            114,
+            441,
+            207,
+            513
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/8f225faa49175d39b4d409f3b12d5001a8bd9eee93d04d6032ed8e077280bf4f.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            220,
+            441,
+            316,
+            513
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/d04201a32da4c441c26b93cdc9874adc7721c3ed6c059f24ddd156a322a456b2.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            331,
+            441,
+            426,
+            513
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/9c44c5676a45c746a0ee0d72322e124fbd89daf9b3a18dc5d012059c61b42605.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            441,
+            441,
+            535,
+            513
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/9d66ddeddde790b077d90775aac699d27bb0364801d08272d94f205d3857ad24.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            550,
+            441,
+            645,
+            513
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/50e05a5bf465992b4fb9291f58aeac5747c28d65b8846ad91cc896f377366fb9.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            663,
+            441,
+            758,
+            513
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/6e50c183a52ea6b64ba598c438596f6f2c172dac5c26b828abf147aae5c41047.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            774,
+            441,
+            870,
+            513
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/0be238e382648ba7dbe46e7a638c02fcafa520950713a401b7154bffe81b631d.jpg",
+        "image_caption": [
+            "(a)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            114,
+            527,
+            207,
+            598
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/7aacf037bbdc66f9e2df57e7a904ec7ff18622ea2466fbd825b3c97e9466fb3b.jpg",
+        "image_caption": [
+            "(b)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            220,
+            527,
+            316,
+            599
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/901551cd46fbaa0479770f37fb74aa2fefab98864be7eb9368185326dd1cce7e.jpg",
+        "image_caption": [
+            "(c)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            331,
+            527,
+            426,
+            599
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/97a4cea2037c190815f15ddd09bfd5fd4cb653fe664c0f7a34bd9f2c84b83aa0.jpg",
+        "image_caption": [
+            "(d)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            441,
+            527,
+            535,
+            599
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/9395bc5e84c3fcd3a4e764743deaa6bf017de3fafcd7d5474a0ad476506138de.jpg",
+        "image_caption": [
+            "(e)",
+            "Figure 13: Comparison of Heatmaps for Different YOLO Model Series. (a) Original image, (b) YOLOv5n; (c) YOLOv5s; (d) YOLOv8n; (e) YOLOv8s; (f) YOLOv11; (g) YOLOv11-KW-TA-FP."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            550,
+            527,
+            645,
+            599
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/94bb88cbad5c57fdd09b23987cb74705303b53ee4afa8a81ab25eaf6a93fd1c9.jpg",
+        "image_caption": [
+            "(f)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            663,
+            527,
+            758,
+            599
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/88e9986479fb28c96651e9e93d00b0da194f42b07e5b4aa7b9ba292b13b481f1.jpg",
+        "image_caption": [
+            "(g)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            774,
+            527,
+            870,
+            599
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "table",
+        "img_path": "images/f9f0d0e753fd1da61454d0ec7154b67efd163534366f5568c4bf01eba216ee56.jpg",
+        "table_caption": [
+            "Table 4: Ablation Experiment Results."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Number</td><td>Base</td><td>KWConv</td><td>TA</td><td>FP-IoU</td><td>P%</td><td>R%</td><td>mAP50%</td><td>mAP50:95%</td></tr><tr><td>1</td><td>✓</td><td>×</td><td>×</td><td>×</td><td>87.1</td><td>73.3</td><td>79.2</td><td>62.2</td></tr><tr><td>2</td><td>✓</td><td>✓</td><td>×</td><td>×</td><td>90.3</td><td>75.1</td><td>83.2</td><td>70.1</td></tr><tr><td>3</td><td>✓</td><td>×</td><td>✓</td><td>×</td><td>87.5</td><td>75.2</td><td>83.1</td><td>70.9</td></tr><tr><td>4</td><td>✓</td><td>×</td><td>×</td><td>✓</td><td>88.2</td><td>75.1</td><td>84.6</td><td>71.3</td></tr><tr><td>5</td><td>✓</td><td>✓</td><td>✓</td><td>×</td><td>90.7</td><td>75.4</td><td>85.4</td><td>70.1</td></tr><tr><td>6</td><td>✓</td><td>✓</td><td>×</td><td>✓</td><td>90.6</td><td>74.8</td><td>85.2</td><td>71.2</td></tr><tr><td>7</td><td>✓</td><td>×</td><td>✓</td><td>✓</td><td>87.2</td><td>75.2</td><td>85.3</td><td>71.1</td></tr><tr><td>8 (Ours)</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>91.3</td><td>76.6</td><td>86.4</td><td>72.4</td></tr></table>",
+        "bbox": [
+            114,
+            724,
+            901,
+            863
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "page_number",
+        "text": "18",
+        "bbox": [
+            488,
+            935,
+            506,
+            946
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/3b2d6c4c528aeb6a2b8adf52d215b4fb0b5446daab556c6e7f91c2e55f3f03b2.jpg",
+        "image_caption": [
+            "(a)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            187,
+            88,
+            493,
+            209
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "image",
+        "img_path": "images/0266809c5a9a427c4500e415fabba648c43366fef3d344cd834713f597c18136.jpg",
+        "image_caption": [
+            "(e)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            576,
+            88,
+            883,
+            209
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "image",
+        "img_path": "images/463be0e39e1065a110c22a103bdb375a1216e42a48e817eb78c889c893d8481d.jpg",
+        "image_caption": [
+            "(b)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            187,
+            212,
+            493,
+            332
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "image",
+        "img_path": "images/4cb9f2bcb41ccaa5bbd5a1934c21d48b3752ca5e9186a9e7ff62c6ec4cefbb71.jpg",
+        "image_caption": [
+            "(f)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            576,
+            212,
+            883,
+            330
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "image",
+        "img_path": "images/f228784eaff45d58852cc03cc044cdf260a8c8762b0c3cdfd8541bf2214be8b7.jpg",
+        "image_caption": [
+            "(c)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            187,
+            337,
+            493,
+            457
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "image",
+        "img_path": "images/2ead4d447618dcd5d51d97ad042c02f60ace5c02acbb2b9a398402153795b677.jpg",
+        "image_caption": [
+            "(g)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            576,
+            337,
+            883,
+            458
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "image",
+        "img_path": "images/ea8f79e8ed1e4d2962fa192f11ec8a18ec8e7fee370f10420871dc701d3feabe.jpg",
+        "image_caption": [
+            "(d)",
+            "Figure 14: Visualization of the ablation experiment results. (a)-(h) correspond to groups 1 to 8 in the ablation experiment."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            187,
+            460,
+            493,
+            580
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "image",
+        "img_path": "images/6c8682fbc845c0182e2099c360891218f0963d71129ddcd79a602401b5407a56.jpg",
+        "image_caption": [
+            "(h)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            576,
+            460,
+            883,
+            580
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "4.3.4 Generalization experiment",
+        "text_level": 1,
+        "bbox": [
+            112,
+            631,
+            352,
+            646
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "To evaluate the generalization ability of the YOLOv11-KW-TA-FP model, this paper compared the improved method with the YOLO series models on the Surface Crack Detection and COCO datasets. The experimental results are shown in Tables 5 and 6.",
+        "bbox": [
+            109,
+            654,
+            883,
+            696
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "Table 5 shows that for the crack detection task, the improved model achieved a precision of  $87.3\\%$ , a recall of  $72.2\\%$ , and an mAP50 of  $82.6\\%$  on the Surface Crack Detection dataset, which are  $3\\%$ ,  $2.7\\%$ , and  $3.3\\%$  higher than those of the baseline model YOLOv11n, respectively. For the crack segmentation task, the improved model achieved a precision of  $81.9\\%$ , a recall of  $67.2\\%$ , and an mAP50 of  $71.3\\%$  on the dataset, which are  $0.7\\%$ ,  $0.4\\%$ , and  $0.9\\%$  higher than those of the baseline model YOLOv11n, respectively. Table 6 shows that for the crack detection task, the improved model achieved a precision of  $88.3\\%$ , a recall of  $74.9\\%$ , and an mAP50 of  $84.6\\%$  on the Crack Segmentation dataset, which are  $4\\%$ ,  $5.4\\%$ , and  $5.3\\%$  higher than those of the baseline model YOLOv11n, respectively. For the crack segmentation task, the improved model achieved a precision of  $85.9\\%$ , a recall of  $70.2\\%$ , and an mAP50 of  $74.3\\%$  on the dataset, which are  $4.7\\%$ ,  $3.4\\%$ , and  $3.9\\%$  higher than those of the baseline model YOLOv11n, respectively. The overall performance is superior to other YOLO-series algorithms.",
+        "bbox": [
+            109,
+            702,
+            883,
+            843
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "4.4 Robustness analysis",
+        "text_level": 1,
+        "bbox": [
+            112,
+            857,
+            292,
+            873
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "The robustness evaluation of deep learning models proves particularly crucial when deploying concrete crack detection and segmentation systems in complex operational environments. For practical implementations, the YOLOv11-KW-TA",
+        "bbox": [
+            111,
+            883,
+            883,
+            912
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "page_number",
+        "text": "19",
+        "bbox": [
+            488,
+            935,
+            506,
+            946
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "table",
+        "img_path": "images/c606b3bf95ca95d57036784da1880288cff27ef325e74bf17391ee172a940fde.jpg",
+        "table_caption": [
+            "Table 5: Generalization experiments on the Surface Crack Detection dataset."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">Network</td><td colspan=\"3\">Evaluation metrics of crack detection</td><td colspan=\"3\">Evaluation metrics of crack segmentation</td></tr><tr><td>P%</td><td>R%</td><td>mAP50%</td><td>P%</td><td>R%</td><td>mAP50%</td></tr><tr><td>YOLOv5n</td><td>81.8</td><td>66.9</td><td>76.3</td><td>78.2</td><td>64.8</td><td>67.3</td></tr><tr><td>YOLOv5s</td><td>82.6</td><td>67.2</td><td>77.6</td><td>78.5</td><td>65.1</td><td>68.2</td></tr><tr><td>YOLOv8n</td><td>83.2</td><td>68.3</td><td>77.2</td><td>79.3</td><td>65.6</td><td>69.3</td></tr><tr><td>YOLOv8s</td><td>83.6</td><td>69.1</td><td>78.6</td><td>80.6</td><td>66.3</td><td>70.1</td></tr><tr><td>YOLOv11n</td><td>84.3</td><td>69.5</td><td>79.3</td><td>81.2</td><td>66.8</td><td>70.4</td></tr><tr><td>Ours</td><td>87.3</td><td>72.2</td><td>82.6</td><td>83.9</td><td>69.2</td><td>73.3</td></tr></table>",
+        "bbox": [
+            114,
+            109,
+            883,
+            243
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "table",
+        "img_path": "images/d6b2fdfc1cc285ad6763feba2843d0f28c890e82ba4e19d053b78596e88ba563.jpg",
+        "table_caption": [
+            "Table 6: Generalization experiments on the Crack Segmentation Detection dataset."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">Network</td><td colspan=\"3\">Evaluation metrics of crack detection</td><td colspan=\"3\">Evaluation metrics of crack segmentation</td></tr><tr><td>P%</td><td>R%</td><td>mAP50%</td><td>P%</td><td>R%</td><td>mAP50%</td></tr><tr><td>YOLOv5n</td><td>81.8</td><td>66.9</td><td>76.3</td><td>78.2</td><td>64.8</td><td>67.3</td></tr><tr><td>YOLOv5s</td><td>82.6</td><td>67.2</td><td>77.6</td><td>78.5</td><td>65.1</td><td>68.2</td></tr><tr><td>YOLOv8n</td><td>83.2</td><td>68.3</td><td>77.2</td><td>79.3</td><td>65.6</td><td>69.3</td></tr><tr><td>YOLOv8s</td><td>83.6</td><td>69.1</td><td>78.6</td><td>80.6</td><td>66.3</td><td>70.1</td></tr><tr><td>YOLOv11n</td><td>84.3</td><td>69.5</td><td>79.3</td><td>81.2</td><td>66.8</td><td>70.4</td></tr><tr><td>Ours</td><td>88.3</td><td>74.9</td><td>84.6</td><td>85.9</td><td>70.2</td><td>74.3</td></tr></table>",
+        "bbox": [
+            114,
+            276,
+            883,
+            409
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "FP model must maintain consistent performance across varying lighting conditions, diverse weather patterns, multiple camera angles, and datasets with heterogeneous quality levels. This necessitates comprehensive robustness testing to ensure the model's operational stability and reliability under such environmental variabilities.",
+        "bbox": [
+            109,
+            431,
+            883,
+            474
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "4.4.1 Dataset Size",
+        "text_level": 1,
+        "bbox": [
+            112,
+            488,
+            253,
+            502
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "To evaluate the model's robustness to dataset scale variations, we conducted a controlled experimental protocol using the Crack-Seg dataset. The original dataset was subsampled at  $30\\%$ ,  $50\\%$ ,  $70\\%$ ,  $90\\%$ , and  $100\\%$  proportions to generate scaled training subsets, while maintaining an identical test set for performance evaluation. Table 7 systematically presents the model's detection and segmentation metrics across these data scales, enabling quantitative benchmark comparisons of scale-dependent performance degradation patterns.",
+        "bbox": [
+            109,
+            511,
+            883,
+            583
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "table",
+        "img_path": "images/7ccd01ab2dde608aade095db542593a2d5d137cd2821f05a98cc857581573c4f.jpg",
+        "table_caption": [
+            "Table 7: Experimental Results of Split Dataset."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Proportion</td><td>P%</td><td>R%</td><td>IoU</td><td>Dice</td></tr><tr><td>30</td><td>72.6</td><td>71.9</td><td>74.3</td><td>72.1</td></tr><tr><td>50</td><td>74.2</td><td>72.3</td><td>79.5</td><td>76.3</td></tr><tr><td>70</td><td>83.5</td><td>73.1</td><td>86.5</td><td>80.1</td></tr><tr><td>90</td><td>87.3</td><td>73.3</td><td>87.1</td><td>81.8</td></tr><tr><td>100</td><td>91.3</td><td>76.6</td><td>87.5</td><td>82.1</td></tr></table>",
+        "bbox": [
+            114,
+            614,
+            883,
+            715
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "The results show that as the size of the training dataset increases, the model's performance improves. When the dataset size reaches  $70\\%$ , the performance improvement tends to level off, indicating that the model can effectively learn crack features on a dataset of a certain scale. Even with a smaller dataset, the model still maintains high precision and recall rates, demonstrating its robustness to dataset size.",
+        "bbox": [
+            109,
+            727,
+            883,
+            784
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "4.4.2 Data Augmentation",
+        "text_level": 1,
+        "bbox": [
+            112,
+            797,
+            303,
+            813
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "To enhance the robustness of the model, data augmentation techniques were employed during training, including: random rotation  $(-30^{\\circ}$  to  $30^{\\circ})$ , horizontal flipping (50% probability), vertical flipping (50% probability), scaling (0.8 to 1.2 ratio), and adding Gaussian noise (mean 0, standard deviation 0.1). The results are shown in Figure 15.",
+        "bbox": [
+            109,
+            821,
+            883,
+            864
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "To evaluate the impact of data augmentation on model performance, we carried out model training on the augmented dataset and conducted performance assessment on the original test set. The experimental results are presented in Table 8. The model's performance is evaluated using metrics closely related to practical applications, including Precision,",
+        "bbox": [
+            109,
+            869,
+            883,
+            912
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "page_number",
+        "text": "20",
+        "bbox": [
+            488,
+            935,
+            508,
+            946
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "image",
+        "img_path": "images/ccd44bf211a2608386032e53c6f72908f4c57c77bb70b07736baa2c037a15a51.jpg",
+        "image_caption": [
+            "Figure 15: Data Augmentation."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            114,
+            85,
+            883,
+            381
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "Recall, IoU, Dice, Miss Detection Rate (MDR), and False Detection Rate (FDR). These metrics enable a more accurate assessment of the model's reliability in complex environments. After data augmentation, the model's various evaluation metrics have all improved. In terms of IoU and Dice coefficient, the IoU has increased by  $3.9\\%$ , and the Dice coefficient has increased by  $5.4\\%$ . Regarding the MDR and FDR, which are closely related to practical applications, the MDR has decreased by  $0.9\\%$ , and the FDR has decreased by  $2.5\\%$ . These results indicate that data augmentation has enhanced the model's robustness, enabling it to more accurately assess the model's reliability in complex environments.",
+        "bbox": [
+            109,
+            430,
+            883,
+            513
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "table",
+        "img_path": "images/5c256ce757c0494aa51e5d7a1692d704366c3350259b11fab10d236243ecc3d2.jpg",
+        "table_caption": [
+            "Table 8: Experimental Results of Data Augmentation."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Data Aug-mentation</td><td>Precision%</td><td>Recall%</td><td>IoU%</td><td>Dice%</td><td>MDR%</td><td>FDR%</td></tr><tr><td>No</td><td>86.8</td><td>72.3</td><td>83.4</td><td>76.5</td><td>27.7</td><td>16.8</td></tr><tr><td>Yes</td><td>88.6</td><td>73.2</td><td>87.3</td><td>81.9</td><td>26.8</td><td>14.3</td></tr></table>",
+        "bbox": [
+            114,
+            547,
+            883,
+            619
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "Following data augmentation implementation, the model exhibits comprehensive improvements across all evaluation metrics, with particularly notable gains in IoU (3.9% increase) and Dice coefficient (5.4% enhancement). These metric advancements confirm that the augmented training strategy effectively strengthens both precision and robustness, enabling improved performance in crack image recognition and segmentation under diverse operational conditions.",
+        "bbox": [
+            109,
+            632,
+            883,
+            689
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "5 Discussion",
+        "text_level": 1,
+        "bbox": [
+            112,
+            708,
+            235,
+            723
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "The YOLOv11-KW-TA-FP model proposed in this study for the concrete crack detection task has made progress in performance optimization through the synergistic optimization of dynamic KernelWarehouse convolution, triple attention mechanism, and FP-IoU loss function.",
+        "bbox": [
+            109,
+            738,
+            883,
+            780
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "From a theoretical perspective, the selection of these three adjustments profoundly reflects the synergistic optimization between the model architecture and the physical characteristics of cracks. The kernel unit partitioning mechanism of KernelWarehouse (KW) convolution (Figure 3) addresses the parameter redundancy issue of traditional convolution in complex backgrounds through dynamic kernel sharing. Its theoretical core lies in decomposing the convolutional kernel into fine-grained units and achieving cross-layer parameter reuse through warehouse sharing. This not only reduces computational complexity but also enhances the model's sensitivity to subtle gradient changes in cracks through adaptive weight adjustment, fundamentally improving the feature representation ability of small-target cracks. The design of the triple attention (TA) mechanism (Figure 4) originates from the spatial heterogeneity of crack shapes and the antagonistic need for background interference. Its theoretical advantage lies in the decoupled spatial-channel",
+        "bbox": [
+            109,
+            787,
+            883,
+            912
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "page_number",
+        "text": "21",
+        "bbox": [
+            488,
+            935,
+            506,
+            946
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "attention branches (equations 3-4) and long-range dependency modeling (equations 9-14), which construct a dynamic feature weight allocation model. The spatial branch's coordinate encoding enhances crack boundary localization, while the channel branch's squeeze-and-excitation suppresses texture noise. The cross-dimensional fusion gating addresses the contextual coherence of crack discontinuous regions through LSTM temporal modeling, thus theoretically balancing the conflict between local details and global structure and reducing the false-detection rate in high-noise environments. The theoretical innovation of the FP-IoU loss function (Figure 5) lies in combining geometric priors with sample quality perception. Its adaptive penalty factor (p in equation 20) and interval mapping mechanism (equations 18-19) reconstruct the gradient update path through the non-monotonic attention layer (equation 23). The PIoUv2 boundary distance minimization replaces the traditional IoU box expansion penalty. This not only theoretically avoids the regression divergence problem of low-quality crack samples (such as edge-blurred cracks) but also dynamically balances the optimization resources of high-and low-confidence samples through the focal weight (q in equation 22), ultimately achieving the theoretical optimal solution for crack localization accuracy. The three together construct a theoretical framework of \"dynamic feature extraction-attention correction-loss convergence acceleration,\" which essentially enhances the robustness and generalization limit of crack detection.",
+        "bbox": [
+            109,
+            90,
+            883,
+            287
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "As can be seen from the confusion matrix in Figure 8, the model misclassified 28 background images as crack images on the test set, indicating that the YOLOv11-KW-TA-FP model has certain limitations in negative sample recognition. This phenomenon is closely related to the design of the model's attention mechanism and the characteristics of the data: the spatial-channel interaction branch of the triple attention mechanism (equations 3-8) is highly sensitive to texture gradients, causing it to misidentify non-crack features such as the rough surface and aggregate texture of concrete as crack patterns. Further experiments have corroborated this analysis: as shown in the heatmap in Figure 13, the model exhibits abnormal activation in background areas (such as the highlighted red regions), indicating that the long-range spatial attention of TA tends to amplify non-crack texture responses when unconstrained. To enhance the model's discrimination ability, future research plans to explore the introduction of a background penalty weight mechanism or the use of data augmentation techniques to enrich the diversity of training backgrounds.",
+        "bbox": [
+            109,
+            291,
+            883,
+            431
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "The complexity of the YOLOv11-KW-TA-FP model may affect its real-time performance. In this study, the optimization and reconstruction of the receptive field have achieved a coordinated improvement in accuracy and efficiency. As shown in Figure 16, the receptive field range (green area) of the improved model has increased by  $28\\%$  compared to the baseline model. This structural optimization, achieved through dynamic convolutional kernel sharing (KWConv) and cross-dimensional attention fusion (TA), enables the model to capture a larger range of contextual information without stacking more convolutional layers.",
+        "bbox": [
+            109,
+            435,
+            883,
+            521
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "6 Conclusion",
+        "text_level": 1,
+        "bbox": [
+            112,
+            571,
+            240,
+            585
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "The YOLOv11-KW-TA-FP model proposed in this study achieves a significant leap in detection accuracy through three-stage collaborative optimization under limited computational resources. The introduction of the dynamic convolutional kernel architecture breaks through the static limitations of traditional convolution. By employing kernel unit partitioning and cross-layer warehouse sharing mechanisms, the model enhances its multi-scale feature extraction capability while maintaining a lightweight structure with 5.83M parameters. Experiments show that this design increases mAP50 by  $4.1\\%$ , especially improving the detection rate of low-contrast micro-cracks by  $9.2\\%$ , effectively addressing the core challenge of \"small-target detection.\" The innovative integration of the triple attention mechanism (TA) through spatial-channel decoupling and long-range modeling enhances key feature extraction in complex backgrounds. This mechanism reduces the boundary localization error of crack segmentation by  $37\\%$  and decreases the false-detection rate in high-interference scenarios by  $26\\%$ , demonstrating the model's practical significance in engineering sites. The FP-IoU loss function, with its adaptive penalty factor and non-monotonic attention layer, significantly improves the regression trajectory of low-quality samples and accelerates training convergence by approximately 1.3 times. It also addresses the localization drift issue in edge-blurred cracks that is common in traditional methods. In terms of application value, the model's performance across various datasets confirms its engineering practicality. It maintains an accuracy of  $83.5\\%$  even in data-limited scenarios, making it feasible for deployment in resource-constrained field settings. In robustness experiments, the model's IoU increased by  $13.2\\%$  after Gaussian noise enhancement, proving its stability in coping with on-site environmental changes. In summary, the YOLOv11-KW-TA-FP model, with its innovative dynamic kernel architecture, efficient attention mechanism, and improved loss function, significantly enhances the detection accuracy, localization precision, and environmental robustness of micro-cracks and other small targets while keeping the model lightweight. It provides an efficient and reliable technical solution for addressing key challenges in the structural health monitoring of actual engineering projects.",
+        "bbox": [
+            109,
+            621,
+            883,
+            912
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "page_number",
+        "text": "22",
+        "bbox": [
+            488,
+            935,
+            508,
+            946
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "image",
+        "img_path": "images/73d35cd21caab628ab2e55e5e7f491df2dbc37510daf484d1a783967ce4bddb3.jpg",
+        "image_caption": [
+            "(a)",
+            "Figure 16: Receptive Field Visualization (a) Baseline Model Receptive Field, (b) YOLOv11-KW-TA-FP Model Receptive Field."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            122,
+            90,
+            421,
+            404
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "image",
+        "img_path": "images/6fca250e52cb628e1f3d4a029ec357cb34a0e6f560b074562bca685c6594730c.jpg",
+        "image_caption": [
+            "(b)"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            426,
+            89,
+            864,
+            404
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "text",
+        "text": "Acknowledgments",
+        "text_level": 1,
+        "bbox": [
+            112,
+            498,
+            272,
+            515
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "text",
+        "text": "This work was supported by the Undergraduate Innovation Training Program of Anhui University of Technology, project number: 202410360022.",
+        "bbox": [
+            111,
+            529,
+            885,
+            559
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "text",
+        "text": "References",
+        "text_level": 1,
+        "bbox": [
+            114,
+            577,
+            209,
+            593
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "[1] Khan, M. A., Kee, S. H., Pathan, A. K., & Nahid, A. A. (2023). Image processing techniques for concrete crack detection: a scientometrics literature review. Remote Sensing, 15(9), 2400. MDPI.",
+            "[2] Laxman, K. C., Tabassum, N., Ai, L., Cole, C., & Ziehl, P. (2023). Automated crack detection and crack depth prediction for reinforced concrete structures using deep learning. Construction and Building Materials, 370, 130709. Elsevier.",
+            "[3] Koch, C., Georgieva, K., Kasireddy, V., Akinci, B., & Fieguth, P. (2015). A review on computer vision based defect detection and condition assessment of concrete and asphalt civil infrastructure. Advanced Engineering Informatics, 29(2), 196-210. Elsevier.",
+            "[4] Golding, V. P., Gharineiat, Z., Munawar, H. S., & Ullah, F. (2022). Crack detection in concrete structures using deep learning. Sustainability, 14(13), 8117. MDPI.",
+            "[5] Zhao, X., Li, S., Su, H., Zhou, L., & Loh, K. J. (2018). Image-based comprehensive maintenance and inspection method for bridges using deep learning. In Proceedings of the ASME 2018 Conference on Smart Materials, Adaptive Structures and Intelligent Systems (V002T05A017). ASME.",
+            "[6] Wang, J., Wu, Q. M. J., & Zhang, N. (2024). You only look at once for real-time and generic multi-task. IEEE Transactions on Vehicular Technology. IEEE.",
+            "[7] He, K., Zhang, X., Ren, S., & Sun, J. (2016). Deep residual learning for image recognition. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (pp. 770-778).",
+            "[8] He, L., Zhou, Y., Liu, L., & Ma, J. (2024). Research and Application of YOLOv11-Based Object Segmentation in Intelligent Recognition at Construction Sites. Buildings, 14(12), 3777. MDPI."
+        ],
+        "bbox": [
+            120,
+            609,
+            883,
+            912
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "page_number",
+        "text": "23",
+        "bbox": [
+            488,
+            935,
+            506,
+            946
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "[9] Ruggieri, S., Cardellicchio, A., Nettis, A., Renò, V., & Uva, G. (2025). Using attention for improving defect detection in existing RC bridges. IEEE Access. IEEE.",
+            "[10] Silva, W. R. L., & Lucena, D. S. (2018). Concrete cracks detection based on deep learning image classification. In Proceedings, 2(8), 489. MDPI.",
+            "[11] Aravind, N., Nagajothi, S., & Elavenil, S. (2021). Machine learning model for predicting the crack detection and pattern recognition of geopolymer concrete beams. Construction and Building Materials, 297, 123785. Elsevier.",
+            "[12] Dung, C. V. (2019). Autonomous concrete crack detection using deep fully convolutional neural network. Automation in Construction, 99, 52-58. Elsevier.",
+            "[13] Munawar, H. S., Ullah, F., Shahzad, D., Heravi, A., Qayyum, S., & Akram, J. (2022). Civil infrastructure damage and corrosion detection: An application of machine learning. Buildings, 12(2), 156. MDPI.",
+            "[14] Fan, L., Tang, S., Ariffin, M. K. A., Ismail, M. I. S., & Zhao, R. (2024). How to Make a State of the Art Report—Case Study—Image-Based Road Crack Detection: A Scientometric Literature Review. Applied Sciences, 14(11), 4817. MDPI.",
+            "[15] Xiong, C., Zayed, T., & Abdelkader, E. M. (2024). A novel YOLOv8-GAM-Wise-IoU model for automated detection of bridge surface cracks. Construction and Building Materials, 414, 135025. Elsevier.",
+            "[16] Dorafshan, S., Thomas, R. J., & Maguire, M. (2018). Comparison of deep convolutional neural networks and edge detectors for image-based crack detection in concrete. Construction and Building Materials, 186, 1031-1045. Elsevier.",
+            "[17] Zhang, J. J., & Luo, J. (2011). A surface crack edge detection algorithm based on improved Sobel operator. Journal of Hefei University of Technology, 34(6).",
+            "[18] Xu, J., Ding, W., & Zhao, H. (2020). Based on improved edge detection algorithm for English text extraction and restoration from color images. IEEE Sensors Journal, 20(20), 11951-11958.",
+            "[19] Jia, Y., Wang, Y., Tang, L., & Wang, C. (2024). Review of Identification Methods for Early-Stage Cracking in Solids. Journal of Testing and Evaluation, 52(5).",
+            "[20] Fan, C. D., Ren, K., Zhang, Y. J., & Yi, L. Z. (2016). Optimal multilevel thresholding based on molecular kinetic theory optimization algorithm and line intercept histogram. Journal of Central South University, 23(4), 880-890. Springer.",
+            "[21] Li, H., Liu, Y., Deng, J., An, Z., & Pan, Q. (2022). Depth and Angle Evaluation of Oblique Surface Cracks Using a Support Vector Machine Based on Seven Parameters. Applied Sciences, 12(16), 8124. MDPI.",
+            "[22] Shi, H., Ebrahimi, M., Zhou, P., Shao, K., & Li, J. (2023). Ultrasonic and phased-array inspection in titanium-based alloys: A review. Proceedings of the Institution of Mechanical Engineers, Part E: Journal of Process Mechanical Engineering, 237(2), 511-530. SAGE.",
+            "[23] Parakh, A. K., Balakrishnan, M., & Paul, K. (2012). Performance estimation of GPUs with cache. In 2012 IEEE 26th International Parallel and Distributed Processing Symposium Workshops & PhD Forum (pp. 2384-2393). IEEE.",
+            "[24] Figueiredo, J., Serraio, C., & de Almeida, A. M. (2023). Deep learning model transposition for network intrusion detection systems. *Electronics*, 12(2), 293. MDPI.",
+            "[25] Xu, G., Zhang, Y., Yue, Q., & Liu, X. (2025). A deep learning framework for real-time multi-task recognition and measurement of concrete cracks. Advanced Engineering Informatics, 65, 103127. Elsevier.",
+            "[26] Hu, W., Fang, J., Zhang, Y., Liu, Z., Verma, A. S., Liu, H., Cong, F., & Tan, J. (2025). Digital twin of wind turbine surface damage detection based on deep learning-aided drone inspection. Renewable Energy, 241, 122332. Elsevier.",
+            "[27] Fan, C. L. (2025). Evaluation Model for Crack Detection with Deep Learning: Improved Confusion Matrix Based on Linear Features. Journal of Construction Engineering and Management, 151(3), 04024210. ASCE.",
+            "[28] Wang, X., Gao, H., Jia, Z., & Zhao, J. (2024). A road defect detection algorithm incorporating partially transformer and multiple aggregate trail attention mechanisms. Measurement Science and Technology, 36(2), 026003. IOP Publishing.",
+            "[29] Li, W., Gao, Z., Feng, G., Hao, R., Zhou, Y., Chen, Y., Liu, S., Zhang, H., & Wang, T. (2025). Damage characteristics and YOLO automated crack detection of fissured rock masses under true-triaxial mining unloading conditions. Engineering Fracture Mechanics, 314, 110790. Elsevier.",
+            "[30] Pan, W., Lei, J., Wang, X., Lv, C., Wang, G., & Li, C. (2025). DAPONet: A Dual Attention and Partially Overparameterized Network for Real-Time Road Damage Detection. Applied Sciences, 15(3), 1470. MDPI."
+        ],
+        "bbox": [
+            114,
+            90,
+            883,
+            912
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "page_number",
+        "text": "24",
+        "bbox": [
+            488,
+            935,
+            508,
+            946
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "[31] Dong, R., Xia, J., Zhao, J., & Hong, L. (2025). CL-PSDD: Contrastive Learning for Adaptive Generalized Pavement Surface Distress Detection. IEEE Transactions on Intelligent Transportation Systems. IEEE.",
+            "[32] Khanam, R., & Hussain, M. (2024). Yolov11: An overview of the key architectural enhancements. arXiv preprint arXiv:2410.17725.",
+            "[33] Lv, Y., Tian, B., Guo, Q., & Zhang, D. (2024). A Lightweight Small Target Detection Algorithm for UAV Platforms. Applied Sciences, 15(1), 12. MDPI.",
+            "[34] Li, C., & Yao, A. (2023). KernelWarehouse: Towards Parameter-Efficient Dynamic Convolution. arXiv preprint arXiv:2308.08361.",
+            "[35] Dang, C., & Wang, Z. X. (2024). Rcyolo: An efficient small target detector for crack detection in tubular topological road structures based on unmanned aerial vehicles. IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing. IEEE.",
+            "[36] Graves, A. (2012). Long short-term memory. In Supervised Sequence Labelling with Recurrent Neural Networks (pp. 37-45). Springer.",
+            "[37] Chen, C., Qin, H., Qin, Y., & Bai, Y. (2025). Real-Time Railway Obstacle Detection Based on Multitask Perception Learning. IEEE Transactions on Intelligent Transportation Systems. IEEE.",
+            "[38] Xing, B., & He, Y. (2024). Based on Improved YOLOv11n for Transmission Line Defect Fastener Segmentation. In Proceedings of the 2024 International Symposium on Integrated Circuit Design and Integrated Systems (pp. 292-298).",
+            "[39] Zhang, H., & Zhang, S. (2024). Focaler-iou: More focused intersection over union loss. arXiv preprint arXiv:2401.10525.",
+            "[40] Liu, C., Wang, K., Li, Q., Zhao, F., Zhao, K., & Ma, H. (2024). Powerful-IoU: More straightforward and faster bounding box regression loss with a nonmonotonic focusing mechanism. Neural Networks, 170, 276-284. Elsevier.",
+            "[41] Yuan, S., Li, J., Ren, L., & Chen, Z. (2024). Multi-Frequency Field Perception and Sparse Progressive Network for low-light image enhancement. Journal of Visual Communication and Image Representation, 100, 104133. Elsevier.",
+            "[42] Hu, X., Li, H., Feng, Y., Qian, S., Li, J., & Li, S. (2025). CCDFormer: A dual-backbone complex crack detection network with transformer. Pattern Recognition, 161, 111251. Elsevier.",
+            "[43] Zhai, S., Shang, D., Wang, S., & Dong, S. (2020). DF-SSD: An improved SSD object detection algorithm based on DenseNet and feature fusion. IEEE Access, 8, 24344–24357.",
+            "[44] Ren, S., He, K., Girshick, R., & Sun, J. (2016). Faster R-CNN: Towards real-time object detection with region proposal networks. IEEE Transactions on Pattern Analysis and Machine Intelligence, 39(6), 1137-1149.",
+            "[45] Wu, J., Liu, B., Zhang, H., He, S., & Yang, Q. (2021). Fault detection based on fully convolutional networks (FCN). Journal of Marine Science and Engineering, 9(3), 259. MDPI.",
+            "[46] Liu, Y., Bai, X., Wang, J., Li, G., Li, J., & Lv, Z. (2024). Image semantic segmentation approach based on DeepLabV3 plus network with an attention mechanism. Engineering Applications of Artificial Intelligence, 127, 107260. Elsevier.",
+            "[47] Yan, K., & Zhang, Z. (2021). Automated asphalt highway pavement crack detection based on deformable single shot multi-box detector under a complex environment. IEEE Access, 9, 150925-150938."
+        ],
+        "bbox": [
+            112,
+            90,
+            883,
+            696
+        ],
+        "page_idx": 24
+    },
+    {
+        "type": "page_number",
+        "text": "25",
+        "bbox": [
+            488,
+            935,
+            508,
+            946
+        ],
+        "page_idx": 24
+    }
+]
