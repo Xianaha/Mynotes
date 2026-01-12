@@ -1,0 +1,1844 @@
+[
+    {
+        "type": "text",
+        "text": "HOTPOTQA: A Dataset for Diverse, Explainable Multi-hop Question Answering",
+        "text_level": 1,
+        "bbox": [
+            248,
+            74,
+            752,
+            115
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Zhilin Yang* Peng Qi* Saizheng Zhang*",
+        "bbox": [
+            294,
+            123,
+            715,
+            140
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Joshua Bengio\\* William W. Cohen",
+        "bbox": [
+            332,
+            141,
+            672,
+            156
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Ruslan Salakhutdinov\\* Christopher D. Manning",
+        "bbox": [
+            275,
+            158,
+            727,
+            175
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "$\\spadesuit$  Carnegie Mellon University  $\\heartsuit$  Stanford University  $\\clubsuit$  Mila, Universite de Montreal",
+        "bbox": [
+            226,
+            177,
+            779,
+            190
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "CIFAR Senior Fellow † Google AI",
+        "bbox": [
+            381,
+            193,
+            625,
+            206
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "{zhiliny, rsalakhu}@cs.cmu.edu, {pengqi, manning}@cs.stanford.edu",
+        "bbox": [
+            211,
+            211,
+            794,
+            224
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "saizheng.zhang@umontreal.ca, yoshua.bengio@gmail.com, wcohen@google.com",
+        "bbox": [
+            181,
+            228,
+            825,
+            240
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Abstract",
+        "text_level": 1,
+        "bbox": [
+            263,
+            263,
+            342,
+            278
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Existing question answering (QA) datasets fail to train QA systems to perform complex reasoning and provide explanations for answers. We introduce HOTPOTQA, a new dataset with 113k Wikipedia-based question-answer pairs with four key features: (1) the questions require finding and reasoning over multiple supporting documents to answer; (2) the questions are diverse and not constrained to any pre-existing knowledge bases or knowledge schemas; (3) we provide sentence-level supporting facts required for reasoning, allowing QA systems to reason with strong supervision and explain the predictions; (4) we offer a new type of factoid comparison questions to test QA systems' ability to extract relevant facts and perform necessary comparison. We show that HOTPOTQA is challenging for the latest QA systems, and the supporting facts enable models to improve performance and make explainable predictions.",
+        "bbox": [
+            142,
+            294,
+            460,
+            593
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "1 Introduction",
+        "text_level": 1,
+        "bbox": [
+            115,
+            609,
+            260,
+            624
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "The ability to perform reasoning and inference over natural language is an important aspect of intelligence. The task of question answering (QA) provides a quantifiable and objective way to test the reasoning ability of intelligent systems. To this end, a few large-scale QA datasets have been proposed, which sparked significant progress in this direction. However, existing datasets have limitations that hinder further advancements of machine reasoning over natural language, especially in testing QA systems' ability to perform multi-hop reasoning, where the system has to reason with information taken from more than one document to arrive at the answer.",
+        "bbox": [
+            114,
+            637,
+            489,
+            860
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Paragraph A, Return to Olympus:",
+        "text_level": 1,
+        "bbox": [
+            521,
+            265,
+            746,
+            277
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "[1] Return to Olympus is the only album by the alternative rock band Malfunkshun. [2] It was released after the band had broken up and after lead singer Andrew Wood (later of Mother Love Bone) had died of a drug overdose in 1990. [3] Stone Gossard, of Pearl Jam, had compiled the songs and released the album on his label, Loosegroove Records.",
+        "bbox": [
+            521,
+            278,
+            870,
+            360
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Paragraph B, Mother Love Bone:",
+        "text_level": 1,
+        "bbox": [
+            522,
+            363,
+            742,
+            375
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "[4] Mother Love Bone was an American rock band that formed in Seattle, Washington in 1987. [5] The band was active from 1987 to 1990. [6] Frontman Andrew Wood's personality and compositions helped to catapult the group to the top of the burgeoning late 1980s/early 1990s Seattle music scene. [7] Wood died only days before the scheduled release of the band's debut album, \"Apple\", thus ending the group's hopes of success. [8] The album was finally released a few months later.",
+        "bbox": [
+            521,
+            375,
+            870,
+            482
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Q: What was the former band of the member of Mother Love Bone who died just before the release of \"Apple\"?",
+        "bbox": [
+            521,
+            485,
+            870,
+            508
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "A: Malfunkshun",
+        "bbox": [
+            522,
+            508,
+            626,
+            519
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Supporting facts: 1, 2, 4, 6, 7",
+        "bbox": [
+            522,
+            520,
+            710,
+            533
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Figure 1: An example of the multi-hop questions in HOTPOTQA. We also highlight the supporting facts in blue italics, which are also part of the dataset.",
+        "bbox": [
+            509,
+            552,
+            884,
+            595
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "First, some datasets mainly focus on testing the ability of reasoning within a single paragraph or document, or single-hop reasoning. For example, in SQuAD (Rajpurkar et al., 2016) questions are designed to be answered given a single paragraph as the context, and most of the questions can in fact be answered by matching the question with a single sentence in that paragraph. As a result, it has fallen short at testing systems' ability to reason over a larger context. TriviaQA (Joshi et al., 2017) and SearchQA (Dunn et al., 2017) create a more challenging setting by using information retrieval to collect multiple documents to form the context given existing question-answer pairs. Nevertheless, most of the questions can be answered by matching the question with a few nearby sentences in one single paragraph, which is limited as it does not require more complex reasoning (e.g.,",
+        "bbox": [
+            509,
+            620,
+            884,
+            910
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "page_footnote",
+        "text": "*These authors contributed equally. The order of authorship is decided through dice rolling.",
+        "bbox": [
+            115,
+            870,
+            487,
+            895
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "page_footnote",
+        "text": "$\\dagger$  Work done when WwC was at CMU.",
+        "bbox": [
+            137,
+            895,
+            376,
+            908
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "page_number",
+        "text": "2369",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "footer",
+        "text": "Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing, pages 2369-2380",
+        "bbox": [
+            161,
+            947,
+            835,
+            960
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "footer",
+        "text": "Brussels, Belgium, October 31 - November 4, 2018. ©2018 Association for Computational Linguistics",
+        "bbox": [
+            184,
+            960,
+            811,
+            971
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "over multiple paragraphs).",
+        "bbox": [
+            115,
+            74,
+            312,
+            90
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Second, existing datasets that target multi-hop reasoning, such as QAngaroo (Welbl et al., 2018) and COMPLEXWEBQUESTIONS (Talmor and Berant, 2018), are constructed using existing knowledge bases (KBs). As a result, these datasets are constrained by the schema of the KBs they use, and therefore the diversity of questions and answers is inherently limited.",
+        "bbox": [
+            114,
+            92,
+            487,
+            219
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Third, all of the above datasets only provide distant supervision; i.e., the systems only know what the answer is, but do not know what supporting facts lead to it. This makes it difficult for models to learn about the underlying reasoning process, as well as to make explainable predictions.",
+        "bbox": [
+            114,
+            222,
+            487,
+            318
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "To address the above challenges, we aim at creating a QA dataset that requires reasoning over multiple documents, and does so in natural language, without constraining itself to an existing knowledge base or knowledge schema. We also want it to provide the system with strong supervision about what text the answer is actually derived from, to help guide systems to perform meaningful and explainable reasoning.",
+        "bbox": [
+            114,
+            319,
+            487,
+            464
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "We present HOTPOTQA<sup>1</sup>, a large-scale dataset that satisfies these desiderata. HOTPOTQA is collected by crowdsourcing based on Wikipedia articles, where crowd workers are shown multiple supporting context documents and asked explicitly to come up with questions requiring reasoning about all of the documents. This ensures it covers multi-hop questions that are more natural, and are not designed with any pre-existing knowledge base schema in mind. Moreover, we also ask the crowd workers to provide the supporting facts they use to answer the question, which we also provide as part of the dataset (see Figure 1 for an example). We have carefully designed a data collection pipeline for HOTPOTQA, since the collection of high-quality multi-hop questions is nontrivial. We hope that this pipeline also sheds light on future work in this direction. Finally, we also collected a novel type of questions—comparison questions—as part of HOTPOTQA, in which we require systems to compare two entities on some shared properties to test their understanding of both language and common concepts such as numerical magnitude. We make HOTPOTQA publicly available at https://HotpotQA.github.io.",
+        "bbox": [
+            114,
+            467,
+            489,
+            869
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "2 Data Collection",
+        "text_level": 1,
+        "bbox": [
+            510,
+            74,
+            680,
+            87
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "The main goal of our work is to collect a diverse and explainable question answering dataset that requires multi-hop reasoning. One way to do so is to define reasoning chains based on a knowledge base (Welbl et al., 2018; Talmor and Berant, 2018). However, the resulting datasets are limited by the incompleteness of entity relations and the lack of diversity in the question types. Instead, in this work, we focus on text-based question answering in order to diversify the questions and answers. The overall setting is that given some context paragraphs (e.g., a few paragraphs, or the entire Web) and a question, a QA system answers the question by extracting a span of text from the context, similar to Rajpurkar et al. (2016). We additionally ensure that it is necessary to perform multi-hop reasoning to correctly answer the question.",
+        "bbox": [
+            509,
+            101,
+            882,
+            388
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "It is non-trivial to collect text-based multi-hop questions. In our pilot studies, we found that simply giving an arbitrary set of paragraphs to crowd workers is counterproductive, because for most paragraph sets, it is difficult to ask a meaningful multi-hop question. To address this challenge, we carefully design a pipeline to collect text-based multi-hop questions. Below, we will highlight the key design choices in our pipeline.",
+        "bbox": [
+            509,
+            392,
+            882,
+            537
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Building a Wikipedia Hyperlink Graph. We use the entire English Wikipedia dump as our corpus. In this corpus, we make two observations: (1) hyper-links in the Wikipedia articles often naturally entail a relation between two (already disambiguated) entities in the context, which could potentially be used to facilitate multi-hop reasoning; (2) the first paragraph of each article often contains much information that could be queried in a meaningful way. Based on these observations, we extract all the hyperlinks from the first paragraphs of all Wikipedia articles. With these hyperlinks, we build a directed graph  $G$ , where each edge  $(a, b)$  indicates there is a hyperlink from the first paragraph of article  $a$  to article  $b$ .",
+        "bbox": [
+            509,
+            549,
+            882,
+            790
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Generating Candidate Paragraph Pairs. To generate meaningful pairs of paragraphs for multihop question answering with  $G$ , we start by considering an example question \"when was the singer and songwriter of Radiohead born?\" To",
+        "bbox": [
+            509,
+            802,
+            882,
+            883
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_footnote",
+        "text": "The name comes from the first three authors' arriving at the main idea during a discussion at a hot pot restaurant.",
+        "bbox": [
+            115,
+            883,
+            487,
+            909
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_footnote",
+        "text": "$^{2}$ https://dumps.wikimedia.org/",
+        "bbox": [
+            531,
+            894,
+            794,
+            909
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_number",
+        "text": "2370",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "answer this question, one would need to first reason that the \"singer and songwriter of Radiohead\" is \"Thom Yorke\", and then figure out his birthday in the text. We call \"Thom Yorke\" a bridge entity in this example. Given an edge  $(a,b)$  in the hyperlink graph  $G$ , the entity of  $b$  can usually be viewed as a bridge entity that connects  $a$  and  $b$ . As we observe articles  $b$  usually determine the theme of the shared context between  $a$  and  $b$ , but not all articles  $b$  are suitable for collecting multihop questions. For example, entities like countries are frequently referred to in Wikipedia, but don't necessarily have much in common with all incoming links. It is also difficult, for instance, for the crowd workers to ask meaningful multihop questions about highly technical entities like the IPv4 protocol. To alleviate this issue, we constrain the bridge entities to a set of manually curated pages in Wikipedia (see Appendix A). After curating a set of pages  $B$ , we create candidate paragraph pairs by sampling edges  $(a,b)$  from the hyperlink graph such that  $b \\in B$ .",
+        "bbox": [
+            114,
+            74,
+            492,
+            429
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Comparison Questions. In addition to questions collected using bridge entities, we also collect another type of multi-hop questions—comparison questions. The main idea is that comparing two entities from the same category usually results in interesting multi-hop questions, e.g., \"Who has played for more NBA teams, Michael Jordan or Kobe Bryant?\" To facilitate collecting this type of question, we manually curate 42 lists of similar entities (denoted as  $L$ ) from Wikipedia.",
+        "bbox": [
+            114,
+            439,
+            489,
+            600
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "To generate candidate paragraph pairs, we randomly sample two paragraphs from the same list and present them to the crowd worker.",
+        "bbox": [
+            114,
+            601,
+            489,
+            649
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "To increase the diversity of multi-hop questions, we also introduce a subset of yes/no questions in comparison questions. This complements the original scope of comparison questions by offering new ways to require systems to reason over both paragraphs. For example, consider the entities Iron Maiden (from the UK) and AC/DC (from Australia). Questions like \"Is Iron Maiden or AC/DC from the UK?\" are not ideal, because one would deduce the answer is \"Iron Maiden\" even if one only had access to that article. With yes/no questions, one may ask \"Are Iron Maiden and AC/DC from the same country?\", which re",
+        "bbox": [
+            114,
+            651,
+            489,
+            859
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "code",
+        "sub_type": "algorithm",
+        "code_caption": [
+            "Algorithm 1 Overall data collection procedure"
+        ],
+        "code_body": "Input: question type ratio  $r_1 = 0.75$  yes/no ratio  $r_2 = 0.5$    \nwhile not finished do if random()  $<  r_{1}$  then Uniformly sample an entity  $b\\in B$  Uniformly sample an edge  $(a,b)$  Workers ask a question about paragraphs  $a$  and  $b$  else Sample a list from  $L$  with probabilities weighted by list sizes Uniformly sample two entities  $(a,b)$  from the list if random()  $<  r_{2}$  then Workers ask a yes/no question to compare  $a$  and b else Workers ask a question with a span answer to compare  $a$  and  $b$  end if end if Workers provide the supporting facts   \nend while",
+        "bbox": [
+            512,
+            91,
+            885,
+            344
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "quires reasoning over both paragraphs.",
+        "bbox": [
+            509,
+            369,
+            801,
+            384
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "To the best of our knowledge, text-based comparison questions are a novel type of questions that have not been considered by previous datasets. More importantly, answering these questions usually requires arithmetic comparison, such as comparing ages given birth dates, which presents a new challenge for future model development.",
+        "bbox": [
+            509,
+            385,
+            884,
+            498
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Collecting Supporting Facts. To enhance the explainability of question answering systems, we want them to output a set of supporting facts necessary to arrive at the answer, when the answer is generated. To this end, we also collect the sentences that determine the answers from crowd workers. These supporting facts can serve as strong supervision for what sentences to pay attention to. Moreover, we can now test the explainability of a model by comparing the predicted supporting facts to the ground truth ones.",
+        "bbox": [
+            509,
+            507,
+            884,
+            684
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The overall procedure of data collection is illustrated in Algorithm 1.",
+        "bbox": [
+            509,
+            684,
+            882,
+            715
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "3 Processing and Benchmark Settings",
+        "text_level": 1,
+        "bbox": [
+            510,
+            730,
+            853,
+            746
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "We collected 112,779 valid examples in total on Amazon Mechanical Turk $^4$  using the ParlAI interface (Miller et al., 2017) (see Appendix A). To isolate potential single-hop questions from the desired multi-hop ones, we first split out a subset of data called train-easy. Specifically, we randomly sampled questions ( $\\sim 3-10$  per Turker) from top-contributing turkers, and categorized all",
+        "bbox": [
+            509,
+            756,
+            884,
+            885
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "page_footnote",
+        "text": "3This is achieved by manually curating lists from the Wikipedia \"List of lists of lists\" (https://wiki.sh/y8qv). One example is \"Highest Mountains on Earth\".",
+        "bbox": [
+            115,
+            870,
+            489,
+            909
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "page_footnote",
+        "text": "4https://www.mturk.com/",
+        "bbox": [
+            531,
+            894,
+            742,
+            909
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "page_number",
+        "text": "2371",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "table",
+        "img_path": "images/2834261dab56085a0d92df355cbabbbdc7c7876e8b07862c716e92ffa54caa0e.jpg",
+        "table_caption": [],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Name</td><td>Desc.</td><td>Usage</td><td># Examples</td></tr><tr><td>train-easy</td><td>single-hop</td><td>training</td><td>18,089</td></tr><tr><td>train-medium</td><td>multi-hop</td><td>training</td><td>56,814</td></tr><tr><td>train-hard</td><td>hard multi-hop</td><td>training</td><td>15,661</td></tr><tr><td>dev</td><td>hard multi-hop</td><td>dev</td><td>7,405</td></tr><tr><td>test-distractor</td><td>hard multi-hop</td><td>test</td><td>7,405</td></tr><tr><td>test-fullwiki</td><td>hard multi-hop</td><td>test</td><td>7,405</td></tr><tr><td>Total</td><td></td><td></td><td>112,779</td></tr></table>",
+        "bbox": [
+            117,
+            72,
+            495,
+            185
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Table 1: Data split. The splits train-easy, train-medium, and train-hard are combined for training. The distractor and full wiki settings use different test sets so that the gold paragraphs in the full wiki test set remain unknown to any models.",
+        "bbox": [
+            114,
+            198,
+            489,
+            269
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "their questions into the train-easy set if an overwhelming percentage in the sample only required reasoning over one of the paragraphs. We sampled these turkers because they contributed more than  $70\\%$  of our data. This train-easy set contains 18,089 mostly single-hop examples.",
+        "bbox": [
+            114,
+            296,
+            489,
+            391
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We implemented a question answering model based on the current state-of-the-art architectures, which we discuss in detail in Section 5.1. Based on this model, we performed a three-fold cross validation on the remaining multi-hop examples. Among these examples, the models were able to correctly answer  $60\\%$  of the questions with high confidence (determined by thresholding the model loss). These correctly-answered questions (56,814 in total,  $60\\%$  of the multi-hop examples) are split out and marked as the train-medium subset, which will also be used as part of our training set.",
+        "bbox": [
+            114,
+            393,
+            489,
+            586
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "After splitting out train-easy and train-medium, we are left with hard examples. As our ultimate goal is to solve multi-hop question answering, we focus on questions that the latest modeling techniques are not able to answer. Thus we constrain our dev and test sets to be hard examples. Specifically, we randomly divide the hard examples into four subsets, train-hard, dev, test-distractor, and test-fullwiki. Statistics about the data split can be found in Table 1. In Section 5, we will show that combining train-easy, train-medium, and train-hard to train models yields the best performance, so we use the combined set as our default training set. The two test sets test-distractor and test-fullwiki are used in two different benchmark settings, which we introduce next.",
+        "bbox": [
+            114,
+            587,
+            489,
+            843
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We create two benchmark settings. In the first setting, to challenge the model to find the true supporting facts in the presence of noise, for each example we employ bigram tfidf (Chen et al., 2017)",
+        "bbox": [
+            114,
+            845,
+            489,
+            910
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "to retrieve 8 paragraphs from Wikipedia as distractors, using the question as the query. We mix them with the 2 gold paragraphs (the ones used to collect the question and answer) to construct the distractor setting. The 2 gold paragraphs and the 8 distractors are shuffled before they are fed to the model. In the second setting, we fully test the model's ability to locate relevant facts as well as reasoning about them by requiring it to answer the question given the first paragraphs of all Wikipedia articles without the gold paragraphs specified. This full wiki setting truly tests the performance of the systems' ability at multi-hop reasoning in the wild. The two settings present different levels of difficulty, and would require techniques ranging from reading comprehension to information retrieval. As shown in Table 1, we use separate test sets for the two settings to avoid leaking information, because the gold paragraphs are available to a model in the distractor setting, but should not be accessible in the full wiki setting.",
+        "bbox": [
+            509,
+            74,
+            884,
+            412
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We also try to understand the model's good performance on the train-medium split. Manual analysis shows that the ratio of multi-hop questions in train-medium is similar to that of the hard examples (93.3% in train-medium vs. 92.0% in dev), but one of the question types appears more frequently in train-medium compared to the hard splits (Type II: 32.0% in train-medium vs. 15.0% in dev, see Section 4 for the definition of Type II questions). These observations demonstrate that given enough training data, existing neural architectures can be trained to answer certain types and certain subsets of the multi-hop questions. However, train-medium remains challenging when not just the gold paragraphs are present—we show in Appendix C that the retrieval problem on these examples are as difficult as that on their hard cousins.",
+        "bbox": [
+            509,
+            413,
+            884,
+            686
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "4 Dataset Analysis",
+        "text_level": 1,
+        "bbox": [
+            510,
+            697,
+            690,
+            715
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "In this section, we analyze the types of questions, types of answers, and types of multi-hop reasoning covered in the dataset.",
+        "bbox": [
+            509,
+            724,
+            882,
+            771
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Question Types. We heuristically identified question types for each collected question. To identify the question type, we first locate the central question word (CQW) in the question. Since HOTPOTQA contains comparison questions and",
+        "bbox": [
+            509,
+            782,
+            882,
+            862
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>5</sup>As we required the crowd workers to use complete entity names in the question, the majority of the questions are unambiguous in the full wiki setting.",
+        "bbox": [
+            509,
+            871,
+            882,
+            909
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "page_number",
+        "text": "2372",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "image",
+        "img_path": "images/ba8c299fc197fa2fe50bb4a85ca32e7a407c07593c1106215c6c393171814377.jpg",
+        "image_caption": [
+            "Figure 2: Types of questions covered in HOTPOTQA. Question types are extracted heuristically, starting at question words or prepositions preceding them. Empty colored blocks indicate suffixes that are too rare to show individually. See main text for more details."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            117,
+            72,
+            487,
+            330
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "yes/no questions, we consider as question words WH-words, copulas (\"is\", \"are\"), and auxiliary verbs (\"does\", \"did\"). Because questions often involve relative clauses beginning with WH-words, we define the CQW as the first question word in the question if it can be found in the first three tokens, or the last question word otherwise. Then, we determine question type by extracting words up to 2 tokens away to the right of the CQW, along with the token to the left if it is one of a few common prepositions (e.g., in the cases of \"in which\" and \"by whom\").",
+        "bbox": [
+            114,
+            432,
+            489,
+            624
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "We visualize the distribution of question types in Figure 2, and label the ones shared among more than 250 questions. As is shown, our dataset covers a diverse variety of questions centered around entities, locations, events, dates, and numbers, as well as yes/no questions directed at comparing two entities (\"Are both A and B ...?\"), to name a few.",
+        "bbox": [
+            114,
+            625,
+            489,
+            738
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Answer Types. We further sample 100 examples from the dataset, and present the types of answers in Table 2. As can be seen, HOTPOTQA covers a broad range of answer types, which matches our initial analysis of question types. We find that a majority of the questions are about entities in the articles (68%), and a non-negligible amount of questions also ask about various properties like date (9%) and other descriptive properties such as numbers (8%) and adjectives (4%).",
+        "bbox": [
+            114,
+            749,
+            489,
+            910
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "table",
+        "img_path": "images/c2967581b3f1b6b0c0580f3d92cdbd92f8f3082a2df118825786076ef4da2b69.jpg",
+        "table_caption": [],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Answer Type</td><td>%</td><td>Example(s)</td></tr><tr><td>Person</td><td>30</td><td>King Edward II, Rianna</td></tr><tr><td>Group / Org</td><td>13</td><td>Cartoonito, Apalachee</td></tr><tr><td>Location</td><td>10</td><td>Fort Richardson, California</td></tr><tr><td>Date</td><td>9</td><td>10th or even 13th century</td></tr><tr><td>Number</td><td>8</td><td>79.92 million, 17</td></tr><tr><td>Artwork</td><td>8</td><td>Die schweigsame Frau</td></tr><tr><td>Yes/No</td><td>6</td><td>-</td></tr><tr><td>Adjective</td><td>4</td><td>conservative</td></tr><tr><td>Event</td><td>1</td><td>Prix Benois de la Danse</td></tr><tr><td>Other proper noun</td><td>6</td><td>Cold War, Laban Movement Analysis</td></tr><tr><td>Common noun</td><td>5</td><td>comedy, both men and women</td></tr></table>",
+        "bbox": [
+            512,
+            72,
+            887,
+            242
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Table 2: Types of answers in HOTPOTQA.",
+        "bbox": [
+            549,
+            244,
+            842,
+            259
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Multi-hop Reasoning Types. We also sampled 100 examples from the dev and test sets and manually classified the types of reasoning required to answer each question. Besides comparing two entities, there are three main types of multi-hop reasoning required to answer these questions, which we show in Table 3 accompanied with examples.",
+        "bbox": [
+            509,
+            293,
+            884,
+            405
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Most of the questions require at least one supporting fact from each paragraph to answer. A majority of sampled questions (42%) require chain reasoning (Type I in the table), where the reader must first identify a bridge entity before the second hop can be answered by filling in the bridge. One strategy to answer these questions would be to decompose them into consecutive single-hop questions. The bridge entity could also be used implicitly to help infer properties of other entities related to it. In some questions (Type III), the entity in question shares certain properties with a bridge entity (e.g., they are collocated), and we can infer its properties through the bridge entity. Another type of question involves locating the answer entity by satisfying multiple properties simultaneously (Type II). Here, to answer the question, one could find the set of all entities that satisfy each of the properties mentioned, and take an intersection to arrive at the final answer. Questions comparing two entities (Comparison) also require the system to understand the properties in question about the two entities (e.g., nationality), and sometimes require arithmetic such as counting (as seen in the table) or comparing numerical values (\"Who is older, A or B?\"). Finally, we find that sometimes the questions require more than two supporting facts to answer (Other). In our analysis, we also find that for all of the examples shown in the table, the supporting facts provided by the Turkers match exactly with the limited context shown here,",
+        "bbox": [
+            509,
+            411,
+            884,
+            910
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "page_number",
+        "text": "2373",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "table",
+        "img_path": "images/b9a1eaaf30e202c9539176c5c852a71cb0c7c09e02e4a6a2557b3aabbdef135a.jpg",
+        "table_caption": [],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Reasoning Type</td><td>%</td><td>Example(s)</td></tr><tr><td>Inferring the bridge entity to complete the 2nd-hop question (Type I)</td><td>42</td><td>Paragraph A: The 2015 Diamond Head Classic was a college basketball tournament ... Buddy Hield was named the tournament&#x27;s MVP. \nParagraph B: Chavano Rainier &quot;Buddy&quot; Hield is a Bahamian professional basketball player for the Sacramento Kings of the NBA... \nQ: Which team does the player named 2015 Diamond Head Classic&#x27;s MVP play for?</td></tr><tr><td>Comparing two entities (Comparison)</td><td>27</td><td>Paragraph A: LostAlone were a British rock band ... consisted of Steven Battelle, Alan Williamson, and Mark Gibson... \nParagraph B: Guster is an American alternative rock band ... Founding members Adam Gardner, Ryan Miller, and Brian Rosenworcel began... \nQ: Did LostAlone and Guster have the same number of members? (yes)</td></tr><tr><td>Locating the answer entity by checking multiple properties (Type II)</td><td>15</td><td>Paragraph A: Several current and former members of the Pittsburgh Pirates - ... John Milner, Dave Parker, and Rod Scurry... \nParagraph B: David Gene Parker, nicknamed &quot;The Cobra&quot;, is an American former player in Major League Baseball... \nQ: Which former member of the Pittsburgh Pirates was nicknamed &quot;The Cobra&quot;?</td></tr><tr><td>Inferring about the property of an entity in question through a bridge entity (Type III)</td><td>6</td><td>Paragraph A: Marine Tactical Air Command Squadron 28 is a United States Marine Corps aviation command and control unit based at Marine Corps Air Station Cherry Point... \nParagraph B: Marine Corps Air Station Cherry Point ... is a United States Marine Corps airfield located in Havelock, North Carolina, USA ... \nQ: What city is the Marine Air Control Group 28 located in?</td></tr><tr><td>Other types of reasoning that require more than two supporting facts (Other)</td><td>2</td><td>Paragraph A: ... the towns of Yodobashi, Okubo, Totsuka, and Ochiai town were merged into Yodobashi ward. ... Yodobashi Camera is a store with its name taken from the town and ward. \nParagraph B: Yodobashi Camera Co., Ltd. is a major Japanese retail chain specializing in electronics, PCs, cameras and photographic equipment. \nQ: Aside from Yodobashi, what other towns were merged into the ward which gave the major Japanese retail chain specializing in electronics, PCs, cameras, and photographic equipment it&#x27;s name?</td></tr></table>",
+        "bbox": [
+            115,
+            72,
+            890,
+            458
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Table 3: Types of multi-hop reasoning required to answer questions in the HOTPOTQA dev and test sets. We show in orange bold italics bridge entities if applicable, blue italics supporting facts from the paragraphs that connect directly to the question, and green bold the answer in the paragraph or following the question. The remaining  $8\\%$  are single-hop  $(6\\%)$  or unanswerable questions  $(2\\%)$  by our judgement.",
+        "bbox": [
+            114,
+            460,
+            884,
+            517
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "showing that the supporting facts collected are of high quality.",
+        "bbox": [
+            114,
+            541,
+            489,
+            573
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Aside from the reasoning types mentioned above, we also estimate that about  $6\\%$  of the sampled questions can be answered with one of the two paragraphs, and  $2\\%$  of them unanswerable. We also randomly sampled 100 examples from train-medium and train-hard combined, and the proportions of reasoning types are: Type I  $38\\%$ , Type II  $29\\%$ , Comparison  $20\\%$ , Other  $7\\%$ , Type III  $2\\%$ , single-hop  $2\\%$ , and unanswerable  $2\\%$ .",
+        "bbox": [
+            114,
+            574,
+            489,
+            717
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "5 Experiments",
+        "text_level": 1,
+        "bbox": [
+            115,
+            732,
+            262,
+            749
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "5.1 Model Architecture and Training",
+        "text_level": 1,
+        "bbox": [
+            115,
+            758,
+            423,
+            774
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "To test the performance of leading QA systems on our data, we reimplemented the architecture described in Clark and Gardner (2017) as our baseline model. We note that our implementation without weight averaging achieves performance very close to what the authors reported on SQuAD (about 1 point worse in  $\\mathbf{F}_1$ ). Our implemented model subsumes the latest techni",
+        "bbox": [
+            114,
+            781,
+            489,
+            909
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "cal advances on question answering, including character-level models, self-attention (Wang et al., 2017), and bi-attention (Seo et al., 2017). Combining these three key components is becoming standard practice, and various state-of-the-art or competitive architectures (Liu et al., 2018; Clark and Gardner, 2017; Wang et al., 2017; Seo et al., 2017; Pan et al., 2017; Salant and Berant, 2018; Xiong et al., 2018) on SQuAD can be viewed as similar to our implemented model. To accommodate yes/no questions, we also add a 3-way classifier after the last recurrent layer to produce the probabilities of “yes”, “no”, and span-based answers. During decoding, we first use the 3-way output to determine whether the answer is “yes”, “no”, or a text span. If it is a text span, we further search for the most probable span.",
+        "bbox": [
+            509,
+            541,
+            884,
+            815
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Supporting Facts as Strong Supervision. To evaluate the baseline model's performance in predicting explainable supporting facts, as well as how much they improve QA performance, we additionally design a component to incorporate",
+        "bbox": [
+            509,
+            829,
+            884,
+            910
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "page_number",
+        "text": "2374",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "image",
+        "img_path": "images/84ee7cca0f49df6692b25db3c173cc4d78d92c073b55e2cb3283cf9b9f3c302c.jpg",
+        "image_caption": [
+            "Figure 3: Our model architecture. Strong supervision over supporting facts is used in a multi-task setting."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            129,
+            73,
+            475,
+            388
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "such strong supervision into our model. For each sentence, we concatenate the output of the self-attention layer at the first and last positions, and use a binary linear classifier to predict the probability that the current sentence is a supporting fact. We minimize a binary cross entropy loss for this classifier. This objective is jointly optimized with the normal question answering objective in a multi-task learning setting, and they share the same low-level representations. With this classifier, the model can also be evaluated on the task of supporting fact prediction to gauge its explainability. Our overall architecture is illustrated in Figure 3. Though it is possible to build a pipeline system, in this work we focus on an end-to-end one, which is easier to tune and faster to train.",
+        "bbox": [
+            114,
+            445,
+            489,
+            702
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "5.2 Results",
+        "text_level": 1,
+        "bbox": [
+            115,
+            713,
+            220,
+            726
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "We evaluate our model in the two benchmark settings. In the full wiki setting, to enable efficient tfidf retrieval among  $5,000,000+$  wiki paragraphs, given a question we first return a candidate pool of at most 5,000 paragraphs using an inverted-index-based filtering strategy and then select the top 10 paragraphs in the pool as the final candidates using bigram tfidf. Retrieval performance is shown in",
+        "bbox": [
+            114,
+            733,
+            489,
+            862
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Table 5. After retrieving these 10 paragraphs, we then use the model trained in the distractor setting to evaluate its performance on these final candidate paragraphs.",
+        "bbox": [
+            509,
+            74,
+            884,
+            137
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Following previous work (Rajpurkar et al., 2016), we use exact match (EM) and  $\\mathrm{F_1}$  as two evaluation metrics. To assess the explainability of the models, we further introduce two sets of metrics involving the supporting facts. The first set focuses on evaluating the supporting facts directly, namely EM and  $\\mathrm{F_1}$  on the set of supporting fact sentences as compared to the gold set. The second set features joint metrics that combine the evaluation of answer spans and supporting facts as follows. For each example, given its precision and recall on the answer span  $(P^{(\\mathrm{ans})}, R^{(\\mathrm{ans})})$  and the supporting facts  $(P^{(\\mathrm{sup})}, R^{(\\mathrm{sup})})$ , respectively, we calculate joint  $\\mathrm{F_1}$  as",
+        "bbox": [
+            509,
+            139,
+            884,
+            363
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "text": "\n$$\n\\begin{array}{l} P ^ {(\\text {j o i n t})} = P ^ {(\\text {a n s})} P ^ {(\\text {s u p})}, R ^ {(\\text {j o i n t})} = R ^ {(\\text {a n s})} R ^ {(\\text {s u p})}, \\\\ \\text {J o i n t} F _ {1} = \\frac {2 P ^ {\\left(\\text {j o i n t}\\right)} R ^ {\\left(\\text {j o i n t}\\right)}}{P ^ {\\left(\\text {j o i n t}\\right)} + R ^ {\\left(\\text {j o i n t}\\right)}}. \\\\ \\end{array}\n$$\n",
+        "text_format": "latex",
+        "bbox": [
+            526,
+            372,
+            867,
+            430
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Joint EM is 1 only if both tasks achieve an exact match and otherwise 0. Intuitively, these metrics penalize systems that perform poorly on either task. All metrics are evaluated example-by-example, and then averaged over examples in the evaluation set.",
+        "bbox": [
+            509,
+            438,
+            882,
+            533
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The performance of our model on the benchmark settings is reported in Table 4, where all numbers are obtained with strong supervision over supporting facts. From the distractor setting to the full wiki setting, expanding the scope of the context increases the difficulty of question answering. The performance in the full wiki setting is substantially lower, which poses a challenge to existing techniques on retrieval-based question answering. Overall, model performance in all settings is significantly lower than human performance as shown in Section 5.3, which indicates that more technical advancements are needed in future work.",
+        "bbox": [
+            509,
+            535,
+            882,
+            743
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "We also investigate the explainability of our model by measuring supporting fact prediction performance. Our model achieves  $60+$  supporting fact prediction  $\\mathrm{F}_1$  and  $\\sim 40$  joint  $\\mathrm{F}_1$ , which indicates there is room for further improvement in terms of explainability.",
+        "bbox": [
+            509,
+            744,
+            882,
+            839
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "In Table 6, we break down the performance on different question types. In the distractor setting, comparison questions have lower  $\\mathrm{F}_1$  scores",
+        "bbox": [
+            509,
+            840,
+            882,
+            888
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "page_footnote",
+        "text": "See Appendix C for details.",
+        "bbox": [
+            137,
+            869,
+            315,
+            883
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>7</sup>We choose the number of final candidates as 10 to stay consistent with the distractor setting where candidates are 2",
+        "bbox": [
+            115,
+            883,
+            489,
+            909
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "page_footnote",
+        "text": "gold paragraphs plus 8 distractors.",
+        "bbox": [
+            510,
+            895,
+            722,
+            909
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "page_number",
+        "text": "2375",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "table",
+        "img_path": "images/eb08255d049a58224c117d65100e3597a9d14cf1162b00c454fbe61f76ae981d.jpg",
+        "table_caption": [],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">Setting</td><td rowspan=\"2\">Split</td><td colspan=\"2\">Answer</td><td colspan=\"2\">Sup Fact</td><td colspan=\"2\">Joint</td></tr><tr><td>EM</td><td>F1</td><td>EM</td><td>F1</td><td>EM</td><td>F1</td></tr><tr><td>distractor</td><td>dev</td><td>44.44</td><td>58.28</td><td>21.95</td><td>66.66</td><td>11.56</td><td>40.86</td></tr><tr><td>distractor</td><td>test</td><td>45.46</td><td>58.99</td><td>22.24</td><td>66.62</td><td>12.04</td><td>41.37</td></tr><tr><td>full wiki</td><td>dev</td><td>24.68</td><td>34.36</td><td>5.28</td><td>40.98</td><td>2.54</td><td>17.73</td></tr><tr><td>full wiki</td><td>test</td><td>25.23</td><td>34.40</td><td>5.07</td><td>40.69</td><td>2.63</td><td>17.85</td></tr></table>",
+        "bbox": [
+            270,
+            72,
+            724,
+            172
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "table",
+        "img_path": "images/78753aaac93984dd5dd634268718efc74e98fde79534a1e6d9e7e031ba8791dc.jpg",
+        "table_caption": [
+            "Table 4: Main results: the performance of question answering and supporting fact prediction in the two benchmark settings. We encourage researchers to report these metrics when evaluating their methods."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Set</td><td>MAP</td><td>Mean Rank</td><td>Hits@2</td><td>Hits@10</td></tr><tr><td>dev</td><td>43.93</td><td>314.71</td><td>39.43</td><td>56.06</td></tr><tr><td>test</td><td>43.21</td><td>314.05</td><td>38.67</td><td>55.88</td></tr></table>",
+        "bbox": [
+            134,
+            223,
+            467,
+            275
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "table",
+        "img_path": "images/b10fb5df87e0df785c3a7f040f0f0b4150993da0fe16a47742114c34485def6b.jpg",
+        "table_caption": [
+            "Table 5: Retrieval performance in the full wiki setting. Mean Rank is averaged over the ranks of two gold paragraphs."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Setting</td><td>Br EM</td><td>Br F1</td><td>Cp EM</td><td>Cp F1</td></tr><tr><td>distractor</td><td>43.41</td><td>59.09</td><td>48.55</td><td>55.05</td></tr><tr><td>full wiki</td><td>19.76</td><td>30.42</td><td>43.87</td><td>50.70</td></tr></table>",
+        "bbox": [
+            142,
+            343,
+            460,
+            395
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "than questions involving bridge entities (as defined in Section 2), which indicates that better modeling this novel question type might need better neural architectures. In the full wiki setting, the performance of bridge entity questions drops significantly while that of comparison questions decreases only marginally. This is because both entities usually appear in the comparison questions, and thus reduces the difficulty of retrieval. Combined with the retrieval performance in Table 5, we believe that the deterioration in the full wiki setting in Table 4 is largely due to the difficulty of retrieving both entities.",
+        "bbox": [
+            114,
+            488,
+            489,
+            697
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "We perform an ablation study in the distractor setting, and report the results in Table 7. Both self-attention and character-level models contribute notably to the final performance, which is consistent with prior work. This means that techniques targeted at single-hop QA are still somewhat effective in our setting. Moreover, removing strong supervision over supporting facts decreases performance, which demonstrates the effectiveness of our approach and the usefulness of the supporting facts. We establish an estimate of the upper bound of strong supervision by only considering the supporting facts as the oracle context input to our",
+        "bbox": [
+            114,
+            700,
+            489,
+            910
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "table",
+        "img_path": "images/814a5bad1cf3f2b526f0ccf28caf17803f4e702db3c3ee1de97fb54ef82bd0c7.jpg",
+        "table_caption": [
+            "Table 6: Performance breakdown over different question types on the dev set in the distractor setting. \"Br\" denotes questions collected using bridge entities, and \"Cp\" denotes comparison questions."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Setting</td><td>EM</td><td>F1</td></tr><tr><td>our model</td><td>44.44</td><td>58.28</td></tr><tr><td>- sup fact</td><td>42.79</td><td>56.19</td></tr><tr><td>- sup fact, self attention</td><td>41.59</td><td>55.19</td></tr><tr><td>- sup fact, char model</td><td>41.66</td><td>55.25</td></tr><tr><td>- sup fact, train-easy</td><td>41.61</td><td>55.12</td></tr><tr><td>- sup fact, train-easy, train-medium</td><td>31.07</td><td>43.61</td></tr><tr><td>gold only</td><td>48.38</td><td>63.58</td></tr><tr><td>sup fact only</td><td>51.95</td><td>66.98</td></tr></table>",
+        "bbox": [
+            522,
+            223,
+            870,
+            374
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Table 7: Ablation study of question answering performance on the dev set in the distractor setting. “-sup fact” means removing strong supervision over supporting facts from our model. “-train-easy” and “-train-medium” means discarding the according data splits from training. “gold only” and “sup fact only” refer to using the gold paragraphs or the supporting facts as the only context input to the model.",
+        "bbox": [
+            509,
+            382,
+            884,
+            497
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "model, which achieves a  $10 + \\mathrm{F}_1$  improvement over not using the supporting facts. Compared with the gain of strong supervision in our model ( $\\sim 2$  points in  $\\mathrm{F}_1$ ), our proposed method of incorporating supporting facts supervision is most likely suboptimal, and we leave the challenge of better modeling to future work. At last, we show that combining all data splits (train-easy, train-medium, and train-hard) yields the best performance, which is adopted as the default setting.",
+        "bbox": [
+            509,
+            520,
+            884,
+            681
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "5.3 Establishing Human Performance",
+        "text_level": 1,
+        "bbox": [
+            510,
+            694,
+            823,
+            709
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "To establish human performance on our dataset, we randomly sampled 1,000 examples from the dev and test sets, and had at least three additional Turkers provide answers and supporting facts for these examples. As a baseline, we treat the original Turker during data collection as the prediction, and the newly collected answers and supporting facts as references, to evaluate human performance. For each example, we choose the answer and supporting fact reference that maximize the  $\\mathrm{F}_1$  score to report the final metrics to reduce the effect of ambiguity (Rajpurkar et al., 2016).",
+        "bbox": [
+            509,
+            715,
+            884,
+            910
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "page_number",
+        "text": "2376",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "table",
+        "img_path": "images/0931c69b1fffa275663b1a4197a8a0145c55374a606a155b82ea0bd3ce173509.jpg",
+        "table_caption": [],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">Setting</td><td colspan=\"2\">Answer</td><td colspan=\"2\">Sp Fact</td><td colspan=\"2\">Joint</td></tr><tr><td>EM</td><td>F1</td><td>EM</td><td>F1</td><td>EM</td><td>F1</td></tr><tr><td>gold only</td><td>65.87</td><td>74.67</td><td>59.76</td><td>90.41</td><td>41.54</td><td>68.15</td></tr><tr><td>distractor</td><td>60.88</td><td>68.99</td><td>30.99</td><td>74.67</td><td>20.06</td><td>52.37</td></tr><tr><td>Human</td><td>83.60</td><td>91.40</td><td>61.50</td><td>90.04</td><td>52.30</td><td>82.55</td></tr><tr><td>Human UB</td><td>96.80</td><td>98.77</td><td>87.40</td><td>97.56</td><td>84.60</td><td>96.37</td></tr></table>",
+        "bbox": [
+            117,
+            72,
+            485,
+            172
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Table 8: Comparing baseline model performance with human performance on 1,000 random samples. \"Human UB\" stands for the upper bound on annotator performance on HOTPOTQA. For details please refer to the main body.",
+        "bbox": [
+            114,
+            187,
+            489,
+            260
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "As can be seen in Table 8, the original crowd worker achieves very high performance in both finding supporting facts, and answering the question correctly. If the baseline model were provided with the correct supporting paragraphs to begin with, it achieves parity with the crowd worker in finding supporting facts, but still falls short at finding the actual answer. When distractor paragraphs are present, the performance gap between the baseline model and the crowd worker on both tasks is enlarged to  $\\sim 30\\%$  for both EM and  $\\mathrm{F_1}$ .",
+        "bbox": [
+            114,
+            284,
+            489,
+            460
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "We further establish the upper bound of human performance in HOTPOTQA, by taking the maximum EM and  $\\mathrm{F_1}$  for each example. Here, we use each Turker's answer in turn as the prediction, and evaluate it against all other workers' answers. As can be seen in Table 8, most of the metrics are close to  $100\\%$ , illustrating that on most examples, at least a subset of Turkers agree with each other, showing high inter-annotator agreement. We also note that crowd workers agree less on supporting facts, which could reflect that this task is inherently more subjective than answering the question.",
+        "bbox": [
+            114,
+            462,
+            489,
+            653
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "6 Related Work",
+        "text_level": 1,
+        "bbox": [
+            115,
+            668,
+            272,
+            684
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Various recently-proposed large-scale QA datasets can be categorized in four categories.",
+        "bbox": [
+            114,
+            695,
+            487,
+            727
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Single-document datasets. SQuAD (Rajpurkar et al., 2016, 2018) questions that are relatively simple because they usually require no more than one sentence in the paragraph to answer.",
+        "bbox": [
+            114,
+            738,
+            489,
+            802
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Multi-document datasets. TriviaQA (Joshi et al., 2017) and SearchQA (Dunn et al., 2017) contain question answer pairs that are accompanied with more than one document as the context. This further challenges QA systems' ability to accommodate longer contexts. However, since the",
+        "bbox": [
+            114,
+            813,
+            489,
+            909
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "supporting documents are collected after the question answer pairs with information retrieval, the questions are not guaranteed to involve interesting reasoning between multiple documents.",
+        "bbox": [
+            509,
+            74,
+            884,
+            139
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "KB-based multi-hop datasets. Recent datasets like QAngaroo (Welbl et al., 2018) and COMPLEXWEBQUESTIONS (Talmor and Berant, 2018) explore different approaches of using pre-existing knowledge bases (KB) with pre-defined logic rules to generate valid QA pairs, to test QA models' capability of performing multi-hop reasoning. The diversity of questions and answers is largely limited by the fixed KB schemas or logical forms. Furthermore, some of the questions might be answerable by one text sentence due to the incompleteness of KBs.",
+        "bbox": [
+            509,
+            148,
+            884,
+            341
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Free-form answer-generation datasets. MS MARCO (Nguyen et al., 2016) contains 100k user queries from Bing Search with human generated answers. Systems generate free-form answers and are evaluated by automatic metrics such as ROUGE-L and BLEU-1. However, the reliability of these metrics is questionable because they have been shown to correlate poorly with human judgement (Novikova et al., 2017).",
+        "bbox": [
+            509,
+            351,
+            884,
+            495
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "7 Conclusions",
+        "text_level": 1,
+        "bbox": [
+            510,
+            507,
+            650,
+            521
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "We present HOTPOTQA, a large-scale question answering dataset aimed at facilitating the development of QA systems capable of performing explainable, multi-hop reasoning over diverse natural language. We also offer a new type of factoid comparison questions to test systems' ability to extract and compare various entity properties in text.",
+        "bbox": [
+            509,
+            533,
+            882,
+            659
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Acknowledgements",
+        "text_level": 1,
+        "bbox": [
+            510,
+            674,
+            684,
+            690
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "This work is partly funded by the Facebook ParlAI Research Award. ZY, WWC, and RS are supported by a Google grant, the DARPA grant D17AP00001, the ONR grants N000141512791, N000141812861, and the Nvidia NVAIL Award. SZ and YB are supported by Mila, Université de Montréal. PQ and CDM are supported by the National Science Foundation under Grant No. IIS-1514268. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views of the National Science Foundation.",
+        "bbox": [
+            509,
+            700,
+            884,
+            892
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "page_number",
+        "text": "2377",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "References",
+        "text_level": 1,
+        "bbox": [
+            117,
+            74,
+            215,
+            89
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "Danqi Chen, Adam Fisch, Jason Weston, and Antoine Bordes. 2017. Reading Wikipedia to answer open-domain questions. In Association for Computational Linguistics (ACL).",
+            "Christopher Clark and Matt Gardner. 2017. Simple and effective multi-paragraph reading comprehension. In Proceedings of the 55th Annual Meeting of the Association of Computational Linguistics.",
+            "Matthew Dunn, Levent Sagun, Mike Higgins, Ugur Guney, Volkan Cirik, and Kyunghyun Cho. 2017. SearchQA: A new Q&A dataset augmented with context from a search engine. arXiv preprint arXiv:1704.05179.",
+            "Mandar Joshi, Eunsol Choi, Daniel S. Weld, and Luke Zettlemoyer. 2017. TriviaQA: A large scale distantly supervised challenge dataset for reading comprehension. In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics.",
+            "Xiaodong Liu, Yelong Shen, Kevin Duh, and Jianfeng Gao. 2018. Stochastic answer networks for machine reading comprehension. In Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics.",
+            "Christopher D. Manning, Mihai Surdeanu, John Bauer, Jenny Finkel, Steven J. Bethard, and David McClosky. 2014. The Stanford CoreNLP natural language processing toolkit. In Association for Computational Linguistics (ACL) System Demonstrations, pages 55-60.",
+            "Alexander H Miller, Will Feng, Adam Fisch, Jiasen Lu, Dhruv Batra, Antoine Bordes, Devi Parikh, and Jason Weston. 2017. ParlAI: A dialog research software platform. arXiv preprint arXiv:1705.06476.",
+            "Tri Nguyen, Mir Rosenberg, Xia Song, Jianfeng Gao, Saurabh Tiwary, Rangan Majumder, and Li Deng. 2016. MS MARCO: A human generated machine reading comprehension dataset. In Proceedings of the 30th Annual Conference on Neural Information Processing Systems (NIPS).",
+            "Jekaterina Novikova, Ondrej Dusek, Amanda Cercas Curry, and Verena Rieser. 2017. Why we need new evaluation metrics for NLG. In Proceedings of the Conference on Empirical Methods in Natural Language Processing.",
+            "Boyuan Pan, Hao Li, Zhou Zhao, Bin Cao, Deng Cai, and Xiaofei He. 2017. Memen: Multi-layer embedding with memory networks for machine comprehension. arXiv preprint arXiv:1707.09098.",
+            "Pranav Rajpurkar, Robin Jia, and Percy Liang. 2018. Know what you don't know: Unanswerable questions for SQuAD. In Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics."
+        ],
+        "bbox": [
+            117,
+            96,
+            490,
+            908
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and Percy Liang. 2016. SQuAD:  $100,000+$  questions for machine comprehension of text. In Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing (EMNLP).",
+            "Shimi Salant and Jonathan Berant. 2018. Contextualized word representations for reading comprehension. In Proceedings of the 16th Annual Conference of the North American Chapter of the Association for Computational Linguistics.",
+            "Minjoon Seo, Aniruddha Kembhavi, Ali Farhadi, and Hannaneh Hajishirzi. 2017. Bidirectional attention flow for machine comprehension. In Proceedings of the International Conference on Learning Representations.",
+            "Alon Talmor and Jonathan Berant. 2018. The web as a knowledge-base for answering complex questions. In Proceedings of the 16th Annual Conference of the North American Chapter of the Association for Computational Linguistics.",
+            "Wenhui Wang, Nan Yang, Furu Wei, Baobao Chang, and Ming Zhou. 2017. Gated self-matching networks for reading comprehension and question answering. In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), volume 1, pages 189-198.",
+            "Johannes Welbl, Pontus Stenetorp, and Sebastian Riedel. 2018. Constructing datasets for multi-hop reading comprehension across documents. Transactions of the Association of Computational Linguistics.",
+            "Caiming Xiong, Victor Zhong, and Richard Socher. 2018. DCN+: Mixed objective and deep residual coattention for question answering. In Proceedings of the International Conference on Learning Representations.",
+            "Zhilin Yang, Saizheng Zhang, Jack Urbanek, Will Feng, Alexander H Miller, Arthur Szlam, Douwe Kiela, and Jason Weston. 2018. Mastering the dungeon: Grounded language learning by mechanical turker descent. In Proceedings of the International Conference on Learning Representations."
+        ],
+        "bbox": [
+            512,
+            76,
+            884,
+            697
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "page_number",
+        "text": "2378",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "A Data Collection Details",
+        "text_level": 1,
+        "bbox": [
+            115,
+            74,
+            354,
+            89
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "A.1 Data Preprocessing",
+        "text_level": 1,
+        "bbox": [
+            115,
+            99,
+            319,
+            115
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "We downloaded the dump of English Wikipedia of October 1, 2017, and extracted text and hyperlinks with WikiExtractor. We use Stanford CoreNLP 3.8.0 (Manning et al., 2014) for word and sentence tokenization. We use the resulting sentence boundaries for collection of supporting facts, and use token boundaries to check whether Turkers are providing answers that cover spans of entire tokens to avoid nonsensical partial-word answers.",
+        "bbox": [
+            114,
+            118,
+            489,
+            263
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "A.2 Further Data Collection Details",
+        "text_level": 1,
+        "bbox": [
+            115,
+            274,
+            413,
+            288
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Details on Curating Wikipedia Pages. To make sure the sampled candidate paragraph pairs are intuitive for crowd workers to ask high-quality multi-hop questions about, we manually curate 591 categories from the lists of popular pages by WikiProject. For each category, we sample  $(a,b)$  pairs from the graph  $G$  where  $b$  is in the considered category, and manually check whether a multi-hop question can be asked given the pair  $(a,b)$ . Those categories with a high probability of permitting multi-hop questions are selected.",
+        "bbox": [
+            114,
+            294,
+            489,
+            470
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Bonus Structures. To incentivize crowd workers to produce higher-quality data more efficiently, we follow Yang et al. (2018), and employ bonus structures. We mix two settings in our data collection process. In the first setting, we reward the top (in terms of numbers of examples) workers every 200 examples. In the second setting, the workers get bonuses based on their productivity (measured as the number of examples per hour).",
+        "bbox": [
+            114,
+            479,
+            489,
+            624
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "A.3 Crowd Worker Interface",
+        "text_level": 1,
+        "bbox": [
+            115,
+            634,
+            361,
+            648
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Our crowd worker interface is based on ParlAI (Miller et al., 2017), an open-source project that facilitates the development of dialog systems and data collection with a dialog interface. We adapt ParlAI for collecting question answer pairs by converting the collection workflow into a system-oriented dialog. This allows us to have more control over the turkers input, as well as provide turkers with in-the-loop feedbacks or helpful hints to help Turkers finish the task, and therefore speed up the collection process.",
+        "bbox": [
+            114,
+            653,
+            489,
+            829
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Please see Figure 4 for an example of the worker interface during data collection.",
+        "bbox": [
+            115,
+            831,
+            487,
+            863
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "image",
+        "img_path": "images/b1d5d788d1c5048f4b5e4cd68bd197f63dbdb95a3f8b96e8e3a9f02bc0467430.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            515,
+            72,
+            882,
+            256
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "image",
+        "img_path": "images/d18f6effb90135f1317237b51aa8cb8ef2797bdc06655639fe2e6e6c6a34636e.jpg",
+        "image_caption": [
+            "Figure 4: Screenshot of our worker interface on Amazon Mechanical Turk.",
+            "Figure 5: Distribution of lengths of questions in HOT-POTQA."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            529,
+            326,
+            862,
+            541
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "B Further Data Analysis",
+        "text_level": 1,
+        "bbox": [
+            510,
+            611,
+            742,
+            627
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "To further look into the diversity of the data in HOTPOTQA, we further visualized the distribution of question lengths in the dataset in Figure 5. Besides being diverse in terms of types as is show in the main text, questions also vary greatly in length, indicating different levels of complexity and details covered.",
+        "bbox": [
+            509,
+            638,
+            884,
+            750
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C Full Wiki Setting Details",
+        "text_level": 1,
+        "bbox": [
+            510,
+            764,
+            763,
+            780
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C.1 The Inverted Index Filtering Strategy",
+        "text_level": 1,
+        "bbox": [
+            510,
+            791,
+            855,
+            807
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "In the full wiki setting, we adopt an efficient inverted-index-based filtering strategy for preliminary candidate paragraph retrieval. We provide details in Algorithm 2, where we set the control threshold  $N = 5000$  in our experiments. For some of the question  $q$ , its corresponding gold para",
+        "bbox": [
+            509,
+            813,
+            884,
+            910
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "page_footnote",
+        "text": "8https://github.com/attardi/",
+        "bbox": [
+            115,
+            869,
+            389,
+            882
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "page_footnote",
+        "text": "wikiextractor",
+        "bbox": [
+            115,
+            884,
+            238,
+            894
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "page_footnote",
+        "text": "$^{9}$ https://wiki.sh/y8qu",
+        "bbox": [
+            139,
+            895,
+            327,
+            908
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "page_number",
+        "text": "2379",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "code",
+        "sub_type": "algorithm",
+        "code_caption": [
+            "Algorithm 2 Inverted Index Filtering Strategy"
+        ],
+        "code_body": "Input: question text  $q$  , control threshold  $N$  , ngram-to-   \nWikidoc inverted index  $\\mathcal{D}$    \nInitialize:   \nExtract unigram  $^+$  bigram set  $r_q$  from  $q$ $N_{\\mathrm{cand}} = +\\infty$ $C_\\mathrm{gram} = 0$    \nwhile  $N_{\\mathrm{cands}} > N$  do   \n $C_\\mathrm{gram} = C_\\mathrm{gram} + 1$    \nSet  $S_{\\mathrm{overlap}}$  to be an empty dictionary   \nfor  $w\\in r_q$  do   \nfor  $d\\in \\mathcal{D}[w]$  do if  $d$  not in  $S_{\\mathrm{overlap}}$  then  $S_{\\mathrm{overlap}}[d] = 1$  else  $S_{\\mathrm{overlap}}[d] = S_{\\mathrm{overlap}}[d] + 1$  end if end for   \nend for   \n $S_{\\mathrm{cand}} = \\emptyset$    \nfor  $d$  in  $S_{\\mathrm{overlap}}$  do if  $S_{\\mathrm{overlap}}[d]\\geq C_\\mathrm{gram}$  then  $S_{\\mathrm{cand}} = S_{\\mathrm{cand}}\\cup \\{d\\}$  end if   \nend for   \n $N_{\\mathrm{cands}} = |S_{\\mathrm{cand}}|$    \nend while   \nreturn  $S_{\\mathrm{cand}}$",
+        "bbox": [
+            119,
+            91,
+            489,
+            416
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "graphs may not be included in the output candidate pool  $S_{\\text{cand}}$ , we set such missing gold paragraph's rank as  $|S_{\\text{cand}}| + 1$  during the evaluation, so MAP and Mean Rank reported in this paper are upper bounds of their true values.",
+        "bbox": [
+            114,
+            439,
+            489,
+            519
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "C.2 Compare train-medium Split to Hard Ones",
+        "text_level": 1,
+        "bbox": [
+            115,
+            530,
+            455,
+            560
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Table 9 shows the comparison between train-medium split and hard examples like dev and test under retrieval metrics in full wiki setting. As we can see, the performance gap between train-medium split and its dev/test is close, which implies that train-medium split has a similar level of difficulty as hard examples under the full wiki setting in which a retrieval model is necessary as the first processing step.",
+        "bbox": [
+            114,
+            568,
+            489,
+            712
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "table",
+        "img_path": "images/dbba93ad073049bd19f5056ee4235e082ae453f0c1018f0317c93e26007d3010.jpg",
+        "table_caption": [],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Set</td><td>MAP</td><td>Mean Rank</td><td>CorAns Rank</td></tr><tr><td>train-medium</td><td>41.89</td><td>288.19</td><td>82.76</td></tr><tr><td>dev</td><td>42.79</td><td>304.30</td><td>97.93</td></tr><tr><td>test</td><td>45.92</td><td>286.20</td><td>74.85</td></tr></table>",
+        "bbox": [
+            124,
+            725,
+            477,
+            790
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Table 9: Retrieval performance comparison on full wiki setting for train-medium, dev and test with 1,000 random samples each. MAP and are in %. Mean Rank averages over retrieval ranks of two gold paragraphs. CorAns Rank refers to the rank of the gold paragraph containing the answer.",
+        "bbox": [
+            114,
+            797,
+            489,
+            883
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "page_number",
+        "text": "2380",
+        "bbox": [
+            480,
+            934,
+            519,
+            947
+        ],
+        "page_idx": 11
+    }
+]
