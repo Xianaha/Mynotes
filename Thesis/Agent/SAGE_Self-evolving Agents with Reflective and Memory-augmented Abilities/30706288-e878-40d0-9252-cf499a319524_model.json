@@ -1,0 +1,4870 @@
+[
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.171,
+                0.099,
+                0.83,
+                0.141
+            ],
+            "angle": 0,
+            "content": "SAGE: Self-evolving Agents with Reflective and Memory-augmented Abilities"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.206,
+                0.147,
+                0.758,
+                0.196
+            ],
+            "angle": 0,
+            "content": "Xuechen Liang \\(^{1*}\\), Yangfan He \\(^{2*}\\), Yinghui Xia \\(^{3*}\\), Xinyuan Song \\(^{4}\\), Jianhui Wang \\(^{5}\\), Meiling Tao \\(^{6}\\), Li Sun \\(^{7}\\), Xinhang Yuan \\(^{8}\\), Jiayi Su \\(^{9}\\), Keqin Li \\(^{10}\\), Jiaqi Chen \\(^{10}\\), Jinsong Yang \\(^{3*}\\), Siyuan Chen \\(^{10}\\), Tianyu Shi \\(^{11\\dagger}\\)"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.202,
+                0.199,
+                0.758,
+                0.231
+            ],
+            "angle": 0,
+            "content": "<sup>1</sup> East China Jiao Tong University, <sup>2</sup> University of Minnesota - Twin Cities, <sup>3</sup> AutoAgents.ai, <sup>4</sup> Emory University,"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.256,
+                0.231,
+                0.703,
+                0.262
+            ],
+            "angle": 0,
+            "content": "<sup>5</sup> University of Electronic Science and Technology of China, <sup>6</sup> Guangdong University of Technology,"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.264,
+                0.262,
+                0.694,
+                0.278
+            ],
+            "angle": 0,
+            "content": "\\(^{7}\\) Amazon, \\(^{8}\\) Washington University, \\(^{9}\\) Xiamen University,"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.198,
+                0.277,
+                0.761,
+                0.307
+            ],
+            "angle": 0,
+            "content": "\\(^{10}\\) Independent Researcher,\\(^{11}\\) University of Bristol,\\(^{12}\\) University of Toronto Project Page: https://jianhuiwemi.github.io/SAGE"
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.459,
+                0.342,
+                0.542,
+                0.359
+            ],
+            "angle": 0,
+            "content": "Abstract"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.229,
+                0.373,
+                0.772,
+                0.624
+            ],
+            "angle": 0,
+            "content": "Large language models (LLMs) have made significant advances in the field of natural language processing, but they still face challenges such as continuous decision-making, lack of long-term memory, and limited context windows in dynamic environments. To address these issues, this paper proposes an innovative framework—Self-evolving Agents with Reflective and Memory-augmented Abilities (SAGE). The SAGE framework comprises three agents: the User, the Assistant, and the Checker. By integrating iterative feedback, reflective mechanisms, and a memory optimization mechanism based on the Ebbinghaus forgetting curve, it significantly enhances the agents' capabilities in handling multi-tasking and long-span information. The agents, through self-evolution, can adaptively adjust strategies, optimize information storage and transmission, and effectively reduce cognitive load. We evaluate the performance of the SAGE framework on multiple benchmarks and long text tasks. Experimental results show that SAGE significantly improves model performance, achieving a 2.26X improvement on closed-source models and an improvement ranging from \\(57.7\\%\\) to \\(100\\%\\) on open-source models, with particularly notable effects on smaller models."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.647,
+                0.321,
+                0.663
+            ],
+            "angle": 0,
+            "content": "1 Introduction"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.672,
+                0.828,
+                0.84
+            ],
+            "angle": 0,
+            "content": "In recent years, large language models (LLMs) have made significant progress in the field of natural language processing, demonstrating powerful performance in tasks such as dialogue and text generation Brown et al. (2020); He et al. (2025; 2024). Recently, there has been growing interest in applying LLMs as autonomous agents (LLM agents), which use language not only for understanding and generation, but also for planning and acting in interactive environments Yao et al. (2023b); Shinn et al. (2023); Liang et al. (2024); Li et al. (2024); Zhou et al. (2024). However, these models still face several challenges: (1) LLM Agents need to continuously make decisions in changing environments and adapt to new situations and tasks. (2) LLM Agents lack long-term memory mechanisms, which is increasingly evident in situations requiring sustained interaction with the environment Graves et al. (2016). The limited context window also hinders the model's ability to handle information over long time spans Rae et al. (2019)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.845,
+                0.828,
+                0.89
+            ],
+            "angle": 0,
+            "content": "To tackle these challenges, researchers have proposed meta-learning and multi-task learning to enhance the transferability and adaptability of LLM agents. For memory limitations, prior works like MemGPT Packer et al. (2024) use a FIFO queue to manage forgetting,"
+        },
+        {
+            "type": "page_footnote",
+            "bbox": [
+                0.191,
+                0.897,
+                0.329,
+                0.91
+            ],
+            "angle": 0,
+            "content": "*Equal contribution."
+        },
+        {
+            "type": "page_footnote",
+            "bbox": [
+                0.193,
+                0.91,
+                0.526,
+                0.925
+            ],
+            "angle": 0,
+            "content": "†Corresponding author: ty.shi@mail.utoronto.ca"
+        },
+        {
+            "type": "list",
+            "bbox": [
+                0.191,
+                0.897,
+                0.526,
+                0.925
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "aside_text",
+            "bbox": [
+                0.023,
+                0.266,
+                0.061,
+                0.709
+            ],
+            "angle": 270,
+            "content": "arXiv:2409.00872v2 [cs.CL] 20 Apr 2025"
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.494,
+                0.949,
+                0.504,
+                0.96
+            ],
+            "angle": 0,
+            "content": "1"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.104,
+                0.827,
+                0.204
+            ],
+            "angle": 0,
+            "content": "while MemoryBank employs a forgetting curve based on insertion time. However, these approaches are often task-specific, lacking a general framework to systematically improve LLM agents in complex environments. Recent innovations, such as AutoGPT Yang et al. (2023) and BabyAGI Nakajima (2024), leverage LLMs as core controllers, aiming to solve real-world challenges. Yet, multi-agent frameworks still face issues like communication overload, heavily relying on memory to maintain context. As interaction history grows, resource demands and latency increase, limiting efficient deployment in practical scenarios."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.209,
+                0.828,
+                0.405
+            ],
+            "angle": 0,
+            "content": "In this paper, we propose an innovative framework, Self-evolving Agents with reflective and memory-augmented abilities (SAGE). By enhancing agents' self-adjustment capabilities through reflection, they can more effectively utilize historical information and make efficient decisions when faced with complex and dynamic tasks. From the perspective of self-evolution, we introduce a memory optimization mechanism based on the Ebbinghaus forgetting curv Ebbinghaus (1885). This mechanism helps agents selectively retain key information, optimize information storage and transmission, reduce unnecessary cognitive load, and enhance agents' capabilities in interaction tasks with the environment. Experimental results demonstrate that our approach consistently enhances the performance of both proprietary and open-source LLMs across a wide range of benchmarks. The improvements are especially notable in smaller models, where the gains are more pronounced. On tasks such as multi-source question answering and code generation, our method sets a new standard, outperforming existing techniques and achieving leading benchmarks Etezadi & Shamsfard (2023), including AgentBench Liu et al. (2023b)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.41,
+                0.542,
+                0.424
+            ],
+            "angle": 0,
+            "content": "The main contributions of our work are as follows:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.434,
+                0.825,
+                0.491
+            ],
+            "angle": 0,
+            "content": "- We propose a novel framework, SAGE, which introduces a reflection mechanism to enhance agents' self-adjustment capabilities. Without any additional training, this enables agents to utilize historical information more effectively and make better decisions when faced with complex and dynamic tasks."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.494,
+                0.826,
+                0.537
+            ],
+            "angle": 0,
+            "content": "- We introduce a memory optimization mechanism based on the Ebbinghaus forgetting curve. This helps agents selectively retain key information, reducing the issue of information overload in multi-agent systems."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.539,
+                0.825,
+                0.584
+            ],
+            "angle": 0,
+            "content": "- SAGE achieves improvements over strong baselines in multiple challenging real-world tasks and attains state-of-the-art results on benchmarks. This framework can be applied to other LLMs, with particularly strong improvements in smaller models."
+        },
+        {
+            "type": "list",
+            "bbox": [
+                0.171,
+                0.434,
+                0.826,
+                0.584
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.171,
+                0.599,
+                0.327,
+                0.615
+            ],
+            "angle": 0,
+            "content": "2 Related work"
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.171,
+                0.624,
+                0.62,
+                0.64
+            ],
+            "angle": 0,
+            "content": "2.1 Self-Improvement of Reasoning and Decision-Making"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.643,
+                0.827,
+                0.812
+            ],
+            "angle": 0,
+            "content": "Deep learning has transformed multiple domains including NLP, time series analysis and computer vision Qiu et al. (2025a;b; 2024). A lot of research is focused on making large language models (LLMs) better at improving themselves. Some researchers are working on using carefully crafted prompts to help models learn how to get better, although this usually only works for one-off tasks. Others are tweaking how models get feedback during tasks, which helps them get better at thinking things through Huang et al. (2022). There's also work on using strategies like random beam searches to help models make smarter decisions and assess their own work. Most current methods rely on quick, one-off tweaks and learning strategies that need lots of resources and hands-on tech help Tian et al. (2024). This paper introduces a self-reflection mechanism, showing that LLMs can keep getting better and produce higher quality work across different tasks, all without needing extra training."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.171,
+                0.821,
+                0.54,
+                0.837
+            ],
+            "angle": 0,
+            "content": "2.2 Memory Mechanism for LLM-based Agents"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.84,
+                0.829,
+                0.926
+            ],
+            "angle": 0,
+            "content": "In LLM-based agents, the memory module stores, processes, and retrieves task-related information, supporting knowledge accumulation, experience handling, and decision-making. To enhance the self-evolution capabilities of these agents, researchers are focused on designing and optimizing these memory modules Raffel et al. (2020). Past research has covered various designs and implementations of memory modules. This includes integrating information from different trials to boost reasoning abilities or storing information in natural"
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.494,
+                0.948,
+                0.506,
+                0.96
+            ],
+            "angle": 0,
+            "content": "2"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.174,
+                0.033,
+                0.347,
+                0.048
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.103,
+                0.828,
+                0.149
+            ],
+            "angle": 0,
+            "content": "language to enhance the module's interpretability and user-friendliness Wada et al. (2019). Despite progress, self-adjustment and memory management still need improvement to handle complex real-world problems more effectively."
+        },
+        {
+            "type": "image",
+            "bbox": [
+                0.174,
+                0.159,
+                0.826,
+                0.381
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "image_caption",
+            "bbox": [
+                0.171,
+                0.389,
+                0.825,
+                0.461
+            ],
+            "angle": 0,
+            "content": "Figure 1: An illustration of the SAGE: a user provides a description and instance to the assistant with short-term (STM) and long-term (LTM) memory. The assistant performs observation, action, reflection, and output, which the checker reviews. The retention rate curve on the right illustrates memory decay over time, with a self-evolving loop guiding continued updates."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.48,
+                0.279,
+                0.496
+            ],
+            "angle": 0,
+            "content": "3 Method"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.505,
+                0.827,
+                0.673
+            ],
+            "angle": 0,
+            "content": "In this section, we present the SAGE framework, designed to improve agent performance by leveraging three core mechanisms: iterative feedback, reflection, and MemorySyntax (as shown in Figure 1). The assistant agent \\( A \\) iteratively updates its policy \\( \\pi_{\\theta} \\) based on feedback \\( f_{t} \\) provided by the checker agent \\( C \\), optimizing over successive iterations to maximize the expected reward \\( R \\). The reflection mechanism allows \\( A \\) to incorporate historical observations \\( \\mathcal{O}_t \\) and actions \\( \\mathbf{a}_t \\), forming a self-reflection \\( r_t \\), which is stored in the memory \\( \\mathcal{M}_L \\) for future decision-making. Finally, MemorySyntax combines the Ebbinghaus forgetting curve with linguistic principles to manage memory decay, dynamically updating the agent's short-term memory \\( \\mathcal{M}_S \\) and long-term memory \\( \\mathcal{M}_L \\) by prioritizing information based on its retention strength \\( S(I_t) \\), thus improving the agent's ability to retain crucial information while discarding less relevant data. The subsequent subsections detail these components."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.682,
+                0.352,
+                0.696
+            ],
+            "angle": 0,
+            "content": "3.1 Iterative Feedback"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.702,
+                0.825,
+                0.787
+            ],
+            "angle": 0,
+            "content": "The iterative feedback mechanism in the SAGE framework enables the assistant agent \\( A \\) to refine its policy \\( \\pi_{\\theta} \\) through repeated interactions with the checker agent \\( C \\). At each iteration \\( t \\), the assistant receives feedback \\( f_{t} \\) based on its current output \\( \\mathbf{o}_{t} \\), and adjusts its policy accordingly. This process continues until the checker validates the output or the iteration cap \\( N \\) is reached, ensuring that \\( A \\) incrementally optimizes its decisions to improve task performance over successive iterations."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.795,
+                0.375,
+                0.809
+            ],
+            "angle": 0,
+            "content": "3.1.1 Initialization Phase"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.813,
+                0.825,
+                0.911
+            ],
+            "angle": 0,
+            "content": "Role Assignment. In the SAGE framework, three agents are introduced: the user \\(U\\), the assistant \\(A\\), and the checker \\(C\\). The user, upon receiving prompt \\(P_U\\), assumes the role of task proposer by specifying a task \\(\\mathcal{T}_U\\) and related constraints \\(\\mathcal{C}_U\\). The assistant, upon receiving prompt \\(P_A\\), generates a sequence of actions \\(\\mathbf{a}_t\\) based on the observations \\(\\mathcal{O}_t\\) and environment \\(\\mathcal{E}\\). The checker \\(C\\) evaluates the output \\(\\mathbf{o}_A\\) produced by the assistant, providing feedback \\(f_C\\) based on the discrepancy between \\(\\mathbf{o}_A\\) and the expected result, updating its policy \\(\\pi_\\theta\\) iteratively to minimize this gap."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.91,
+                0.825,
+                0.926
+            ],
+            "angle": 0,
+            "content": "Task Assignment. The task \\(\\mathcal{T}_U\\) provided by the user includes an initial task description \\(\\mathbf{d}_U\\)"
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.494,
+                0.949,
+                0.504,
+                0.96
+            ],
+            "angle": 0,
+            "content": "3"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.104,
+                0.825,
+                0.162
+            ],
+            "angle": 0,
+            "content": "and an instance \\(\\mathbf{i}_U\\) that serves as the reference for correct output. This forms the input set \\(\\mathcal{I}_A = (\\mathbf{d}_U, \\mathbf{i}_U)\\) for the assistant to initiate its generative process. The assistant then proceeds by selecting an action \\(\\mathbf{a}_t\\) at each time step \\(t\\), guided by \\(\\pi_{\\theta}\\), with the goal of maximizing the reward \\(R_t\\) for completing \\(\\mathcal{T}_U\\)."
+        },
+        {
+            "type": "image",
+            "bbox": [
+                0.174,
+                0.177,
+                0.826,
+                0.389
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "image_caption",
+            "bbox": [
+                0.171,
+                0.398,
+                0.827,
+                0.442
+            ],
+            "angle": 0,
+            "content": "Figure 2: An example of the assistant's iterative workflow, including checker evaluation, prompt templates for feedback, and reflection processes integrating short-term and long-term memory."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.47,
+                0.409,
+                0.484
+            ],
+            "angle": 0,
+            "content": "3.1.2 Actual Interaction Phase"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.489,
+                0.825,
+                0.59
+            ],
+            "angle": 0,
+            "content": "Following the role assignment and task definition in the initialization phase, the assistant \\(A\\) transitions into the actual interaction phase to generate outputs aimed at accomplishing the task \\(\\mathcal{T}_U\\). In this phase, \\(A\\) iteratively produces outputs \\(\\mathbf{o}_t\\) at each time step \\(t\\) based on the task description \\(\\mathbf{d}_U\\) and instance \\(\\mathbf{i}_U\\) provided in the input set \\(\\mathcal{I}_A = (\\mathbf{d}_U, \\mathbf{i}_U)\\). At each time step \\(t\\), the assistant selects an action \\(\\mathbf{a}_t\\) by following its policy \\(\\pi_\\theta\\), which is conditioned on the current state \\(s_t\\), the reward signal \\(R_t\\) (the reward score for task performance), and feedback \\(f_t^i\\) from the checker \\(C\\). This decision-making process is formalized as:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.416,
+                0.598,
+                0.826,
+                0.617
+            ],
+            "angle": 0,
+            "content": "\\[\n\\mathbf {o} _ {t} \\sim \\pi_ {\\theta} \\left(\\mathbf {o} _ {t} \\mid s _ {t}, R _ {t}, f _ {t} ^ {i}\\right), \\tag {1}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.623,
+                0.825,
+                0.668
+            ],
+            "angle": 0,
+            "content": "where \\(\\pi_{\\theta}\\) represents the assistant's policy, \\(R_{t}\\) reflects the reward signal based on task performance at time \\(t\\), and \\(f_{t}^{i}\\) is the feedback provided by the checker during the \\(i\\)-th iteration."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.675,
+                0.827,
+                0.747
+            ],
+            "angle": 0,
+            "content": "As the interaction progresses, the checker \\( C \\) evaluates each output \\( \\mathbf{o}_t \\) generated by \\( A \\), comparing it against the expected outcome derived from \\( \\mathbf{i}_U \\). Based on this comparison, the checker provides iterative feedback \\( f_t^i \\) to guide \\( A \\) in refining its actions \\( \\mathbf{a}_t \\) and outputs \\( \\mathbf{o}_t \\). The iterative refinement continues until either the checker validates the output as correct or the iteration limit \\( N \\) is reached."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.754,
+                0.827,
+                0.852
+            ],
+            "angle": 0,
+            "content": "Theoretical optimality of iterative feedback mechanism. In the SAGE framework, the assistant repeatedly updates its policy through this checker feedback, enabling the outputs to be incrementally refined until either the result is validated or a specified iteration limit is reached. The assistant's utility \\( R_{A} \\) reflects task performance, and the checker's utility \\( R_{C} \\) depends on its feedback. The following theorem indicates that this iterative feedback mechanism leads to strategy stability in the sense of a Nash equilibrium Fudenberg & Tirole (1991)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.857,
+                0.825,
+                0.901
+            ],
+            "angle": 0,
+            "content": "Theorem 3.1 (Theory for the multi-agent iterative feedback system). Let \\(\\mathcal{U},\\mathcal{A},\\mathcal{C}\\) denote the compact, convex strategy spaces of the user \\((U)\\), assistant \\((A)\\), and checker \\((C)\\), respectively. Assume that the utility functions"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.223,
+                0.909,
+                0.826,
+                0.927
+            ],
+            "angle": 0,
+            "content": "\\[\nR _ {U}: \\mathcal {U} \\times \\mathcal {A} \\times \\mathcal {C} \\rightarrow \\mathbb {R}, \\quad R _ {A}: \\mathcal {U} \\times \\mathcal {A} \\times \\mathcal {C} \\rightarrow \\mathbb {R}, \\quad a n d \\quad R _ {C}: \\mathcal {U} \\times \\mathcal {A} \\times \\mathcal {C} \\rightarrow \\mathbb {R} \\tag {2}\n\\]"
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.494,
+                0.949,
+                0.505,
+                0.96
+            ],
+            "angle": 0,
+            "content": "4"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.348,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.104,
+                0.827,
+                0.133
+            ],
+            "angle": 0,
+            "content": "are continuous in each player's strategy. Then, by the Debreu-Glicksberg-Fan fixed-point theorem, there exists a Nash equilibrium"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.406,
+                0.141,
+                0.826,
+                0.16
+            ],
+            "angle": 0,
+            "content": "\\[\n\\left(s _ {U} ^ {*}, s _ {A} ^ {*}, s _ {C} ^ {*}\\right) \\in \\mathcal {U} \\times \\mathcal {A} \\times \\mathcal {C}. \\tag {3}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.165,
+                0.825,
+                0.208
+            ],
+            "angle": 0,
+            "content": "Furthermore, suppose that the assistant's policy \\(\\pi_{\\theta}\\) is updated via policy gradient methods and that the checker's strategy is refined through convex optimization. Then, the iterative update procedures yield sequences"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.397,
+                0.21,
+                0.826,
+                0.231
+            ],
+            "angle": 0,
+            "content": "\\[\n\\left\\{\\pi_ {\\theta} ^ {(k)} \\right\\} _ {k \\geq 0} \\quad a n d \\quad \\left\\{f ^ {(k)} \\right\\} _ {k \\geq 0}, \\tag {4}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.236,
+                0.576,
+                0.253
+            ],
+            "angle": 0,
+            "content": "which converge to a stable strategy profile \\((\\pi_{\\theta}^{*},f^{*})\\) , and has:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.306,
+                0.261,
+                0.826,
+                0.28
+            ],
+            "angle": 0,
+            "content": "\\[\nR _ {A} \\left(\\pi_ {\\theta} ^ {*}, f ^ {*}\\right) \\geq R _ {A} \\left(\\pi_ {\\theta}, f ^ {*}\\right), \\quad R _ {C} \\left(\\pi_ {\\theta} ^ {*}, f ^ {*}\\right) \\geq R _ {C} \\left(\\pi_ {\\theta} ^ {*}, f\\right). \\tag {5}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.293,
+                0.825,
+                0.351
+            ],
+            "angle": 0,
+            "content": "This result demonstrates that the iterative feedback mechanism enhances the model's strategy stability by converging to a Nash equilibrium in the three-player game. It provides a stronger justification for the three-agent system versus simpler alternatives (such as two-agent systems). For the detailed theoretical explanation and proof, see A.2."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.36,
+                0.482,
+                0.374
+            ],
+            "angle": 0,
+            "content": "3.1.3 Evolutionary Goals and Directions"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.38,
+                0.825,
+                0.41
+            ],
+            "angle": 0,
+            "content": "Leveraging the feedback \\( f_{t}^{i} \\) obtained at each iteration \\( t \\), the assistant \\( A \\) formulates new evolutionary objectives:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.279,
+                0.419,
+                0.826,
+                0.451
+            ],
+            "angle": 0,
+            "content": "\\[\n\\mathcal {G} ^ {t + 1} = \\left(\\mathcal {A} ^ {t + 1}, \\mathcal {D} ^ {t + 1}\\right), \\quad \\mathcal {D} ^ {t + 1} = \\arg \\min  _ {\\mathcal {D} _ {t} \\in \\Delta} \\sum_ {i \\in I _ {t}} L _ {D} \\left(\\mathcal {D} _ {t}; f _ {t} ^ {i}, \\pi_ {\\theta} ^ {t}\\right), \\tag {6}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.461,
+                0.826,
+                0.538
+            ],
+            "angle": 0,
+            "content": "where \\(\\mathcal{A}^{t + 1}\\) represents the updated memory optimization mechanisms, and \\(\\mathcal{D}^{t + 1} \\in \\Delta\\) refers to the model's self-adjustments to make the RL algorithm converge. These evolutionary objectives guide the assistant in updating its policy \\(\\pi_{\\theta}\\) for the subsequent iteration. The policy update is governed by the function \\(\\psi\\), which integrates the current policy \\(\\pi_{\\theta}^{t}\\) with the new evolutionary objectives \\(\\mathcal{G}^{t + 1}\\):"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.251,
+                0.546,
+                0.826,
+                0.573
+            ],
+            "angle": 0,
+            "content": "\\[\n\\theta^ {t + 1} = \\phi (\\theta^ {t}, \\mathcal {G} ^ {t + 1}) = \\theta^ {t} + \\alpha \\nabla_ {\\theta} [ \\lambda_ {A} L _ {A} (\\theta^ {t}, \\mathcal {A} ^ {t + 1}) + \\lambda_ {D} L _ {D} (\\theta^ {t}, \\mathcal {D} ^ {t + 1}) ]. \\tag {7}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.581,
+                0.827,
+                0.651
+            ],
+            "angle": 0,
+            "content": "Here \\(L_{A}(\\theta, \\mathcal{A})\\) and \\(L_{D}(\\theta, \\mathcal{D})\\) are MSE loss functions corresponding to the memory-optimization and self-adjustment aspects, respectively, and \\(\\lambda_{A}, \\lambda_{D} \\geq 0\\) are weighting coefficients. The iterative policy refinement enables the assistant \\(A\\) to continuously adapt its strategies based on cumulative feedback and evolving task requirements, thereby improving its overall performance in dynamic environments."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.662,
+                0.381,
+                0.677
+            ],
+            "angle": 0,
+            "content": "3.2 Memory Management"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.682,
+                0.825,
+                0.739
+            ],
+            "angle": 0,
+            "content": "The SAGE framework implements a dual-memory system, consisting of Short-Term Memory (STM) and Long-Term Memory (LTM), to manage task-relevant information and enhance the agent's reasoning and decision-making capabilities (see Figure 2 for a visual representation of this process)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.745,
+                0.827,
+                0.803
+            ],
+            "angle": 0,
+            "content": "Short-Term Memory (STM). STM is responsible for storing immediate, task-specific data with limited capacity. It updates rapidly with new observations \\((\\mathcal{O}_t)\\) and actions \\((\\mathbf{a}_t)\\), maintaining a recent trajectory history \\(\\mathcal{T}_t = (\\mathcal{O}_t,\\mathbf{a}_t)\\). This allows the agent to make real-time decisions and respond quickly to dynamic changes in the environment Mnih et al. (2015)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.808,
+                0.826,
+                0.879
+            ],
+            "angle": 0,
+            "content": "Long-Term Memory (LTM). LTM retains critical information and self-reflections \\((r_t)\\) over extended periods, enabling the agent to accumulate knowledge from past interactions and apply it to future tasks. Stored as \\(\\mathcal{M}_L = \\{r_t \\mid t \\in T\\}\\), this memory mechanism allows the agent to use prior experiences to improve task performance, particularly in complex environments that require long-span information Graves et al. (2016)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.885,
+                0.825,
+                0.929
+            ],
+            "angle": 0,
+            "content": "By integrating STM and LTM, the SAGE framework allows the agent to balance immediate task demands with the ability to draw from accumulated knowledge, thereby enhancing its overall decision-making efficiency."
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.494,
+                0.948,
+                0.505,
+                0.96
+            ],
+            "angle": 0,
+            "content": "5"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.348,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.104,
+                0.3,
+                0.119
+            ],
+            "angle": 0,
+            "content": "3.2.1 Reflection"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.122,
+                0.827,
+                0.208
+            ],
+            "angle": 0,
+            "content": "Figure 4 illustrates an example of the reflection mechanism applied to a HotpotQA task Yang et al. (2018b). The reflection mechanism equips the assistant \\( A \\) with sparse reward signals, such as binary success/failure states, trajectory \\( \\mathcal{T}_t \\), and its stored memory \\( \\mathcal{M}_L \\). The assistant processes these inputs, deriving insights from past performance and storing self-reflections \\( \\mathbf{r}_t \\) for future decision-making. These self-reflections, richer than scalar rewards, enhance the assistant's learning capacity and are incorporated into long-term memory:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.43,
+                0.214,
+                0.826,
+                0.231
+            ],
+            "angle": 0,
+            "content": "\\[\n\\mathbf {r} _ {t} = \\operatorname {r e f} \\left(\\mathbf {o} _ {1: t}, \\mathbf {R} _ {1: t}\\right), \\tag {8}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.238,
+                0.825,
+                0.268
+            ],
+            "angle": 0,
+            "content": "where \\(\\operatorname{ref}(\\cdot)\\) denotes the reflection function based on the output sequence \\(\\mathbf{o}_{1:t}\\) and rewards \\(\\mathbf{R}_{1:t}\\). The derived reflection \\(\\mathbf{r}_t\\) is then added to \\(\\mathcal{M}_L\\):"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.427,
+                0.275,
+                0.826,
+                0.291
+            ],
+            "angle": 0,
+            "content": "\\[\n\\mathcal {M} _ {L} \\leftarrow \\mathcal {M} _ {L} \\cup \\left\\{\\mathbf {r} _ {t} \\right\\}. \\tag {9}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.299,
+                0.825,
+                0.33
+            ],
+            "angle": 0,
+            "content": "The process gradually enhances the agent's decision-making, allowing it to adapt effectively through accumulated experience."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.339,
+                0.339,
+                0.354
+            ],
+            "angle": 0,
+            "content": "3.2.2 MemorySyntax"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.357,
+                0.827,
+                0.429
+            ],
+            "angle": 0,
+            "content": "Building upon the reflection mechanism, the MemorySyntax method integrates the Ebbinghaus forgetting curve with linguistic principles to emulate human-like memory processes within the agent's memory management system. Let \\( I_{t} \\) denote the information received at time \\( t \\), and let \\( R(I_{t},\\tau) \\) represent its retention rate after a time interval \\( \\tau \\). According to the Ebbinghaus forgetting curve, the retention rate is modeled as:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.442,
+                0.436,
+                0.826,
+                0.455
+            ],
+            "angle": 0,
+            "content": "\\[\nR \\left(I _ {t}, \\tau\\right) = e ^ {- \\frac {\\tau}{S}}, \\tag {10}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.174,
+                0.463,
+                0.783,
+                0.479
+            ],
+            "angle": 0,
+            "content": "where \\( S \\) is the strength of the information, reflecting its importance and complexity."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.482,
+                0.825,
+                0.513
+            ],
+            "angle": 0,
+            "content": "To enhance retention, MemorySyntax applies linguistic optimization to \\( I_{t} \\), producing an optimized version \\( I_{t}^{*} \\) with increased strength \\( S^{*} > S \\). The retention rate for \\( I_{t}^{*} \\) is defined as:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.379,
+                0.519,
+                0.826,
+                0.56
+            ],
+            "angle": 0,
+            "content": "\\[\nR \\left(I _ {t} ^ {*}, \\tau\\right) = \\left\\{ \\begin{array}{l l} e ^ {- \\frac {\\tau}{S ^ {*}}}, & \\text {i f} I _ {t} ^ {*} \\in \\mathcal {M} _ {S}, \\\\ e ^ {- \\frac {\\tau}{S}}, & \\text {i f} I _ {t} ^ {*} \\in \\mathcal {M} _ {L}, \\end{array} \\right. \\tag {11}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.174,
+                0.568,
+                0.809,
+                0.584
+            ],
+            "angle": 0,
+            "content": "where \\(\\mathcal{M}_S\\) and \\(\\mathcal{M}_L\\) represent short-term memory and long-term memory, respectively."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.587,
+                0.825,
+                0.617
+            ],
+            "angle": 0,
+            "content": "The agent updates its memory state \\(\\mathcal{M}_t\\) based on the retention rate of \\(I_t^*\\) using predefined thresholds \\(\\theta_1\\) and \\(\\theta_2\\), with \\(\\theta_1 > \\theta_2\\). The memory update rule is formalized as:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.349,
+                0.625,
+                0.826,
+                0.675
+            ],
+            "angle": 0,
+            "content": "\\[\n\\mathcal {M} _ {t + 1} = \\left\\{ \\begin{array}{l l} \\mathcal {M} _ {t} \\cup \\left\\{I _ {t} ^ {*} \\right\\}, & \\text {i f} R \\left(I _ {t} ^ {*}, \\tau\\right) \\geq \\theta_ {1}, \\\\ \\mathcal {M} _ {t} \\backslash \\left\\{I _ {t} ^ {*} \\right\\}, & \\text {i f} R \\left(I _ {t} ^ {*}, \\tau\\right) <   \\theta_ {2}, \\\\ \\mathcal {M} _ {t}, & \\text {o t h e r w i s e .} \\end{array} \\right. \\tag {12}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.176,
+                0.685,
+                0.598,
+                0.701
+            ],
+            "angle": 0,
+            "content": "This update rule operates under the following conditions:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.711,
+                0.825,
+                0.741
+            ],
+            "angle": 0,
+            "content": "- Retention in Short-Term Memory \\((\\mathcal{M}_S)\\): If \\(R(I_t^*, \\tau) \\geq \\theta_1\\), the information \\(I_t^*\\) is retained in short-term memory \\(\\mathcal{M}_S\\)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.745,
+                0.827,
+                0.773
+            ],
+            "angle": 0,
+            "content": "- Discarding Information: If \\( R(I_t^*, \\tau) < \\theta_2 \\), the information \\( I_t^* \\) is considered insignificant and is discarded."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.779,
+                0.827,
+                0.81
+            ],
+            "angle": 0,
+            "content": "- Transfer to Long-Term Memory \\((\\mathcal{M}_L)\\): If \\(\\theta_2 \\leq R(I_t^*, \\tau) < \\theta_1\\), the information \\(I_t^*\\) is transferred to long-term memory \\(\\mathcal{M}_L\\)."
+        },
+        {
+            "type": "list",
+            "bbox": [
+                0.171,
+                0.711,
+                0.827,
+                0.81
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.821,
+                0.825,
+                0.852
+            ],
+            "angle": 0,
+            "content": "The above MemorySyntax method is optimal and ensures maximal information utility. For theoretical background and detailed proof, see Appendix A.1."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.857,
+                0.827,
+                0.929
+            ],
+            "angle": 0,
+            "content": "By simulating human memory dynamics, MemorySyntax enables the agent to prioritize essential information, retain critical data in short-term memory \\(\\mathcal{M}_S\\), store important but less frequently used information in long-term memory \\(\\mathcal{M}_L\\), and discard irrelevant data. The mechanism addresses memory capacity limitations and enhances the agent's ability to perform complex tasks requiring efficient memory management."
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.494,
+                0.949,
+                0.505,
+                0.96
+            ],
+            "angle": 0,
+            "content": "6"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.102,
+                0.31,
+                0.12
+            ],
+            "angle": 0,
+            "content": "4 Experiment"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.129,
+                0.827,
+                0.256
+            ],
+            "angle": 0,
+            "content": "To demonstrate the capabilities and performance of SAGE in coordinating autonomous agent groups to work together on tasks, we conduct extensive quantitative experiments on benchmark tasks. We use a public benchmark, AgentBench Liu et al. (2023b), which is a multidimensional evolutionary benchmark from which we select six tasks. These tasks test the reasoning and decision-making abilities of LLMs acting as agents in multi-turn open-ended generation settings. To further assess the agents' long-context understanding, we select four widely adopted tasks related to long-text processing. These tasks reflect the agents' programming abilities(LCCGuo et al. (2023), RepoBench-P Liu et al. (2023a)) and reasoning abilities(HotpotQA Yang et al. (2018b), TriviaQA Joshi et al. (2017b))."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.171,
+                0.268,
+                0.414,
+                0.284
+            ],
+            "angle": 0,
+            "content": "4.1 Evaluation on AgentBench"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.288,
+                0.829,
+                0.346
+            ],
+            "angle": 0,
+            "content": "Task Description AgentBench includes scenarios from CODE (Knowledge Graph, OS, DB), GAME (ALFWorld) Shridhar et al. (2021), and WEB (WebShop Yao et al. (2023a), Mind2Web Deng et al. (2023)). For more details for the datasets and benchmarks, see Appendix B."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.351,
+                0.828,
+                0.41
+            ],
+            "angle": 0,
+            "content": "Baselines We evaluate commercial models GPT-3.5 Brown et al. (2020) and GPT-4 OpenAI et al. (2024), and open-source models Llama2 Touvron et al. (2023), Codellama Roziere et al. (2024), Qwen Bai et al. (2023), and ChatGLM2 GLM et al. (2024). Dialogue history exceeding the model length limit is truncated, using greedy decoding."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.414,
+                0.828,
+                0.542
+            ],
+            "angle": 0,
+            "content": "Results As shown in Table 1, our method significantly improves model performance on AgentBench, especially for smaller models. GPT-3.5 and GPT-4, despite already high scores, also show notable improvements with SAGE, up to \\(2.26\\mathrm{x}\\) in the Database task. Llama2-7b is notably enhanced, showing the method's impact on weaker models. CodeLlama-7b and Qwen-1.8B also see substantial gains. Qwen-1.8B, after applying our method, performs close to GPT-3.5, highlighting its potential as a general agent. Llama2, previously error-prone, shows a significant reduction in basic errors through feedback and memory optimization, proving that our method not only enhances agent capabilities but also reduces fundamental errors in complex tasks."
+        },
+        {
+            "type": "table_caption",
+            "bbox": [
+                0.247,
+                0.555,
+                0.75,
+                0.571
+            ],
+            "angle": 0,
+            "content": "Table 1: Baseline and SAGE Framework Performance on AgentBench"
+        },
+        {
+            "type": "table",
+            "bbox": [
+                0.151,
+                0.582,
+                0.862,
+                0.695
+            ],
+            "angle": 0,
+            "content": "<table><tr><td rowspan=\"2\">LLM Type</td><td rowspan=\"2\">Model</td><td colspan=\"2\">VER</td><td colspan=\"2\">OS</td><td colspan=\"2\">DB</td><td colspan=\"2\">KG</td><td colspan=\"2\">ALF</td><td colspan=\"2\">WS</td><td colspan=\"2\">M2W</td></tr><tr><td>Base</td><td>SAGE</td><td>Base</td><td>SAGE</td><td>Base</td><td>SAGE</td><td>Base</td><td>SAGE</td><td>Base</td><td>SAGE</td><td>Base</td><td>SAGE</td><td>Base</td><td>SAGE</td></tr><tr><td rowspan=\"2\">API</td><td>GPT-4</td><td>42.4</td><td>49.7</td><td>32.0</td><td>39.8</td><td>57.4</td><td>63.1</td><td>78.0</td><td>82.0</td><td>67.1</td><td>67.8</td><td>27.0</td><td>32.0</td><td>27.0</td><td>32.0</td></tr><tr><td>GPT-3.5</td><td>31.6</td><td>38.3</td><td>15.7</td><td>35.6</td><td>25.9</td><td>37.6</td><td>17.0</td><td>23.0</td><td>64.1</td><td>72.1</td><td>16.0</td><td>28.0</td><td>16.0</td><td>28.0</td></tr><tr><td rowspan=\"5\">OSS</td><td>Llama2-7B Chat</td><td>0.0</td><td>8.4</td><td>0.0</td><td>10.2</td><td>0.0</td><td>25.0</td><td>0.0</td><td>5.0</td><td>4.4</td><td>10.4</td><td>0.0</td><td>15.0</td><td>0.0</td><td>15.0</td></tr><tr><td>CodeLlama-7B Instruct</td><td>5.7</td><td>18.4</td><td>2.6</td><td>19.2</td><td>0.0</td><td>27.0</td><td>0.0</td><td>12.5</td><td>16.3</td><td>40.2</td><td>0.0</td><td>15.0</td><td>15.0</td><td>15.0</td></tr><tr><td>Qwen1.8B Chat</td><td>2.7</td><td>18.7</td><td>1.4</td><td>15.1</td><td>6.8</td><td>45.3</td><td>0.0</td><td>10.5</td><td>6.6</td><td>11.4</td><td>0.6</td><td>13.6</td><td>13.6</td><td>13.6</td></tr><tr><td>Qwen-7B Chat</td><td>5.6</td><td>22.2</td><td>4.8</td><td>18.0</td><td>0.0</td><td>48.0</td><td>34.0</td><td>38.5</td><td>0.0</td><td>13.6</td><td>0.0</td><td>15.0</td><td>15.0</td><td>15.0</td></tr><tr><td>ChatGLM2-6B v1.1</td><td>0.0</td><td>15.2</td><td>0.0</td><td>16.3</td><td>0.0</td><td>17.0</td><td>0.0</td><td>5.0</td><td>0.3</td><td>10.3</td><td>4.9</td><td>14.9</td><td>14.9</td><td>14.9</td></tr></table>"
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.171,
+                0.716,
+                0.542,
+                0.731
+            ],
+            "angle": 0,
+            "content": "4.2 Complex Problem-Solving Tasks Evaluation"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.736,
+                0.828,
+                0.822
+            ],
+            "angle": 0,
+            "content": "We evaluated SAGE against baseline models on three tasks: long-form QA Akash et al. (2023), multi-turn dialog Cui et al. (2020), and sequential task completion Stephens et al. (2012). As shown in Table 2, SAGE outperforms all baselines with significant gains, such as a \\(20.8\\%\\) increase in answer accuracy for GPT-3.5 on HotpotQA Yang et al. (2018b) and a \\(17.3\\%\\) improvement in task completion for Mistral-7b on ALFWorld Shridhar et al. (2021). Across all tasks, SAGE notably enhances answer accuracy, dialog coherence, and step completion."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.171,
+                0.833,
+                0.466,
+                0.849
+            ],
+            "angle": 0,
+            "content": "4.3 Evaluation of Long-Context Tasks"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.854,
+                0.826,
+                0.927
+            ],
+            "angle": 0,
+            "content": "We evaluated the agent's code generation and reasoning on four long-text tasks: LCC Dataset Mohler et al. (2016) focuses on predicting the next line of code from a few initial lines, with Precision, Recall, and F1 as metrics. RepoBench-P Liu et al. (2024) tests retrieval of relevant code snippets from cross-file and within-file contexts to predict the next line, also evaluated with Precision, Recall, and F1. HotPotQA Yang et al. (2018a), a Wikipedia-based"
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.493,
+                0.948,
+                0.506,
+                0.96
+            ],
+            "angle": 0,
+            "content": "7"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "table_caption",
+            "bbox": [
+                0.227,
+                0.101,
+                0.772,
+                0.116
+            ],
+            "angle": 0,
+            "content": "Table 2: Evaluation of SAGE and Baseline Models on Three Different Tasks"
+        },
+        {
+            "type": "table",
+            "bbox": [
+                0.134,
+                0.128,
+                0.848,
+                0.315
+            ],
+            "angle": 0,
+            "content": "<table><tr><td>Agent</td><td>Task Completion Time (min)</td><td>Answer Accuracy (QA)(%)</td><td>Dialog Coherence (%)</td><td>Step Completion Accuracy (%)</td></tr><tr><td>GPT-3.5 (Baseline)</td><td>Long-form QA (HotpotQA)</td><td>54.1%</td><td>48.5%</td><td>62.7%</td></tr><tr><td>GPT-4 (Baseline)</td><td>Long-form QA (HotpotQA)</td><td>61.2%</td><td>53.8%</td><td>68.2%</td></tr><tr><td>Llama2-7b (Baseline)</td><td>Multi-turn Dialog (MultiWOZ)</td><td>55.9%</td><td>50.1%</td><td>64.8%</td></tr><tr><td>Codellama-13b (Baseline)</td><td>Multi-turn Dialog (MultiWOZ)</td><td>58.4%</td><td>52.3%</td><td>66.7%</td></tr><tr><td>Mistral-7b (Baseline)</td><td>Sequential Task (ALFWorld)</td><td>56.5%</td><td>51.5%</td><td>65.1%</td></tr><tr><td>SAGE-GPT-3.5</td><td>Long-form QA (HotpotQA)</td><td>74.9% (+20.8%)</td><td>68.3% (+19.8%)</td><td>80.6% (+17.9%)</td></tr><tr><td>SAGE-GPT-4</td><td>Long-form QA (HotpotQA)</td><td>78.4% (+17.2%)</td><td>73.4% (+19.6%)</td><td>83.9% (+15.7%)</td></tr><tr><td>SAGE-Llama2-7b</td><td>Multi-turn Dialog (MultiWOZ)</td><td>72.2% (+16.1%)</td><td>67.9% (+17.8%)</td><td>78.5% (+13.7%)</td></tr><tr><td>SAGE-Codellama-13b</td><td>Multi-turn Dialog (MultiWOZ)</td><td>74.7% (+16.3%)</td><td>71.2% (+18.9%)</td><td>81.2% (+14.5%)</td></tr><tr><td>SAGE-Mistral-7b</td><td>Sequential Task (ALFWorld)</td><td>73.8% (+17.3%)</td><td>70.5% (+19.0%)</td><td>79.9% (+14.8%)</td></tr></table>"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.342,
+                0.828,
+                0.399
+            ],
+            "angle": 0,
+            "content": "dataset with 113k question-answer pairs, challenges the agent to reason across multiple documents, evaluated by answer F1. TriviaQA Joshi et al. (2017a) is a reading comprehension dataset with question-answer pairs and evidence paragraphs (filtered to over 1,000 words), also using answer F1 for evaluation."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.405,
+                0.827,
+                0.448
+            ],
+            "angle": 0,
+            "content": "We compared two self-refinement methods: Beam Search Kool et al. (2019), which integrates self-assessment through stochastic beam search, and Reflexion Shinn et al. (2023), which uses past trial experience in a verbal form."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.171,
+                0.461,
+                0.359,
+                0.475
+            ],
+            "angle": 0,
+            "content": "4.4 Evaluation Results:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.481,
+                0.827,
+                0.54
+            ],
+            "angle": 0,
+            "content": "Code Completion Task: On the LCC dataset (Table 3), SAGE shows a slight improvement in F1 score (79.29) compared to Beam Search and Reflexion. Its memory mechanisms help refine code predictions, but the performance difference is not substantial in simpler tasks like code completion."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.544,
+                0.829,
+                0.603
+            ],
+            "angle": 0,
+            "content": "Reasoning Tasks: SAGE significantly outperforms Reflexion and Beam Search on HotPotQA and TriviaQA, with F1 scores of 22.06 and 22.76 (Table 3). SAGE's ability to effectively integrate multi-document information through reflection leads to better reasoning accuracy, while Reflexion and Beam Search face challenges in handling complex reasoning tasks."
+        },
+        {
+            "type": "table_caption",
+            "bbox": [
+                0.27,
+                0.616,
+                0.727,
+                0.632
+            ],
+            "angle": 0,
+            "content": "Table 3: Comparison of Performance Across Different Methods"
+        },
+        {
+            "type": "table",
+            "bbox": [
+                0.204,
+                0.642,
+                0.794,
+                0.72
+            ],
+            "angle": 0,
+            "content": "<table><tr><td rowspan=\"2\">Models</td><td colspan=\"3\">LCC</td><td colspan=\"3\">RepoBench-P</td><td>HotpotQA</td><td>TriviaQA</td></tr><tr><td>Precision</td><td>Recall</td><td>F1</td><td>Precision</td><td>Recall</td><td>F1</td><td>F1</td><td>F1</td></tr><tr><td>Reflexion</td><td>77.72</td><td>81.00</td><td>79.28</td><td>78.73</td><td>81.86</td><td>80.25</td><td>11.26</td><td>11.23</td></tr><tr><td>Beam search</td><td>78.98</td><td>79.32</td><td>79.12</td><td>78.75</td><td>81.02</td><td>79.87</td><td>10.26</td><td>12.13</td></tr><tr><td>SAGE</td><td>78.76</td><td>79.88</td><td>79.29</td><td>79.27</td><td>83.28</td><td>81.22</td><td>22.06</td><td>22.76</td></tr></table>"
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.171,
+                0.74,
+                0.414,
+                0.755
+            ],
+            "angle": 0,
+            "content": "4.5 Evaluation of RAG Agents"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.17,
+                0.76,
+                0.828,
+                0.929
+            ],
+            "angle": 0,
+            "content": "Table 4 compares classical lexical retrieval (RAG with BM25) Robertson & Zaragoza (2009), dense passage retrieval (RAG with DPR) Reichman & Heck (2024), a commercial retrieval solution (RAG with OpenAI Retrieval) OpenAI (2023), the TART Eisenschlos et al. (2022) sequence-to-sequence retrieval model, and the FiD (Fusion-in-Decoder) method Izacard & Grave (2021), all tested on multi-document and open-domain QA tasks (HotpotQA, Natural Questions Kwiatkowski et al. (2019), and TriviaQA). RAG with BM25 relies on term-based matching, while RAG with DPR uses learned dense embeddings. TART adopts a transformer-based approach to produce relevant contexts, and FiD fuses multiple retrieved passages through an encoder-decoder design. In contrast, ChatGPT-4 (SAGE) employs a structured reasoning workflow for retrieval and generation, which leads to steady accuracy improvements of \\(3.6\\%\\) to \\(4.7\\%\\) and cuts memory consumption nearly \\(50\\%\\) on some tasks, all without increasing latency."
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.494,
+                0.949,
+                0.506,
+                0.96
+            ],
+            "angle": 0,
+            "content": "8"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.174,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "table_caption",
+            "bbox": [
+                0.221,
+                0.101,
+                0.776,
+                0.117
+            ],
+            "angle": 0,
+            "content": "Table 4: Evaluation of different RAG Agents on Different Tasks and Datasets"
+        },
+        {
+            "type": "table",
+            "bbox": [
+                0.207,
+                0.128,
+                0.794,
+                0.479
+            ],
+            "angle": 0,
+            "content": "<table><tr><td>Agent</td><td>Accuracy (QA) (%)</td><td>Latency (ms)</td><td>Memory Usage (MB)</td></tr><tr><td colspan=\"4\">Task 1: Multi-Document QA (HotpotQA)</td></tr><tr><td>RAG (BM25)</td><td>60.8</td><td>121</td><td>613</td></tr><tr><td>RAG (DPR)</td><td>66.3</td><td>129</td><td>542</td></tr><tr><td>RAG (OpenAI Retrieval)</td><td>67.4</td><td>108</td><td>494</td></tr><tr><td>TART</td><td>63.2</td><td>144</td><td>477</td></tr><tr><td>FiD (Fusion-in-Decoder)</td><td>70.1</td><td>153</td><td>456</td></tr><tr><td>ChatGPT-4 - Sage</td><td>74.8 (+4.7)</td><td>128</td><td>231 (-50%)</td></tr><tr><td colspan=\"4\">Task 2: Document Retrieval for Contextual Answering (Natural Questions)</td></tr><tr><td>RAG (BM25)</td><td>59.9</td><td>125</td><td>605</td></tr><tr><td>RAG (DPR)</td><td>65.5</td><td>131</td><td>561</td></tr><tr><td>RAG (OpenAI Retrieval)</td><td>66.8</td><td>113</td><td>484</td></tr><tr><td>TART</td><td>62.4</td><td>146</td><td>455</td></tr><tr><td>FiD (Fusion-in-Decoder)</td><td>69.8</td><td>156</td><td>443</td></tr><tr><td>ChatGPT-4 - Sage</td><td>73.6 (+3.8)</td><td>131</td><td>227 (-49%)</td></tr><tr><td colspan=\"4\">Task 3: Open-Domain QA with Multiple Contexts (TriviaQA)</td></tr><tr><td>RAG (BM25)</td><td>62.1</td><td>124</td><td>615</td></tr><tr><td>RAG (DPR)</td><td>67.8</td><td>129</td><td>530</td></tr><tr><td>RAG (OpenAI Retrieval)</td><td>68.9</td><td>117</td><td>494</td></tr><tr><td>TART</td><td>64.7</td><td>148</td><td>462</td></tr><tr><td>FiD (Fusion-in-Decoder)</td><td>71.9</td><td>155</td><td>456</td></tr><tr><td>ChatGPT-4 - Sage</td><td>75.5 (+3.6)</td><td>134</td><td>243 (-47%)</td></tr></table>"
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.505,
+                0.318,
+                0.52
+            ],
+            "angle": 0,
+            "content": "4.6 Error analysis"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.524,
+                0.828,
+                0.61
+            ],
+            "angle": 0,
+            "content": "As shown in Figure 3, the SAGE framework significantly enhances agent performance across tasks, especially in the WS task for AgentBench, due to its iterative feedback mechanism, which refines outputs through continuous assistant-checker interaction. In OS and DB tasks, Context Limit Exceeded and invalid format errors are nearly eliminated, with a notable reduction in invalid action errors, attributed to the reflection mechanism that helps the assistant learn and reduce logical mistakes."
+        },
+        {
+            "type": "image",
+            "bbox": [
+                0.177,
+                0.627,
+                0.825,
+                0.771
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "image_caption",
+            "bbox": [
+                0.171,
+                0.782,
+                0.829,
+                0.825
+            ],
+            "angle": 0,
+            "content": "Figure 3: Execution results across six tasks (CLE: Context Limit Exceeded, TLE: Task Limit Exceeded). Task limits are the main cause of incomplete tasks, highlighting LLM agents' limitations under time constraints."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.834,
+                0.33,
+                0.85
+            ],
+            "angle": 0,
+            "content": "4.7 Ablation Study"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.854,
+                0.829,
+                0.926
+            ],
+            "angle": 0,
+            "content": "We conducted ablation experiments on Qwen-1.8B and CodeLlama-7B to evaluate memory optimization (Table 5). Without memory optimization, both models perform weakly, especially Qwen-1.8B, which improves from 6.8 to 48.0 in KG and from 0.0 to 10.5 in ALF after optimization. Similarly, CodeLlama-7B shows substantial gains, particularly in DB (2.7 to 41.3) and WS (14.3 to 58.7). Overall, CodeLlama-7B performs better than Qwen-1.8B,"
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.494,
+                0.949,
+                0.506,
+                0.96
+            ],
+            "angle": 0,
+            "content": "9"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.103,
+                0.825,
+                0.133
+            ],
+            "angle": 0,
+            "content": "highlighting the stronger adaptability of models with more parameters in handling complex tasks."
+        },
+        {
+            "type": "table_caption",
+            "bbox": [
+                0.221,
+                0.143,
+                0.776,
+                0.16
+            ],
+            "angle": 0,
+            "content": "Table 5: Ablation study for memory optimization on the task of AgentBench"
+        },
+        {
+            "type": "table",
+            "bbox": [
+                0.272,
+                0.169,
+                0.725,
+                0.248
+            ],
+            "angle": 0,
+            "content": "<table><tr><td>Models</td><td>OS</td><td>DB</td><td>KG</td><td>ALF</td><td>WS</td><td>M2W</td></tr><tr><td>Qwen-1.8B (w/o memo)</td><td>10.4</td><td>22.6</td><td>6.8</td><td>0.0</td><td>26.6</td><td>5.0</td></tr><tr><td>Qwen-1.8B (w memo)</td><td>18.7</td><td>28.3</td><td>45.3</td><td>10.5</td><td>31.4</td><td>25.1</td></tr><tr><td>Codellama-7B (w/o memo)</td><td>9.7</td><td>2.7</td><td>0.0</td><td>0.0</td><td>14.3</td><td>5.0</td></tr><tr><td>Codellama-7B (w memo)</td><td>23.4</td><td>41.3</td><td>48.0</td><td>12.5</td><td>58.7</td><td>15.0</td></tr></table>"
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.259,
+                0.31,
+                0.275
+            ],
+            "angle": 0,
+            "content": "5 Conclusion"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.278,
+                0.828,
+                0.378
+            ],
+            "angle": 0,
+            "content": "In this paper, we propose the SAGE framework, which enhances agents' self-adjustment and memory management in complex tasks through reflective mechanisms and memory optimization. Experimental results show significant performance improvements across benchmarks, especially in smaller models. In the AgentBench test, SAGE boosts the performance of strong baselines like GPT-3.5 and GPT-4, while also significantly improving open-source models. It effectively reduces basic errors and logical mistakes, particularly enabling smaller models to handle complex tasks."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.173,
+                0.397,
+                0.276,
+                0.413
+            ],
+            "angle": 0,
+            "content": "References"
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.42,
+                0.829,
+                0.465
+            ],
+            "angle": 0,
+            "content": "Pritom Saha Akash, Kashob Kumar Roy, Lucian Popa, and Kevin Chen-Chuan Chang. Long-form question answering: An iterative planning-retrieval-generation approach, 2023. URL https://arxiv.org/abs/2311.09383."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.471,
+                0.829,
+                0.587
+            ],
+            "angle": 0,
+            "content": "Jinze Bai, Shuai Bai, Yunfei Chu, Zeyu Cui, Kai Dang, Xiaodong Deng, Yang Fan, Wenbin Ge, Yu Han, Fei Huang, Binyuan Hui, Luo Ji, Mei Li, Junyang Lin, Runji Lin, Dayiheng Liu, Gao Liu, Chengqiang Lu, Keming Lu, Jianxin Ma, Rui Men, Xingzhang Ren, Xuancheng Ren, Chuanqi Tan, Sinan Tan, Jianhong Tu, Peng Wang, Shijie Wang, Wei Wang, Shengguang Wu, Benfeng Xu, Jin Xu, An Yang, Hao Yang, Jian Yang, Shusheng Yang, Yang Yao, Bowen Yu, Hongyi Yuan, Zheng Yuan, Jianwei Zhang, Xingxuan Zhang, Yichang Zhang, Zhenru Zhang, Chang Zhou, Jingren Zhou, Xiaohuan Zhou, and Tianhang Zhu. Qwen technical report, 2023."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.593,
+                0.829,
+                0.693
+            ],
+            "angle": 0,
+            "content": "Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared Kaplan, Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, Sandhini Agarwal, Ariel Herbert-Voss, Gretchen Krueger, Tom Henighan, Rewon Child, Aditya Ramesh, Daniel M. Ziegler, Jeffrey Wu, Clemens Winter, Christopher Hesse, Mark Chen, Eric Sigler, Mateusz Litwin, Scott Gray, Benjamin Chess, Jack Clark, Christopher Berner, Sam McCandlish, Alec Radford, Ilya Sutskever, and Dario Amodei. Language models are few-shot learners, 2020."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.7,
+                0.829,
+                0.731
+            ],
+            "angle": 0,
+            "content": "Thomas M. Cover and Joy A. Thomas. Elements of Information Theory (Wiley Series in Telecommunications and Signal Processing). Wiley-Interscience, USA, 2006. ISBN 0471241954."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.738,
+                0.829,
+                0.81
+            ],
+            "angle": 0,
+            "content": "Leyang Cui, Yu Wu, Shujie Liu, Yue Zhang, and Ming Zhou. MuTual: A dataset for multi-turn dialogue reasoning. In Dan Jurafsky, Joyce Chai, Natalie Schluter, and Joel Tetreault (eds.), Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics, pp. 1406-1416, Online, July 2020. Association for Computational Linguistics. doi: 10. 18653/v1/2020.acl-main.130. URL https://aclanthology.org/2020.acl-main.130/."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.818,
+                0.829,
+                0.849
+            ],
+            "angle": 0,
+            "content": "Xiang Deng, Yu Gu, Boyuan Zheng, Shijie Chen, Samuel Stevens, Boshi Wang, Huan Sun, and Yu Su. Mind2web: Towards a generalist agent for the web, 2023."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.857,
+                0.829,
+                0.887
+            ],
+            "angle": 0,
+            "content": "Hermann Ebbinghaus. Über das gedächtnis: untersuchungen zur experimentellen psychologie. Duncker & Humblot, 1885."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.895,
+                0.829,
+                0.927
+            ],
+            "angle": 0,
+            "content": "Julian Eisenschlos, Yury Zemlyanskiy, Jason Phang, Bhuwan Dhingra, and William W. Cohen. TART: Retrieval-augmented generation for task-oriented dialog. In Proceedings of"
+        },
+        {
+            "type": "list",
+            "bbox": [
+                0.174,
+                0.42,
+                0.829,
+                0.927
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.509,
+                0.96
+            ],
+            "angle": 0,
+            "content": "10"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.174,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.189,
+                0.103,
+                0.826,
+                0.134
+            ],
+            "angle": 0,
+            "content": "the 60th Annual Meeting of the Association for Computational Linguistics (ACL), pp. 1866-1881, 2022. URL https://aclanthology.org/2022.acl-long.131."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.176,
+                0.141,
+                0.825,
+                0.172
+            ],
+            "angle": 0,
+            "content": "Romina Etezadi and Mehrnoush Shamsfard. The state of the art in open domain complex question answering: a survey. Applied Intelligence, 53(4):4124-4144, 2023."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.178,
+                0.763,
+                0.196
+            ],
+            "angle": 0,
+            "content": "Drew Fudenberg and Jean Tirole. Game Theory. MIT Press, Cambridge, MA, 1991."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.202,
+                0.827,
+                0.343
+            ],
+            "angle": 0,
+            "content": "Team GLM, Aohan Zeng, Bin Xu, Bowen Wang, Chenhui Zhang, Da Yin, Diego Rojas, Guanyu Feng, Hanlin Zhao, Hanyu Lai, Hao Yu, Hongning Wang, Jiadai Sun, Jiajie Zhang, Jiale Cheng, Jiayi Gui, Jie Tang, Jing Zhang, Juanzi Li, Lei Zhao, Lindong Wu, Lucen Zhong, Mingdao Liu, Minlie Huang, Peng Zhang, Qinkai Zheng, Rui Lu, Shuaiqi Duan, Shudan Zhang, Shulin Cao, Shuxun Yang, Weng Lam Tam, Wenyi Zhao, Xiao Liu, Xiao Xia, Xiaohan Zhang, Xiaotao Gu, Xin Lv, Xinghan Liu, Xinyi Liu, Xinyue Yang, Xixuan Song, Xunkai Zhang, Yifan An, Yifan Xu, Yilin Niu, Yuantao Yang, Yueyan Li, Yushi Bai, Yuxiao Dong, Zehan Qi, Zhaoyu Wang, Zhen Yang, Zhengxiao Du, Zhenyu Hou, and Zihan Wang. Chatglm: A family of large language models from glm-130b to glm-4 all tools, 2024."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.35,
+                0.826,
+                0.407
+            ],
+            "angle": 0,
+            "content": "Alex Graves, Greg Wayne, Malcolm Reynolds, Tim Harley, Ivo Danihelka, Agnieszka Grabska-Barwinska, Sergio Gomez Colmenarejo, Edward Grefenstette, Tiago Ramalho, John Agapiou, et al. Hybrid computing using a neural network with dynamic external memory. Nature, 538(7626):471-476, 2016."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.415,
+                0.824,
+                0.446
+            ],
+            "angle": 0,
+            "content": "Daya Guo, Canwen Xu, Nan Duan, Jian Yin, and Julian McAuley. Longcoder: A long-range pre-trained language model for code completion, 2023."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.175,
+                0.453,
+                0.824,
+                0.497
+            ],
+            "angle": 0,
+            "content": "Yangfan He, Jianhui Wang, Kun Li, Yijin Wang, Li Sun, Jun Yin, Miao Zhang, and Xueqian Wang. Enhancing intent understanding for ambiguous prompt: A human-machine co-adaption strategy. Available at SSRN 5119629, 2024."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.175,
+                0.504,
+                0.824,
+                0.548
+            ],
+            "angle": 0,
+            "content": "Yangfan He, Jianhui Wang, Kun Li, Yijin Wang, Li Sun, Jun Yin, Miao Zhang, and Xueqian Wang. Enhancing intent understanding for ambiguous prompts through human-machine co-adaptation. arXiv preprint arXiv:2501.15167, 2025."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.556,
+                0.824,
+                0.587
+            ],
+            "angle": 0,
+            "content": "Jiaxin Huang, Shixiang Shane Gu, Le Hou, Yuexin Wu, Xuezhi Wang, Hongkun Yu, and Jiawei Han. Large language models can self-improve, 2022."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.175,
+                0.593,
+                0.826,
+                0.651
+            ],
+            "angle": 0,
+            "content": "Gautier Izacard and Edouard Grave. Leveraging passage retrieval with generative models for open domain question answering. In Proceedings of the 16th Conference of the European Chapter of the Association for Computational Linguistics: Main Volume (EACL), pp. 874-880, 2021. URL https://aclanthology.org/2021.eacl-main.24."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.175,
+                0.658,
+                0.827,
+                0.743
+            ],
+            "angle": 0,
+            "content": "Mandar Joshi, Eunsol Choi, Daniel Weld, and Luke Zettlemoyer. TriviaQA: A large scale distantly supervised challenge dataset for reading comprehension. In Regina Barzilay and Min-Yen Kan (eds.), Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), pp. 1601-1611, Vancouver, Canada, July 2017a. Association for Computational Linguistics. doi: 10.18653/v1/P17-1147. URL https://aclanthology.org/P17-1147."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.751,
+                0.824,
+                0.782
+            ],
+            "angle": 0,
+            "content": "Mandar Joshi, Eunsol Choi, Daniel S. Weld, and Luke Zettlemoyer. Triviaqa: A large scale distantly supervised challenge dataset for reading comprehension, 2017b."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.175,
+                0.788,
+                0.825,
+                0.832
+            ],
+            "angle": 0,
+            "content": "Wouter Kool, Herke van Hoof, and Max Welling. Stochastic beams and where to find them: The gumbel-top-k trick for sampling sequences without replacement, 2019. URL https://arxiv.org/abs/1903.06059."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.175,
+                0.84,
+                0.827,
+                0.925
+            ],
+            "angle": 0,
+            "content": "Tom Kwiatkowski, Jennimaria Palomaki, Olivia Redfield, Michael Collins, Ankur Parikh, Chris Alberti, Danielle Epstein, Illia Polosukhin, Jacob Devlin, Kenton Lee, Kristina Toutanova, Llion Jones, Matthew Kelcey, Ming-Wei Chang, Andrew M. Dai, Jakob Uszkoreit, Quoc Le, and Slav Petrov. Natural questions: A benchmark for question answering research. Transactions of the Association for Computational Linguistics, 7:452-466, 2019. doi: 10.1162/tacl_a_00276. URL https://aclanthology.org/Q19-1026/."
+        },
+        {
+            "type": "list",
+            "bbox": [
+                0.174,
+                0.103,
+                0.827,
+                0.925
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.508,
+                0.96
+            ],
+            "angle": 0,
+            "content": "11"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.174,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.175,
+                0.103,
+                0.826,
+                0.147
+            ],
+            "angle": 0,
+            "content": "Zeyuan Li, Yangfan He, Lewei He, Jianhui Wang, Tianyu Shi, Bin Lei, Yuchen Li, and Qiuwu Chen. Falcon: Feedback-driven adaptive long/short-term memory reinforced coding optimization system. arXiv preprint arXiv:2410.21349, 2024."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.154,
+                0.827,
+                0.198
+            ],
+            "angle": 0,
+            "content": "Xuechen Liang, Meiling Tao, Yinghui Xia, Tianyu Shi, Jun Wang, and JingSong Yang. Cmat: A multi-agent collaboration tuning framework for enhancing small language models. arXiv preprint arXiv:2404.01663, 2024."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.205,
+                0.825,
+                0.236
+            ],
+            "angle": 0,
+            "content": "Tianyang Liu, Canwen Xu, and Julian McAuley. Repobench: Benchmarking repository-level code auto-completion systems, 2023a."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.243,
+                0.827,
+                0.287
+            ],
+            "angle": 0,
+            "content": "Tianyang Liu, Canwen Xu, and Julian McAuley. Repobench: Benchmarking repository-level code auto-completion systems. In The Twelfth International Conference on Learning Representations, 2024. URL https://openreview.net/forum?id=pPjZIouQuF."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.293,
+                0.827,
+                0.365
+            ],
+            "angle": 0,
+            "content": "Xiao Liu, Hao Yu, Hanchen Zhang, Yifan Xu, Xuanyu Lei, Hanyu Lai, Yu Gu, Hangliang Ding, Kaiwen Men, Kejuan Yang, Shudan Zhang, Xiang Deng, Aohan Zeng, Zhengxiao Du, Chenhui Zhang, Sheng Shen, Tianjun Zhang, Yu Su, Huan Sun, Minlie Huang, Yuxiao Dong, and Jie Tang. Agentbench: Evaluating llms as agents. arXiv preprint arXiv: 2308.03688, 2023b."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.372,
+                0.827,
+                0.43
+            ],
+            "angle": 0,
+            "content": "Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Andrei A Rusu, Joel Veness, Marc G Bellemare, Alex Graves, Martin Riedmiller, Andreas K Fidjeland, Georg Ostrovski, et al. Human-level control through deep reinforcement learning. nature, 518(7540):529-533, 2015."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.437,
+                0.827,
+                0.535
+            ],
+            "angle": 0,
+            "content": "Michael Mohler, Mary Brunson, Bryan Rink, and Marc Tomlinson. Introducing the LCC metaphor datasets. In Nicoletta Calzolari, Khalid Choukri, Thierry Declerck, Sara Goggi, Marko Grobelnik, Bente Maegaard, Joseph Mariani, Helene Mazo, Asuncion Moreno, Jan Odijk, and Stelios Piperidis (eds.), Proceedings of the Tenth International Conference on Language Resources and Evaluation (LREC'16), pp. 4221-4227, Portoroz, Slovenia, May 2016. European Language Resources Association (ELRA). URL https://aclanthology.org/L16-1668."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.544,
+                0.788,
+                0.56
+            ],
+            "angle": 0,
+            "content": "Yohei Nakajima. Babyagi: An ai agent that can achieve goals and execute tasks, 2024."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.568,
+                0.827,
+                0.596
+            ],
+            "angle": 0,
+            "content": "OpenAI. Openai cookbook. https://github.com/openai/openai-cookbook, 2023. Accessed: 2025-03-27."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.605,
+                0.827,
+                0.926
+            ],
+            "angle": 0,
+            "content": "OpenAI, Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad, Ilge Akkaya, Florencia Leoni Aleman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, Red Avila, Igor Babuschkin, Suchir Balaji, Valerie Balcom, Paul Baltescu, Haiming Bao, Mohammad Bavarian, Jeff Belgium, Irwan Bello, Jake Berdine, Gabriel Bernadett-Shapiro, Christopher Berner, Lenny Bogdonoff, Oleg Boiko, Madelaine Boyd, Anna-Luisa Brakman, Greg Brockman, Tim Brooks, Miles Brundage, Kevin Button, Trevor Cai, Rosie Campbell, Andrew Cann, Brittany Carey, Chelsea Carlson, Rory Carmichael, Brooke Chan, Che Chang, Fotis Chantzis, Derek Chen, Sully Chen, Ruby Chen, Jason Chen, Mark Chen, Ben Chess, Chester Cho, Casey Chu, Hyung Won Chung, Dave Cummings, Jeremiah Currier, Yunxing Dai, Cory Decareaux, Thomas Degry, Noah Deutsch, Damien Deville, Arka Dhar, David Dohan, Steve Dowling, Sheila Dunning, Adrien Ecoffet, Atty Eleti, Tyna Eloundou, David Farhi, Liam Fedus, Niko Felix, Simón Posada Fishman, Juston Forte, Isabella Fulford, Leo Gao, Elie Georges, Christian Gibson, Vik Goel, Tarun Gogineni, Gabriel Goh, Rapha Gontijo-Lopes, Jonathan Gordon, Morgan Grafstein, Scott Gray, Ryan Greene, Joshua Gross, Shixiang Shane Gu, Yufei Guo, Chris Hallacy, Jesse Han, Jeff Harris, Yuchen He, Mike Heating, Johannes Heidecke, Chris Hesse, Alan Hickey, Wade Hickey, Peter Hoeschele, Brandon Houghton, Kenny Hsu, Shengli Hu, Xin Hu, Joost Huizinga, Shantanu Jain, Shawn Jain, Joanne Jang, Angela Jiang, Roger Jiang, Haozhun Jin, Denny Jin, Shino Jomoto, Billie Jonn, Heewoo Jun, Tomer Kaftan, Lukasz Kaiser, Ali Kamali, Ingmar Kanitscheider, Nitish Shirish Keskar, Tabarak Khan, Logan Kilpatrick, Jong Wook Kim, Christina Kim, Yongjik Kim, Jan Hendrik Kirchner, Jamie Kiros, Matt Knight, Daniel Kokotajlo, Lukasz Kondraciuk, Andrew Kondrich, Aris Konstantinidis, Kyle Kosic, Gretchen Krueger, Vishal Kuo, Michael Lampe, Ikai Lan, Teddy Lee, Jan Leike"
+        },
+        {
+            "type": "list",
+            "bbox": [
+                0.173,
+                0.103,
+                0.827,
+                0.926
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.509,
+                0.96
+            ],
+            "angle": 0,
+            "content": "12"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.174,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.189,
+                0.104,
+                0.827,
+                0.493
+            ],
+            "angle": 0,
+            "content": "Jade Leung, Daniel Levy, Chak Ming Li, Rachel Lim, Molly Lin, Stephanie Lin, Mateusz Litwin, Theresa Lopez, Ryan Lowe, Patricia Lue, Anna Makanju, Kim Malfacini, Sam Manning, Todor Markov, Yaniv Markovski, Bianca Martin, Katie Mayer, Andrew Mayne, Bob McGrew, Scott Mayer McKinney, Christine McLeavey, Paul McMillan, Jake McNeil, David Medina, Aalok Mehta, Jacob Menick, Luke Metz, Andrey Mishchenko, Pamela Mishkin, Vinnie Monaco, Evan Morikawa, Daniel Mossing, Tong Mu, Mira Murati, Oleg Murk, David Mély, Ashvin Nair, Reiichiro Nakano, Rajeev Nayak, Arvind Neelakantan, Richard Ngo, Hyeonwoo Noh, Long Ouyang, Cullen O'Keefe, Jakub Pachocki, Alex Paino, Joe Palermo, Ashley Pantuliano, Giambattista Parascandolo, Joel Parish, Emy Parparita, Alex Passos, Mikhail Pavlov, Andrew Peng, Adam Perelman, Filipe de Avila Belbute Peres, Michael Petrov, Henrique Ponde de Oliveira Pinto, Michael, Pokorny, Michelle Pokrass, Vitchyr H. Pong, Tolly Powell, Alethea Power, Boris Power, Elizabeth Proehl, Raul Puri, Alec Radford, Jack Rae, Aditya Ramesh, Cameron Raymond, Francis Real, Kendra Rimbach, Carl Ross, Bob Rotsted, Henri Roussez, Nick Ryder, Mario Saltarelli, Ted Sanders, Shibani Santurkar, Girish Sastry, Heather Schmidt, David Schnurr, John Schulman, Daniel Selsam, Kyla Sheppard, Toki Sherbakov, Jessica Shieh, Sarah Shoker, Pranav Shyam, Szymon Sidor, Eric Sigler, Maddie Simens, Jordan Sitkin, Katarina Slama, Ian Sohl, Benjamin Sokolowsky, Yang Song, Natalie Staudacher, Felipe Petroski Such, Natalie Summers, Ilya Sutskever, Jie Tang, Nikolas Tezak, Madeleine B. Thompson, Phil Tillet, Amin Tootoonchian, Elizabeth Tseng, Preston Tuggle, Nick Turley, Jerry Tworek, Juan Felipe Cerón Uribe, Andrea Vallone, Arun Vijayvergiya, Chelsea Voss, Carroll Wainwright, Justin Jay Wang, Alvin Wang, Ben Wang, Jonathan Ward, Jason Wei CJ Weinmann Akila Welihinda Peter Welinder Jiayi Weng Lilian Weng Matt Wiethoff Dave Willner,Clemens Winter,Samuel Wolrich,Hannah WongLauren Workman Sherwin WuJeff WuMichael WuKai Xiao,Tao XuSarah YooKevin YuQiming Yuan Wojciech Zaremba Rowan ZellersChong Zhang Marvin Zhang Shengjia ZhaoTianhao Zheng,Juntang ZhuangWilliam Zhuk,and Barret Zoph.Gpt-4 technical report 2024. URL https://arxiv.org/abs/2303.08774."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.5,
+                0.826,
+                0.531
+            ],
+            "angle": 0,
+            "content": "Charles Packer, Sarah Wooders, Kevin Lin, Vivian Fang, Shishir G. Patil, Ion Stoica, and Joseph E. Gonzalez. Memgpt: Towards llms as operating systems, 2024."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.537,
+                0.826,
+                0.595
+            ],
+            "angle": 0,
+            "content": "Xiangfei Qiu, Jilin Hu, Lekui Zhou, Xingjian Wu, Junyang Du, Buang Zhang, Chenjuan Guo, Aoying Zhou, Christian S. Jensen, Zhenli Sheng, and Bin Yang. Tfb: Towards comprehensive and fair benchmarking of time series forecasting methods. In Proc. VLDB Endow., pp. 2363-2377, 2024."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.603,
+                0.829,
+                0.647
+            ],
+            "angle": 0,
+            "content": "Xiangfei Qiu, Xiuwen Li, Ruiyang Pang, Zhicheng Pan, Xingjian Wu, Liu Yang, Jilin Hu, Yang Shu, Xuesong Lu, Chengcheng Yang, Chenjuan Guo, Aoying Zhou, Christian S. Jensen, and Bin Yang. Easytime: Time series forecasting made easy. In ICDE, 2025a."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.654,
+                0.826,
+                0.697
+            ],
+            "angle": 0,
+            "content": "Xiangfei Qiu, Xingjian Wu, Yan Lin, Chenjuan Guo, Jilin Hu, and Bin Yang. Duet: Dual clustering enhanced multivariate time series forecasting. In SIGKDD, pp. 1185-1196, 2025b."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.172,
+                0.705,
+                0.825,
+                0.736
+            ],
+            "angle": 0,
+            "content": "Jack W Rae, Anna Potapenko, Siddhant M Jayakumar, and Timothy P Lillicrap. Compressive transformers for long-range sequence modelling. arXiv preprint arXiv:1911.05507, 2019."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.742,
+                0.827,
+                0.786
+            ],
+            "angle": 0,
+            "content": "Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter J Liu. Exploring the limits of transfer learning with a unified text-to-text transformer. Journal of machine learning research, 21(140):1-67, 2020."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.793,
+                0.825,
+                0.823
+            ],
+            "angle": 0,
+            "content": "Benjamin Reichman and Larry Heck. Dense passage retrieval: Is it retrieving?, 2024. URL https://arxiv.org/abs/2402.11035."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.83,
+                0.825,
+                0.874
+            ],
+            "angle": 0,
+            "content": "Stephen Robertson and Hugo Zaragoza. The probabilistic relevance framework: Bm25 and beyond. Foundations and Trends® in Information Retrieval, 3(4):333-389, 2009. ISSN 1554-0669. doi: 10.1561/1500000019. URL http://dx.doi.org/10.1561/1500000019."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.173,
+                0.882,
+                0.829,
+                0.925
+            ],
+            "angle": 0,
+            "content": "Baptiste Rozière, Jonas Gehring, Fabian Gloeckle, Sten Sootla, Itai Gat, Xiaqing Ellen Tan, Yossi Adi, Jingyu Liu, Romain Sauvestre, Tal Remez, Jérémy Rapin, Artyom Kozhevnikov, Ivan Evtimov, Joanna Bitton, Manish Bhatt, Cristian Canton Ferrer, Aaron Grattaftori,"
+        },
+        {
+            "type": "list",
+            "bbox": [
+                0.172,
+                0.5,
+                0.829,
+                0.925
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.509,
+                0.96
+            ],
+            "angle": 0,
+            "content": "13"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.174,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.189,
+                0.103,
+                0.826,
+                0.147
+            ],
+            "angle": 0,
+            "content": "Wenhan Xiong, Alexandre Défossez, Jade Copet, Faisal Azhar, Hugo Touvron, Louis Martin, Nicolas Usunier, Thomas Scialom, and Gabriel Synnaeve. Code llama: Open foundation models for code, 2024. URL https://arxiv.org/abs/2308.12950."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.176,
+                0.155,
+                0.827,
+                0.187
+            ],
+            "angle": 0,
+            "content": "Noah Shinn, Federico Cassano, Edward Berman, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflection: Language agents with verbal reinforcement learning, 2023."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.194,
+                0.827,
+                0.251
+            ],
+            "angle": 0,
+            "content": "Mohit Shridhar, Xingdi Yuan, Marc-Alexandre Côté, Yonatan Bisk, Adam Trischler, and Matthew Hausknecht. ALFWorld: Aligning Text and Embodied Environments for Interactive Learning. In Proceedings of the International Conference on Learning Representations (ICLR), 2021. URL https://arxiv.org/abs/2010.03768."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.259,
+                0.827,
+                0.303
+            ],
+            "angle": 0,
+            "content": "Keri K Stephens, Jaehee K Cho, and Dawnna I Ballard. Simultaneity, sequentiality, and speed: Organizational messages about multiple-task completion. Human Communication Research, 38(1):23-47, 2012."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.312,
+                0.827,
+                0.342
+            ],
+            "angle": 0,
+            "content": "Richard S. Sutton and Andrew G. Barto. Reinforcement Learning: An Introduction. MIT Press, Cambridge, MA, 2 edition, 2018."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.175,
+                0.35,
+                0.825,
+                0.381
+            ],
+            "angle": 0,
+            "content": "Ye Tian, Baolin Peng, Linfeng Song, Lifeng Jin, Dian Yu, Haitao Mi, and Dong Yu. Toward self-improvement of llms via imagination, searching, and criticizing, 2024."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.388,
+                0.827,
+                0.584
+            ],
+            "angle": 0,
+            "content": "Hugo Touvron, Louis Martin, Kevin Stone, Peter Albert, Amjad Almahairi, Yasmine Babaei, Nikolay Bashlykov, Soumya Batra, Prajwal Bhargava, Shruti Bhosale, Dan Bikel, Lukas Blecher, Cristian Canton Ferrer, Moya Chen, Guillem Cucurull, David Esiobu, Jude Fernandes, Jeremy Fu, Wenyin Fu, Brian Fuller, Cynthia Gao, Vedanuj Goswami, Naman Goyal, Anthony Hartshorn, Saghar Hosseini, Rui Hou, Hakan Inan, Marcin Kardas, Viktor Kerkez, Madian Khabsa, Isabel Kloumann, Artem Korenev, Punit Singh Koura, Marie-Anne Lachaux, Thibaut Lavril, Jenya Lee, Diana Liskovich, Yinghai Lu, Yuning Mao, Xavier Martinet, Todor Mihaylov, Pushkar Mishra, Igor Molybog, Yixin Nie, Andrew Poulton, Jeremy Reizenstein, Rashi Rungta, Kalyan Saladi, Alan Schelten, Ruan Silva, Eric Michael Smith, Ranjan Subramanian, Xiaqing Ellen Tan, Binh Tang, Ross Taylor, Adina Williams, Jian Xiang Kuan, Puxin Xu, Zheng Yan, Iliyan Zarov, Yuchen Zhang, Angela Fan, Melanie Kambadur, Sharan Narang, Aurelien Rodriguez, Robert Stojnic, Sergey Edunov, and Thomas Scialom. Llama 2: Open foundation and fine-tuned chat models, 2023."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.175,
+                0.593,
+                0.825,
+                0.638
+            ],
+            "angle": 0,
+            "content": "Takashi Wada, Tomoharu Iwata, and Yuji Matsumoto. Unsupervised multilingual word embedding with limited resources using neural language models. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics, pp. 3113-3124, 2019."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.175,
+                0.645,
+                0.825,
+                0.675
+            ],
+            "angle": 0,
+            "content": "Hui Yang, Sifu Yue, and Yunzhong He. Auto-gpt for online decision making: Benchmarks and additional opinions, 2023. URL https://arxiv.org/abs/2306.02224."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.683,
+                0.827,
+                0.782
+            ],
+            "angle": 0,
+            "content": "Zhilin Yang, Peng Qi, Saizheng Zhang, Yoshua Bengio, William Cohen, Ruslan Salakhutdinov, and Christopher D. Manning. HotpotQA: A dataset for diverse, explainable multi-hop question answering. In Ellen Riloff, David Chiang, Julia Hockenmaier, and Jun'ichi Tsujii (eds.), Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing, pp. 2369-2380, Brussels, Belgium, October-November 2018a. Association for Computational Linguistics. doi: 10.18653/v1/D18-1259. URL https://aclanthology.org/D18-1259."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.79,
+                0.827,
+                0.835
+            ],
+            "angle": 0,
+            "content": "Zhilin Yang, Peng Qi, Saizheng Zhang, Yoshua Bengio, William W. Cohen, Ruslan Salakhutdinov, and Christopher D. Manning. Hotpotqa: A dataset for diverse, explainable multihop question answering, 2018b. URL https://arxiv.org/abs/1809.09600."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.843,
+                0.825,
+                0.874
+            ],
+            "angle": 0,
+            "content": "Shunyu Yao, Howard Chen, John Yang, and Karthik Narasimhan. Webshop: Towards scalable real-world web interaction with grounded language agents, 2023a."
+        },
+        {
+            "type": "ref_text",
+            "bbox": [
+                0.174,
+                0.881,
+                0.825,
+                0.925
+            ],
+            "angle": 0,
+            "content": "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. React: Synergizing reasoning and acting in language models, 2023b. URL https://arxiv.org/abs/2210.03629."
+        },
+        {
+            "type": "list",
+            "bbox": [
+                0.174,
+                0.103,
+                0.827,
+                0.925
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.509,
+                0.96
+            ],
+            "angle": 0,
+            "content": "14"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.103,
+                0.825,
+                0.149
+            ],
+            "angle": 0,
+            "content": "Ziqi Zhou, Jingyue Zhang, Jingyuan Zhang, Yangfan He, Boyue Wang, Tianyu Shi, and Alaa Khamis. Human-centric reward optimization for reinforcement learning-based automated driving using large language models. arXiv preprint arXiv:2405.04135, 2024."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.182,
+                0.169,
+                0.796,
+                0.196
+            ],
+            "angle": 0,
+            "content": "User: Answer the question based on the given passages. Only give me the answer and do not output any other words. The following are given passages: The \"trust system\" (sometimes incorrectly called \"trustee system\") was a penitentiary system of discipline and security enforced in parts of the United States until the 1980s ...."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.197,
+                0.617,
+                0.205
+            ],
+            "angle": 0,
+            "content": "Answer the question based on the given passages. Only give me the answer and do not output any other words."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.206,
+                0.521,
+                0.214
+            ],
+            "angle": 0,
+            "content": "Question: Which case was brought to court first Miller v. California or Gates v. Collier?"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.214,
+                0.221,
+                0.222
+            ],
+            "angle": 0,
+            "content": "Answer:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.182,
+                0.232,
+                0.288,
+                0.241
+            ],
+            "angle": 0,
+            "content": "Assistant: Gates v. Collier"
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.184,
+                0.25,
+                0.223,
+                0.259
+            ],
+            "angle": 0,
+            "content": "Checker:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.183,
+                0.26,
+                0.769,
+                0.277
+            ],
+            "angle": 0,
+            "content": "Incorrect answer: Neglecting specific years: Assistant did not accurately confirm the specific years of each case, leading to an incorrect judgment of the chronological order."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.183,
+                0.278,
+                0.766,
+                0.295
+            ],
+            "angle": 0,
+            "content": "Insufficient understanding of the question: When answering the question, Assistant may not have fully understood or carefully analyzed the provided information, resulting in a misjudgment."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.184,
+                0.304,
+                0.232,
+                0.312
+            ],
+            "angle": 0,
+            "content": "Reflection:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.183,
+                0.314,
+                0.802,
+                0.331
+            ],
+            "angle": 0,
+            "content": "When answering the question about which case, \"Miller v. California\" or \"Gates v. Collier,\" was brought up first, I mistakenly thought \"Gates v. Collier\" preceded \"Miller v. California.\" In reality, \"Miller v. California\" came first. This indicates that I made an error in judging the chronological order of events."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.183,
+                0.332,
+                0.802,
+                0.348
+            ],
+            "angle": 0,
+            "content": "Improvement measures: Carefully verify information: When answering questions involving time sequences, it is essential to carefully check the specific timing of each event to ensure accuracy."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.183,
+                0.349,
+                0.715,
+                0.357
+            ],
+            "angle": 0,
+            "content": "Timeline tools: When dealing with multiple events or cases, use timeline tools to help clarify the chronological order and avoid oversights."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.183,
+                0.358,
+                0.803,
+                0.374
+            ],
+            "angle": 0,
+            "content": "Review mechanism: Before submitting the final answer, establish a self-review mechanism to recheck all relevant information and details to ensure the accuracy of the response."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.183,
+                0.375,
+                0.803,
+                0.393
+            ],
+            "angle": 0,
+            "content": "Conclusion: This mistake serves as a reminder for me to be more careful and cautious when handling questions related to time and sequence. Through reflection and improvement, I hope to provide more accurate and reliable answers in the future and prevent similar errors from occurring."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.182,
+                0.401,
+                0.317,
+                0.41
+            ],
+            "angle": 0,
+            "content": "Assistant with SAGE response:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.183,
+                0.411,
+                0.255,
+                0.419
+            ],
+            "angle": 0,
+            "content": "Miller v. California"
+        },
+        {
+            "type": "image_caption",
+            "bbox": [
+                0.268,
+                0.434,
+                0.726,
+                0.451
+            ],
+            "angle": 0,
+            "content": "Figure 4: The illustration of an example HotpotQA with SAGE."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.477,
+                0.396,
+                0.496
+            ],
+            "angle": 0,
+            "content": "A Theoretical Analysis"
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.509,
+                0.795,
+                0.54
+            ],
+            "angle": 0,
+            "content": "A.1 An Information-Theoretic Perspective on Memory Optimization Based on the Ebbinghaus Forgetting Curve"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.549,
+                0.827,
+                0.676
+            ],
+            "angle": 0,
+            "content": "The memory optimization mechanism proposed in this work is grounded in the Ebbinghaus forgetting curve. It dynamically manages short-term memory (STM) and long-term memory (LTM) by prioritizing the retention of essential information while discarding irrelevant data. This mechanism can be viewed as computing the retention strength \\( S(I_{t}) \\) of each information unit based on its information entropy. Theoretically, one can interpret this as maximizing information entropy to show that the mechanism effectively mitigates the issue of information overload Cover & Thomas (2006). That is, by preferentially retaining high-entropy (i.e., high-uncertainty) information, the model improves its information processing efficiency."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.681,
+                0.579,
+                0.697
+            ],
+            "angle": 0,
+            "content": "First, the retention strength of information is defined as:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.445,
+                0.704,
+                0.826,
+                0.739
+            ],
+            "angle": 0,
+            "content": "\\[\nS \\left(I _ {t}\\right) = \\frac {H \\left(I _ {t}\\right)}{f (t)} \\tag {13}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.752,
+                0.825,
+                0.782
+            ],
+            "angle": 0,
+            "content": "where the numerator \\( H(I_{t}) \\) represents the information entropy of the content at time \\( t \\), and \\( f(t) \\) models the forgetting curve."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.787,
+                0.825,
+                0.817
+            ],
+            "angle": 0,
+            "content": "The objective of memory optimization is to maximize the utility of retained information under a memory capacity constraint:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.364,
+                0.834,
+                0.826,
+                0.863
+            ],
+            "angle": 0,
+            "content": "\\[\n\\max  \\sum_ {t} M _ {t} \\cdot S \\left(I _ {t}\\right), \\quad \\text {s . t .} \\quad \\sum_ {t} M _ {t} \\leq C \\tag {14}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.874,
+                0.827,
+                0.904
+            ],
+            "angle": 0,
+            "content": "Here, \\( C \\) represents the total memory capacity, and \\( M_{t} \\in \\{0,1\\} \\) denotes whether the information at time \\( t \\) is retained (1) or discarded (0)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.909,
+                0.763,
+                0.926
+            ],
+            "angle": 0,
+            "content": "Using the method of Lagrange multipliers, we construct the Lagrangian function:"
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.508,
+                0.96
+            ],
+            "angle": 0,
+            "content": "15"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.341,
+                0.115,
+                0.828,
+                0.157
+            ],
+            "angle": 0,
+            "content": "\\[\n\\mathcal {L} \\left(M _ {t}, \\lambda\\right) = \\sum_ {t} M _ {t} \\cdot S \\left(I _ {t}\\right) - \\lambda \\left(\\sum_ {t} M _ {t} - C\\right) \\tag {15}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.166,
+                0.825,
+                0.197
+            ],
+            "angle": 0,
+            "content": "Taking the derivative of \\(\\mathcal{L}\\), which is the optimal memory retnetion, with respect to \\(M_{t}\\) and setting it to zero yields the optimality condition:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.298,
+                0.213,
+                0.826,
+                0.248
+            ],
+            "angle": 0,
+            "content": "\\[\n\\frac {\\partial \\mathcal {L}}{\\partial M _ {t}} = S \\left(I _ {t}\\right) - \\lambda = 0 \\quad \\Rightarrow \\quad \\left\\{ \\begin{array}{l l} \\text {R e t a i n} I _ {t} & \\text {i f} S \\left(I _ {t}\\right) \\geq \\lambda \\\\ \\text {D i s c a r d} I _ {t} & \\text {i f} S \\left(I _ {t}\\right) <   \\lambda \\end{array} \\right. \\tag {16}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.259,
+                0.825,
+                0.289
+            ],
+            "angle": 0,
+            "content": "This rule is consistent with the threshold-based memory retention strategy used in the SAGE framework."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.305,
+                0.566,
+                0.32
+            ],
+            "angle": 0,
+            "content": "A.2 Iterative Feedback and Game-Theoretic Model"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.332,
+                0.827,
+                0.417
+            ],
+            "angle": 0,
+            "content": "Multi-agent systems often depend on reinforcement learning (RL) methods, making their theoretical basis essential for ensuring that algorithms converge to stable solutions, such as Nash equilibria Fudenberg & Tirole (1991). The subsequent theory provides a formal guarantee of convergence, showing that our proposed algorithm is not randomly designed. Instead, it surpasses standard approaches by establishing robust criteria that confirm both its stability and performance advantages."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.431,
+                0.54,
+                0.448
+            ],
+            "angle": 0,
+            "content": "A.2.1 Players and Their Strategy Spaces Settings"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.23,
+                0.456,
+                0.699,
+                0.472
+            ],
+            "angle": 0,
+            "content": "User (U) : Provides a task description \\( T_U \\) and constraints \\( C_U \\)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.195,
+                0.474,
+                0.826,
+                0.49
+            ],
+            "angle": 0,
+            "content": "Assistant (A) : Chooses actions \\(a_{t} \\sim \\pi_{\\theta}(\\cdot \\mid s_{t})\\), where \\(\\pi_{\\theta}\\) is the policy. (17)"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.202,
+                0.491,
+                0.777,
+                0.508
+            ],
+            "angle": 0,
+            "content": "Checker (C) : Generates feedback \\( f_{t} \\) aimed at reducing the error \\( \\| o_{t} - o^{*}\\|_{F} \\),"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.512,
+                0.825,
+                0.54
+            ],
+            "angle": 0,
+            "content": "where \\(o_t\\) is the output of the assistant and \\(o^*\\) is the expected (ground-truth) output, \\(\\| \\cdot \\|_F\\) denotes the Frobenius norm."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.547,
+                0.427,
+                0.563
+            ],
+            "angle": 0,
+            "content": "For the Utility Functions, we have:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.193,
+                0.57,
+                0.804,
+                0.6
+            ],
+            "angle": 0,
+            "content": "Assistant's Utility, \\( R_A \\): Measures task performance (e.g., BLEU score, accuracy): \\( R_A = \\) Task Performance Metric of \\( a_t \\)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.201,
+                0.602,
+                0.762,
+                0.618
+            ],
+            "angle": 0,
+            "content": "Checker's Utility, \\( R_C \\) : Measures feedback accuracy by reduction of error:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.394,
+                0.617,
+                0.529,
+                0.632
+            ],
+            "angle": 0,
+            "content": "\\[\nR _ {C} \\propto \\Delta \\| o _ {t} - o ^ {*} \\| _ {F}.\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.796,
+                0.631,
+                0.826,
+                0.646
+            ],
+            "angle": 0,
+            "content": "(18)"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.651,
+                0.827,
+                0.737
+            ],
+            "angle": 0,
+            "content": "The overall interaction can be viewed as a three-player game in which: The assistant (A) optimizes its policy \\(\\pi_{\\theta}\\) to maximize \\(R_{A}\\), while the checker (C) aims to minimize \\(\\| o_t - o^*\\|\\) (i.e., maximize \\(R_{C}\\)) The user U sets the task and constraints that guide both the assistant and checker's performances. Next we want to show that it can be shown that under a finite strategy space and continuous utility functions, a Nash equilibrium exists in this multi-agent game."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.752,
+                0.471,
+                0.768
+            ],
+            "angle": 0,
+            "content": "A.2.2 Setup for the proof of theorem 3.1"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.776,
+                0.529,
+                0.792
+            ],
+            "angle": 0,
+            "content": "First, we want to write a road map for this proof."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.802,
+                0.825,
+                0.832
+            ],
+            "angle": 0,
+            "content": "- It can be shown that under a finite strategy space and continuous utility functions, a Nash equilibrium exists in this multi-agent game."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.835,
+                0.825,
+                0.891
+            ],
+            "angle": 0,
+            "content": "- According to the Debreu-Glicksberg-Fan Theorem (a generalization of Nash's existence theorem), if each player's strategy space is a compact convex set and the utility functions are continuous and quasi-concave (or concave) in their own strategies, then at least one Nash equilibrium exists."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.895,
+                0.825,
+                0.925
+            ],
+            "angle": 0,
+            "content": "- Then, the assistant's policy \\(\\pi_{\\theta}\\) is updated using policy gradient methods. Since \\(R_{A}\\) is a continuous function of \\(\\pi_{\\theta}\\), the assistant's utility is continuous."
+        },
+        {
+            "type": "list",
+            "bbox": [
+                0.172,
+                0.802,
+                0.825,
+                0.925
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.949,
+                0.509,
+                0.96
+            ],
+            "angle": 0,
+            "content": "16"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.348,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.104,
+                0.825,
+                0.133
+            ],
+            "angle": 0,
+            "content": "- After that, the checker's feedback strategy can be obtained via convex optimization (e.g., least-squares regression), and thus \\( R_{C} \\) is a convex function."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.136,
+                0.825,
+                0.166
+            ],
+            "angle": 0,
+            "content": "- Therefore, a Nash equilibrium \\((\\pi_{\\theta}^{*}, f^{*})\\) exists, at which both the assistant and checker's strategies are stable with respect to each other:"
+        },
+        {
+            "type": "list",
+            "bbox": [
+                0.171,
+                0.104,
+                0.825,
+                0.166
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.32,
+                0.169,
+                0.826,
+                0.194
+            ],
+            "angle": 0,
+            "content": "\\[\n\\pi_ {\\theta} ^ {*} = \\arg \\max  _ {\\pi} R _ {A} (\\pi , f ^ {*}), \\quad f ^ {*} = \\arg \\max  _ {f} R _ {C} \\left(\\pi_ {\\theta} ^ {*}, f\\right) \\tag {19}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.205,
+                0.321,
+                0.221
+            ],
+            "angle": 0,
+            "content": "Let's start the proof."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.223,
+                0.825,
+                0.267
+            ],
+            "angle": 0,
+            "content": "Lemma A.1. Let \\(S_{1}, S_{2}, \\ldots, S_{N}\\) be finite strategy sets for each of \\(N\\) players, and let \\(u_{i}: S_{1} \\times \\dots \\times S_{N} \\to \\mathbb{R}\\) be continuous for each \\(i\\). Then, there exists a Nash equilibrium in the multi-agent game."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.28,
+                0.609,
+                0.297
+            ],
+            "angle": 0,
+            "content": "Proof. For each player \\(i\\), define the set of mixed strategies as"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.268,
+                0.301,
+                0.826,
+                0.343
+            ],
+            "angle": 0,
+            "content": "\\[\n\\Delta \\left(\\mathcal {S} _ {i}\\right) = \\left\\{x _ {i} \\in \\mathbb {R} ^ {\\left| \\mathcal {S} _ {i} \\right|} \\mid x _ {i} (s) \\geq 0 \\text {f o r a l l} s \\in \\mathcal {S} _ {i}, \\sum_ {s \\in \\mathcal {S} _ {i}} x _ {i} (s) = 1 \\right\\}. \\tag {20}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.349,
+                0.825,
+                0.381
+            ],
+            "angle": 0,
+            "content": "Each set \\(\\Delta(S_i)\\) is a simplex in \\(\\mathbb{R}^{|S_i|}\\), and hence is nonempty, compact, and convex. Define the expected utility function for player \\(i\\):"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.273,
+                0.385,
+                0.826,
+                0.428
+            ],
+            "angle": 0,
+            "content": "\\[\nU _ {i} \\left(x _ {1}, \\dots , x _ {N}\\right) = \\sum_ {\\left(s _ {1}, \\dots , s _ {N}\\right) \\in \\mathcal {S} _ {1} \\times \\dots \\times \\mathcal {S} _ {N}} \\left(\\prod_ {j = 1} ^ {N} x _ {j} \\left(s _ {j}\\right)\\right) u _ {i} \\left(s _ {1}, \\dots , s _ {N}\\right). \\tag {21}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.432,
+                0.825,
+                0.467
+            ],
+            "angle": 0,
+            "content": "Since the strategy spaces are finite and \\( u_{i} \\) is continuous (and hence bounded on the finite set), the function \\( U_{i} \\) is continuous on the product space \\( \\prod_{j=1}^{N} \\Delta(S_{j}) \\)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.473,
+                0.62,
+                0.489
+            ],
+            "angle": 0,
+            "content": "For each player \\(i\\), define the best response correspondence as:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.373,
+                0.492,
+                0.826,
+                0.519
+            ],
+            "angle": 0,
+            "content": "\\[\nB R _ {i} \\left(x _ {- i}\\right) = \\arg \\max  _ {x _ {i} \\in \\Delta \\left(\\mathcal {S} _ {i}\\right)} U _ {i} \\left(x _ {i}, x _ {- i}\\right), \\tag {22}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.524,
+                0.826,
+                0.568
+            ],
+            "angle": 0,
+            "content": "where \\( x_{-i} \\) denotes the mixed strategies of all players other than \\( i \\). Because \\( \\Delta(S_i) \\) is compact and \\( U_i \\) is continuous and linear in \\( x_i \\) (hence concave), the maximum exists and \\( BR_i(x_{-i}) \\) is nonempty, convex, and compact. Now we define the overall best-response correspondence:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.31,
+                0.571,
+                0.826,
+                0.588
+            ],
+            "angle": 0,
+            "content": "\\[\nB R (x) = B R _ {1} \\left(x _ {- 1}\\right) \\times B R _ {2} \\left(x _ {- 2}\\right) \\times \\dots \\times B R _ {N} \\left(x _ {- N}\\right), \\tag {23}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.594,
+                0.826,
+                0.652
+            ],
+            "angle": 0,
+            "content": "where \\(x = (x_{1}, x_{2}, \\ldots, x_{N})\\). The product space \\(\\prod_{i=1}^{N} \\Delta(\\mathcal{S}_{i})\\) is compact and convex, and the correspondence \\(BR\\) has nonempty, convex, and compact values and is upper hemicontinuous (due to the continuity and linearity of the expected utilities). Hence, by Kakutani's fixed point theorem, there exists a fixed point"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.378,
+                0.657,
+                0.826,
+                0.695
+            ],
+            "angle": 0,
+            "content": "\\[\nx ^ {*} = \\left(x _ {1} ^ {*}, x _ {2} ^ {*}, \\dots , x _ {N} ^ {*}\\right) \\in \\prod_ {i = 1} ^ {N} \\Delta \\left(\\mathcal {S} _ {i}\\right) \\tag {24}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.7,
+                0.245,
+                0.714
+            ],
+            "angle": 0,
+            "content": "such that"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.448,
+                0.713,
+                0.826,
+                0.73
+            ],
+            "angle": 0,
+            "content": "\\[\nx ^ {*} \\in B R \\left(x ^ {*}\\right). \\tag {25}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.731,
+                0.592,
+                0.747
+            ],
+            "angle": 0,
+            "content": "This fixed point is a Nash equilibrium in mixed strategies."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.752,
+                0.826,
+                0.824
+            ],
+            "angle": 0,
+            "content": "Thus, under a finite strategy space and continuous utility functions, a Nash equilibrium exists. According to the Debreu-Glicksberg-Fan Theorem (a generalization of Nash's existence theorem), if each player's strategy space is a compact convex set and the utility functions are continuous and quasi-concave (or concave) in their own strategies, then at least one Nash equilibrium exists."
+        },
+        {
+            "type": "image",
+            "bbox": [
+                0.808,
+                0.831,
+                0.825,
+                0.842
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.169,
+                0.851,
+                0.826,
+                0.927
+            ],
+            "angle": 0,
+            "content": "Lemma A.2. By Lemma A.1, Let \\( I = \\{1, 2, \\dots, n\\} \\) be the set of players. For each player \\( i \\), let \\( X_{i} \\subset \\mathbb{R}^{d_{i}} \\) be a compact, convex strategy set, and define \\( X = \\prod_{i=1}^{n} X_{i} \\). Suppose each player's utility function \\( u_{i}: X \\to \\mathbb{R} \\) is continuous on \\( X \\) and quasi-concave (or concave) in the coordinate \\( x_{i} \\) for fixed \\( x_{-i} \\). Then, by the Debreu-Glicksberg-Fan theorem, there exists at least one Nash equilibrium \\( x^{*} = (x_{1}^{*}, x_{2}^{*}, \\ldots, x_{n}^{*}) \\in X \\)."
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.508,
+                0.96
+            ],
+            "angle": 0,
+            "content": "17"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.348,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.104,
+                0.646,
+                0.12
+            ],
+            "angle": 0,
+            "content": "Proof. For each player \\(i\\), define the best-response correspondence"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.311,
+                0.125,
+                0.826,
+                0.151
+            ],
+            "angle": 0,
+            "content": "\\[\nB R _ {i} \\left(x _ {- i}\\right) = \\left\\{x _ {i} \\in X _ {i}: u _ {i} \\left(x _ {i}, x _ {- i}\\right) = \\max  _ {y _ {i} \\in X _ {i}} u _ {i} \\left(y _ {i}, x _ {- i}\\right) \\right\\}. \\tag {26}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.157,
+                0.827,
+                0.187
+            ],
+            "angle": 0,
+            "content": "Since \\( u_{i} \\) is continuous and \\( X_{i} \\) is compact, the maximum is attained; hence, \\( BR_{i}(x_{-i}) \\neq \\emptyset \\). The quasi-concavity (or concavity) of \\( u_{i} \\) in \\( x_{i} \\) ensures that the set"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.407,
+                0.193,
+                0.826,
+                0.21
+            ],
+            "angle": 0,
+            "content": "\\[\n\\left\\{x _ {i} \\in X _ {i}: u _ {i} \\left(x _ {i}, x _ {- i}\\right) \\geq \\alpha \\right\\} \\tag {27}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.215,
+                0.78,
+                0.232
+            ],
+            "angle": 0,
+            "content": "is convex for any \\(\\alpha \\in \\mathbb{R}\\). In particular, the set \\(BR_{i}(x_{-i})\\) is convex for every fixed \\(x_{-i}\\)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.236,
+                0.827,
+                0.294
+            ],
+            "angle": 0,
+            "content": "The continuity of \\( u_{i} \\) implies that the best-response correspondence \\( BR_{i} \\) is upper hemicontinuous. This means that for any sequence \\( \\{x_{-i}^{(k)}\\} \\) converging to \\( x_{-i} \\) and any corresponding sequence \\( \\{x_{i}^{(k)}\\} \\) with \\( x_{i}^{(k)} \\in BR_{i}(x_{-i}^{(k)}) \\), every limit point \\( x_{i} \\) of \\( \\{x_{i}^{(k)}\\} \\) belongs to \\( BR_{i}(x_{-i}) \\)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.299,
+                0.613,
+                0.315
+            ],
+            "angle": 0,
+            "content": "Now we define the aggregate best-response correspondence:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.318,
+                0.321,
+                0.826,
+                0.337
+            ],
+            "angle": 0,
+            "content": "\\[\nB R (x) = B R _ {1} \\left(x _ {- 1}\\right) \\times B R _ {2} \\left(x _ {- 2}\\right) \\times \\dots \\times B R _ {n} \\left(x _ {- n}\\right), \\tag {28}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.342,
+                0.825,
+                0.388
+            ],
+            "angle": 0,
+            "content": "where \\(x = (x_{1}, x_{2}, \\ldots, x_{n}) \\in X\\). Note that: (1) \\(X\\) is a nonempty, compact, convex subset of \\(\\mathbb{R}^{d_1 + d_2 + \\dots + d_n}\\). (2) For each \\(i\\), \\(BR_{i}(x_{-i})\\) is nonempty and convex. (3) The correspondence \\(BR\\) is upper hemicontinuous."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.394,
+                0.825,
+                0.454
+            ],
+            "angle": 0,
+            "content": "By the Debreu-Glicksberg-Fan fixed point theorem, there exists a fixed point \\( x^{*} \\in X \\) such that \\( x^{*} \\in BR(x^{*}) \\). That is, for every \\( i \\in I, x_{i}^{*} \\in BR_{i}(x_{-i}^{*}) \\). This means that no player can unilaterally deviate from \\( x^{*} \\) and increase their utility, which is precisely the definition of a Nash equilibrium."
+        },
+        {
+            "type": "image",
+            "bbox": [
+                0.808,
+                0.46,
+                0.825,
+                0.471
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.489,
+                0.825,
+                0.532
+            ],
+            "angle": 0,
+            "content": "Next, based on the above Lemmas, we want to prove that the assistant's policy \\(\\pi_{\\theta}\\) is updated using policy gradient methods Sutton & Barto (2018). Since \\(R_{A}\\) is a continuous function of \\(\\pi_{\\theta}\\), the assistant's utility is continuous."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.535,
+                0.825,
+                0.564
+            ],
+            "angle": 0,
+            "content": "Lemma A.3. Let \\(\\Theta\\) denote the parameter space for the assistant's policy \\(\\pi_{\\theta}\\), and let the assistant's utility be given by"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.437,
+                0.565,
+                0.825,
+                0.581
+            ],
+            "angle": 0,
+            "content": "\\[\nR _ {A} \\left(\\pi_ {\\theta}\\right) = f \\left(\\pi_ {\\theta}\\right), \\tag {29}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.584,
+                0.825,
+                0.613
+            ],
+            "angle": 0,
+            "content": "where \\( f: \\Pi \\to \\mathbb{R} \\) is a continuous function on the space \\( \\Pi \\) of policies. Assume that the mapping \\( \\theta \\mapsto \\pi_{\\theta} \\) is continuous. Then the composite function"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.449,
+                0.621,
+                0.825,
+                0.638
+            ],
+            "angle": 0,
+            "content": "\\[\nF (\\theta) = f \\left(\\pi_ {\\theta}\\right) \\tag {30}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.643,
+                0.827,
+                0.671
+            ],
+            "angle": 0,
+            "content": "is continuous in \\(\\theta\\). Moreover, since the assistant's policy is updated using policy gradient methods, the update rule"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.416,
+                0.671,
+                0.825,
+                0.687
+            ],
+            "angle": 0,
+            "content": "\\[\n\\theta_ {k + 1} = \\theta_ {k} + \\alpha_ {k} \\nabla_ {\\theta} F (\\theta_ {k}) \\tag {31}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.688,
+                0.482,
+                0.705
+            ],
+            "angle": 0,
+            "content": "employs the gradient of a continuous function."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.719,
+                0.478,
+                0.735
+            ],
+            "angle": 0,
+            "content": "Proof. We divide the proof into two parts:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.74,
+                0.827,
+                0.802
+            ],
+            "angle": 0,
+            "content": "Step 1: Continuity of the Utility Function. Since the mapping \\(\\theta \\mapsto \\pi_{\\theta}\\) is continuous and the function \\(f:\\Pi \\to \\mathbb{R}\\) is continuous by hypothesis, their composition \\(F(\\theta) = f\\bigl (\\pi_{\\theta}\\bigr)\\) is continuous in \\(\\theta\\). Formally, for any \\(\\epsilon >0\\), there exists a \\(\\delta >0\\) such that for all \\(\\theta ,\\theta^{\\prime}\\in \\Theta\\) satisfying \\(\\| \\theta -\\theta^{\\prime}\\| < \\delta\\),"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.36,
+                0.809,
+                0.826,
+                0.827
+            ],
+            "angle": 0,
+            "content": "\\[\n\\left| F (\\theta) - F \\left(\\theta^ {\\prime}\\right) \\right| = \\left| f \\left(\\pi_ {\\theta}\\right) - f \\left(\\pi_ {\\theta^ {\\prime}}\\right) \\right| <   \\epsilon . \\tag {32}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.839,
+                0.825,
+                0.868
+            ],
+            "angle": 0,
+            "content": "Step 2: Policy Gradient Updates. In the policy gradient framework, the assistant updates its parameters according to the rule:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.414,
+                0.874,
+                0.826,
+                0.89
+            ],
+            "angle": 0,
+            "content": "\\[\n\\theta_ {k + 1} = \\theta_ {k} + \\alpha_ {k} \\nabla_ {\\theta} F (\\theta_ {k}), \\tag {33}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.896,
+                0.827,
+                0.926
+            ],
+            "angle": 0,
+            "content": "where \\(\\alpha_{k} > 0\\) is a (possibly diminishing) step size and \\(\\nabla_{\\theta}F(\\theta_k)\\) denotes the gradient of \\(F\\) evaluated at \\(\\theta_{k}\\). Since \\(F\\) is continuous (and under typical smoothness assumptions,"
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.508,
+                0.96
+            ],
+            "angle": 0,
+            "content": "18"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.348,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.104,
+                0.825,
+                0.135
+            ],
+            "angle": 0,
+            "content": "differentiable with continuous gradient), the gradient \\(\\nabla_{\\theta}F\\) is well-defined. The policy gradient update is thus a continuous map from \\(\\theta_{k}\\) to \\(\\theta_{k + 1}\\)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.139,
+                0.825,
+                0.21
+            ],
+            "angle": 0,
+            "content": "Because the update at each iteration is based on the gradient (which is continuous) of the assistant's utility \\( F(\\theta) \\), any small perturbation in \\( \\theta \\) results in only a small variation in both the gradient and the updated parameter. This demonstrates that the update procedure is stable in the sense that the assistant's utility, \\( R_A(\\pi_\\theta) = F(\\theta) \\), continuously varies under the sequence of policy gradient updates Sutton & Barto (2018)."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.216,
+                0.826,
+                0.246
+            ],
+            "angle": 0,
+            "content": "Thus, since \\( R_A \\) is a continuous function of \\( \\pi_{\\theta} \\) and \\( \\pi_{\\theta} \\) depends continuously on \\( \\theta \\), the assistant's utility is continuous, and the policy gradient update is well-defined."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.26,
+                0.825,
+                0.29
+            ],
+            "angle": 0,
+            "content": "Then we want to prove that, the checker's feedback strategy can be obtained via convex optimization (e.g., least-squares regression), and thus \\( R_{C} \\) is a convex function."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.291,
+                0.825,
+                0.322
+            ],
+            "angle": 0,
+            "content": "Lemma A.4. Let \\(\\mathcal{F}\\) be a convex subset of a vector space, and suppose the checker's feedback strategy is given by a function \\(f\\in \\mathcal{F}\\) obtained as a solution to the convex optimization problem"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.384,
+                0.326,
+                0.826,
+                0.362
+            ],
+            "angle": 0,
+            "content": "\\[\n\\min  _ {f \\in \\mathcal {F}} J (f) = \\sum_ {i = 1} ^ {n} \\left(y _ {i} - f \\left(x _ {i}\\right)\\right) ^ {2}, \\tag {34}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.366,
+                0.756,
+                0.382
+            ],
+            "angle": 0,
+            "content": "where \\( x_{i} \\) are given inputs and \\( y_{i} \\) are target outputs. Define the checker's utility function"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.445,
+                0.385,
+                0.826,
+                0.403
+            ],
+            "angle": 0,
+            "content": "\\[\nR _ {C} (f) = J (f). \\tag {35}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.405,
+                0.797,
+                0.422
+            ],
+            "angle": 0,
+            "content": "Then \\( R_C \\) is a convex function on \\( \\mathcal{F} \\); that is, for any \\( f_1, f_2 \\in \\mathcal{F} \\) and any \\( \\lambda \\in [0,1] \\) it holds that"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.318,
+                0.426,
+                0.826,
+                0.445
+            ],
+            "angle": 0,
+            "content": "\\[\nR _ {C} (\\lambda f _ {1} + (1 - \\lambda) f _ {2}) \\leq \\lambda R _ {C} (f _ {1}) + (1 - \\lambda) R _ {C} (f _ {2}). \\tag {36}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.457,
+                0.825,
+                0.487
+            ],
+            "angle": 0,
+            "content": "Proof. We prove the convexity of \\( R_C \\) by verifying that the squared-error loss is a convex function and that convex combinations preserve convexity."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.492,
+                0.487,
+                0.507
+            ],
+            "angle": 0,
+            "content": "For each data point \\(i\\), consider the function"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.418,
+                0.512,
+                0.826,
+                0.535
+            ],
+            "angle": 0,
+            "content": "\\[\n\\ell_ {i} (f) = \\left(y _ {i} - f \\left(x _ {i}\\right)\\right) ^ {2}. \\tag {37}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.539,
+                0.826,
+                0.59
+            ],
+            "angle": 0,
+            "content": "Since for any real number \\( t \\), the function \\( t^2 \\) is convex, and the mapping \\( f \\mapsto y_i - f(x_i) \\) is affine (and hence convex), the composition \\( f \\mapsto (y_i - f(x_i))^2 \\) is convex. In particular, for any \\( f_1, f_2 \\in \\mathcal{F} \\) and \\( \\lambda \\in [0,1] \\),"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.331,
+                0.594,
+                0.826,
+                0.613
+            ],
+            "angle": 0,
+            "content": "\\[\n\\ell_ {i} (\\lambda f _ {1} + (1 - \\lambda) f _ {2}) \\leq \\lambda \\ell_ {i} (f _ {1}) + (1 - \\lambda) \\ell_ {i} (f _ {2}). \\tag {38}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.622,
+                0.6,
+                0.639
+            ],
+            "angle": 0,
+            "content": "Since the checker's overall loss (and hence utility function)"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.433,
+                0.643,
+                0.826,
+                0.679
+            ],
+            "angle": 0,
+            "content": "\\[\nR _ {C} (f) = \\sum_ {i = 1} ^ {n} \\ell_ {i} (f) \\tag {39}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.684,
+                0.825,
+                0.714
+            ],
+            "angle": 0,
+            "content": "is a finite sum of convex functions, it follows that \\( R_C \\) is convex on \\( \\mathcal{F} \\); that is, for any \\( f_1, f_2 \\in \\mathcal{F} \\) and \\( \\lambda \\in [0,1] \\),"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.301,
+                0.718,
+                0.826,
+                0.814
+            ],
+            "angle": 0,
+            "content": "\\[\n\\begin{array}{l} R _ {C} \\left(\\lambda f _ {1} + (1 - \\lambda) f _ {2}\\right) = \\sum_ {i = 1} ^ {n} \\ell_ {i} \\left(\\lambda f _ {1} + (1 - \\lambda) f _ {2}\\right) \\\\ \\leq \\lambda \\sum_ {i = 1} ^ {n} \\ell_ {i} \\left(f _ {1}\\right) + (1 - \\lambda) \\sum_ {i = 1} ^ {n} \\ell_ {i} \\left(f _ {2}\\right) \\tag {40} \\\\ = \\lambda R _ {C} (f _ {1}) + (1 - \\lambda) R _ {C} (f _ {2}). \\\\ \\end{array}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.817,
+                0.218,
+                0.83
+            ],
+            "angle": 0,
+            "content": "Thus:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.347,
+                0.829,
+                0.826,
+                0.865
+            ],
+            "angle": 0,
+            "content": "\\[\nR _ {C} (f) = \\sum_ {i = 1} ^ {n} \\left(y _ {i} - f \\left(x _ {i}\\right)\\right) ^ {2} \\text {i s c o n v e x o n} \\mathcal {F}. \\tag {41}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.808,
+                0.867,
+                0.825,
+                0.879
+            ],
+            "angle": 0,
+            "content": "□"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.896,
+                0.825,
+                0.926
+            ],
+            "angle": 0,
+            "content": "Thus, the checker's feedback strategy derived via convex optimization (e.g., least-squares regression) ensures that the corresponding utility function \\( R_{C} \\) is convex."
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.508,
+                0.96
+            ],
+            "angle": 0,
+            "content": "19"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.348,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.104,
+                0.457,
+                0.12
+            ],
+            "angle": 0,
+            "content": "A.2.3 The formal proof of theorem 3.1"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.129,
+                0.827,
+                0.144
+            ],
+            "angle": 0,
+            "content": "We want to rewrite the theorem 3.1 into the following lemma based on the former lemmas:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.146,
+                0.825,
+                0.205
+            ],
+            "angle": 0,
+            "content": "Lemma A.5 (theorem 3.1). Suppose the assistant's strategy space \\(\\Pi\\) and the checker's strategy space \\(\\mathcal{F}\\) are nonempty, compact, and convex sets. Assume that: \\(R_A:\\Pi \\times \\mathcal{F}\\to \\mathbb{R}\\) is continuous in \\(\\pi\\) for fixed \\(f\\), \\(R_C:\\Pi \\times \\mathcal{F}\\rightarrow \\mathbb{R}\\) is convex in \\(f\\) for fixed \\(\\pi\\). Then there exists a Nash equilibrium \\(\\pi_{\\theta}^{*},f^{*}\\) defined by"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.293,
+                0.211,
+                0.826,
+                0.236
+            ],
+            "angle": 0,
+            "content": "\\[\n\\pi_ {\\theta} ^ {*} = \\underset {\\pi \\in \\Pi} {\\arg \\max } R _ {A} (\\pi , f ^ {*}) \\quad a n d \\quad f ^ {*} = \\underset {f \\in \\mathcal {F}} {\\arg \\max } R _ {C} \\left(\\pi_ {\\theta} ^ {*}, f\\right). \\tag {42}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.251,
+                0.658,
+                0.267
+            ],
+            "angle": 0,
+            "content": "Proof. For each fixed \\( f \\in \\mathcal{F} \\) define the assistant's best-response set:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.32,
+                0.274,
+                0.826,
+                0.298
+            ],
+            "angle": 0,
+            "content": "\\[\nB R _ {A} (f) = \\left\\{\\pi \\in \\Pi : R _ {A} (\\pi , f) = \\max  _ {\\pi^ {\\prime} \\in \\Pi} R _ {A} \\left(\\pi^ {\\prime}, f\\right) \\right\\}. \\tag {43}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.304,
+                0.825,
+                0.349
+            ],
+            "angle": 0,
+            "content": "By hypothesis (i) and the compactness of \\(\\Pi\\), the maximum is attained and \\(BR_{A}(f)\\) is nonempty. (Continuity of \\(R_{A}\\) assures that small changes in \\(f\\) lead to small changes in \\(R_{A}(\\cdot, f)\\).)"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.353,
+                0.675,
+                0.37
+            ],
+            "angle": 0,
+            "content": "Similarly, for each fixed \\(\\pi \\in \\Pi\\) define the checker's best-response set:"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.322,
+                0.376,
+                0.826,
+                0.401
+            ],
+            "angle": 0,
+            "content": "\\[\nB R _ {C} (\\pi) = \\left\\{f \\in \\mathcal {F}: R _ {C} (\\pi , f) = \\max  _ {f ^ {\\prime} \\in \\mathcal {F}} R _ {C} \\left(\\pi , f ^ {\\prime}\\right) \\right\\}. \\tag {44}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.408,
+                0.825,
+                0.438
+            ],
+            "angle": 0,
+            "content": "Since hypothesis (ii) implies that \\( R_C \\) is convex in \\( f \\) and \\( \\mathcal{F} \\) is convex and compact, we conclude that \\( BR_C(\\pi) \\) is nonempty, convex, and closed."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.444,
+                0.388,
+                0.459
+            ],
+            "angle": 0,
+            "content": "Consider the correspondence"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.3,
+                0.465,
+                0.826,
+                0.482
+            ],
+            "angle": 0,
+            "content": "\\[\nH: \\Pi \\times \\mathcal {F} \\rightarrow \\Pi \\times \\mathcal {F}, \\quad H (\\pi , f) = B R _ {A} (f) \\times B R _ {C} (\\pi). \\tag {45}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.487,
+                0.825,
+                0.531
+            ],
+            "angle": 0,
+            "content": "By the arguments above: For every \\((\\pi, f) \\in \\Pi \\times \\mathcal{F}\\), the set \\(H(\\pi, f)\\) is nonempty. \\(BR_A(f)\\) is closed (by continuity and compactness) and \\(BR_C(\\pi)\\) is convex (and closed) by hypothesis (ii). Hence, \\(H(\\pi, f)\\) is convex and closed."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.537,
+                0.826,
+                0.594
+            ],
+            "angle": 0,
+            "content": "Since the domain \\(\\Pi \\times \\mathcal{F}\\) is nonempty, compact, and convex, and since the correspondence \\(H\\) has nonempty, convex, and closed values and is upper hemicontinuous (this follows from the continuity of \\(R_{A}\\) in \\(\\pi\\) and convexity of \\(R_{C}\\) in \\(f\\)), Kakutani's fixed point theorem guarantees the existence of a fixed point"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.307,
+                0.598,
+                0.826,
+                0.617
+            ],
+            "angle": 0,
+            "content": "\\[\n\\left(\\pi^ {*}, f ^ {*}\\right) \\in \\Pi \\times \\mathcal {F} \\quad \\text {s u c h t h a t} \\quad \\left(\\pi^ {*}, f ^ {*}\\right) \\in H \\left(\\pi^ {*}, f ^ {*}\\right). \\tag {46}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.172,
+                0.628,
+                0.509,
+                0.644
+            ],
+            "angle": 0,
+            "content": "By the definition of \\(H\\), the fixed point satisfies"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.36,
+                0.649,
+                0.826,
+                0.667
+            ],
+            "angle": 0,
+            "content": "\\[\n\\pi^ {*} \\in B R _ {A} \\left(f ^ {*}\\right) \\quad \\text {a n d} \\quad f ^ {*} \\in B R _ {C} \\left(\\pi^ {*}\\right), \\tag {47}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.672,
+                0.336,
+                0.687
+            ],
+            "angle": 0,
+            "content": "which is equivalent to"
+        },
+        {
+            "type": "equation",
+            "bbox": [
+                0.292,
+                0.693,
+                0.826,
+                0.719
+            ],
+            "angle": 0,
+            "content": "\\[\n\\pi^ {*} = \\underset {\\pi \\in \\Pi} {\\arg \\max } R _ {A} (\\pi , f ^ {*}) \\quad \\text {a n d} \\quad f ^ {*} = \\underset {f \\in \\mathcal {F}} {\\arg \\max } R _ {C} (\\pi^ {*}, f). \\tag {48}\n\\]"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.732,
+                0.825,
+                0.763
+            ],
+            "angle": 0,
+            "content": "Thus, no unilateral deviation by either the assistant or the checker increases the respective utility; in other words, the strategy pair \\((\\pi^{*},f^{*})\\) is a Nash equilibrium."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.781,
+                0.473,
+                0.797
+            ],
+            "angle": 0,
+            "content": "B Detailed Dataset Information"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.203,
+                0.812,
+                0.827,
+                0.924
+            ],
+            "angle": 0,
+            "content": "(1) Operating systems (OS) Integrating LLMs into operating systems has immense potential for automating and optimizing tasks. This integration requires a secure, user-friendly interface to ensure effective LLM-OS interaction. LLMs must accurately understand the OS context for informed operations, prioritizing safety to prevent misuse. Additionally, the system should effectively handle errors and provide clear feedback to users, enhancing overall interaction and control. Addressing these aspects can transform computer interaction and efficiency across various industries."
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.509,
+                0.96
+            ],
+            "angle": 0,
+            "content": "20"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.173,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.204,
+                0.103,
+                0.825,
+                0.202
+            ],
+            "angle": 0,
+            "content": "(2) Database (DB) The ability of LLMs to operate on real databases via SQL is critical due to the importance and complexity of database analysis in everyday activities. Previous research has highlighted the effectiveness of LLMs in automating database access, such as with T5QL, a new SQL generation method. Furthermore, fine-tuned LLMs (like GPT-3.5) have demonstrated the ability to extract and link complex scientific information from texts, obtaining structured knowledge from unstructured text and building extensive databases."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.204,
+                0.24,
+                0.825,
+                0.34
+            ],
+            "angle": 0,
+            "content": "(3) WebShop (WS) WebShop is an innovative simulation of an e-commerce website environment, featuring 1.18 million real-world products and 12,087 crowd-sourced text instructions. It challenges agents to navigate various types of webpages and perform diverse actions to find, customize, and purchase products based on given instructions. WebShop's challenges include understanding compositional instructions, query (re-)formulation, dealing with noisy text on webpages, and strategic exploration."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.204,
+                0.377,
+                0.825,
+                0.476
+            ],
+            "angle": 0,
+            "content": "(4) Knowledge Graphs (KG) LLMs' utilization in constructing and interacting with knowledge graphs (KG) presents a promising opportunity to enhance semantic understanding and information retrieval. This involves assessing the models' ability to generate and interpret complex interrelations within data, facilitating more intuitive and context-aware responses. Effective LLM performance in this domain could significantly improve AI's reasoning and decision-making capabilities based on structured knowledge."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.204,
+                0.514,
+                0.825,
+                0.586
+            ],
+            "angle": 0,
+            "content": "(5) Mind2Web (M2W) Mind2Web (M2W) is a dataset designed for developing web agents capable of performing complex tasks on real websites via language instructions. It features over 2,000 tasks across 137 sites from 31 domains. M2W's real web environments and diverse user interactions make it a crucial platform for advancing AI navigation capabilities."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.204,
+                0.624,
+                0.825,
+                0.736
+            ],
+            "angle": 0,
+            "content": "(6) ALFWorld (ALF) ALFWorld bridges interactive TextWorld environments with embodied tasks from the ALFRED dataset, enabling agents to learn abstract strategies and apply them to real-world tasks. It supports abstract reasoning and concrete execution, allowing agents to plan actions in a text-based simulator and execute these tasks in a visual environment. This approach enhances agent generalization and problem-solving skills across various domains, such as language understanding and visual navigation, by leveraging a modular design that simplifies research improvements."
+        },
+        {
+            "type": "list",
+            "bbox": [
+                0.204,
+                0.103,
+                0.825,
+                0.736
+            ],
+            "angle": 0,
+            "content": null
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.172,
+                0.798,
+                0.567,
+                0.816
+            ],
+            "angle": 0,
+            "content": "C Comparison with Task-Splitting Agents"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.171,
+                0.855,
+                0.827,
+                0.924
+            ],
+            "angle": 0,
+            "content": "To compare the SAGE framework with existing agents across various task types and datasets, we conducted a comprehensive evaluation. The results are detailed in Table 6. SAGE demonstrates superior performance in task completion time, answer accuracy, dialog coherence, and step completion accuracy, highlighting its effectiveness in managing complex, multifaceted tasks."
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.508,
+                0.96
+            ],
+            "angle": 0,
+            "content": "21"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.174,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "table_caption",
+            "bbox": [
+                0.18,
+                0.101,
+                0.817,
+                0.118
+            ],
+            "angle": 0,
+            "content": "Table 6: Evaluation of Task-Splitting SOTA Agents on Different Task Types and Datasets"
+        },
+        {
+            "type": "table",
+            "bbox": [
+                0.174,
+                0.128,
+                0.864,
+                0.17
+            ],
+            "angle": 0,
+            "content": "<table><tr><td>Agent</td><td>Task Completion Time (min)</td><td>Answer Accuracy (QA)(%)</td><td>Dialog Coherence (%)</td><td>Step Completion Accuracy (%)</td></tr></table>"
+        },
+        {
+            "type": "table_caption",
+            "bbox": [
+                0.346,
+                0.174,
+                0.698,
+                0.188
+            ],
+            "angle": 0,
+            "content": "Task 1: Long-form Question Answering (HotpotQA)"
+        },
+        {
+            "type": "table",
+            "bbox": [
+                0.175,
+                0.19,
+                0.825,
+                0.297
+            ],
+            "angle": 0,
+            "content": "<table><tr><td>BabyAGI</td><td>7.8</td><td>74.1</td><td>-</td><td>-</td></tr><tr><td>AutoGPT</td><td>8.1</td><td>76.3</td><td>-</td><td>-</td></tr><tr><td>HuggingGPT</td><td>6.7</td><td>79.2</td><td>-</td><td>-</td></tr><tr><td>LangChain Agent</td><td>7.9</td><td>77.0</td><td>-</td><td>-</td></tr><tr><td>TaskMatrix.AI</td><td>6.5</td><td>80.3</td><td>-</td><td>-</td></tr><tr><td>SAGE - ChatGPT-4</td><td>10.6</td><td>82.5 (+6.0)</td><td>-</td><td>-</td></tr></table>"
+        },
+        {
+            "type": "table_caption",
+            "bbox": [
+                0.349,
+                0.301,
+                0.694,
+                0.315
+            ],
+            "angle": 0,
+            "content": "Task 2: Multi-turn Dialog Completion (MultiWOZ)"
+        },
+        {
+            "type": "table",
+            "bbox": [
+                0.175,
+                0.317,
+                0.825,
+                0.424
+            ],
+            "angle": 0,
+            "content": "<table><tr><td>BabyAGI</td><td>8.2</td><td>-</td><td>73.5</td><td>-</td></tr><tr><td>AutoGPT</td><td>8.5</td><td>-</td><td>75.6</td><td>-</td></tr><tr><td>HuggingGPT</td><td>7.1</td><td>-</td><td>78.1</td><td>-</td></tr><tr><td>LangChain Agent</td><td>8.3</td><td>-</td><td>76.5</td><td>-</td></tr><tr><td>TaskMatrix.AI</td><td>6.8</td><td>-</td><td>79.9</td><td>-</td></tr><tr><td>SAGE - ChatGPT-4</td><td>10.9</td><td>-</td><td>81.6 (+5.8)</td><td>-</td></tr></table>"
+        },
+        {
+            "type": "table_caption",
+            "bbox": [
+                0.334,
+                0.428,
+                0.71,
+                0.442
+            ],
+            "angle": 0,
+            "content": "Task 3: Sequential Task with Dependencies (ALFWorld)"
+        },
+        {
+            "type": "table",
+            "bbox": [
+                0.175,
+                0.444,
+                0.841,
+                0.552
+            ],
+            "angle": 0,
+            "content": "<table><tr><td>BabyAGI</td><td>8.7</td><td>-</td><td>-</td><td>71.5</td></tr><tr><td>AutoGPT</td><td>8.3</td><td>-</td><td>-</td><td>73.1</td></tr><tr><td>HuggingGPT</td><td>7.5</td><td>-</td><td>-</td><td>75.2</td></tr><tr><td>LangChain Agent</td><td>7.8</td><td>-</td><td>-</td><td>72.8</td></tr><tr><td>TaskMatrix.AI</td><td>6.6</td><td>-</td><td>-</td><td>76.4</td></tr><tr><td>SAGE - ChatGPT-4</td><td>10.7</td><td>-</td><td>-</td><td>82.3 (+5.9)</td></tr></table>"
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.509,
+                0.96
+            ],
+            "angle": 0,
+            "content": "22"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.174,
+                0.033,
+                0.347,
+                0.049
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.173,
+                0.102,
+                0.3,
+                0.121
+            ],
+            "angle": 0,
+            "content": "D Examples"
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.183,
+                0.143,
+                0.571,
+                0.16
+            ],
+            "angle": 0,
+            "content": "Cases study on TriviaQA in using GPT with SAGE."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.184,
+                0.166,
+                0.228,
+                0.177
+            ],
+            "angle": 0,
+            "content": "User:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.179,
+                0.814,
+                0.208
+            ],
+            "angle": 0,
+            "content": "Answer the question based on the given passages. Only give me the answer and do not output any other words. The following are given passages:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.208,
+                0.814,
+                0.262
+            ],
+            "angle": 0,
+            "content": "History of canals in Great Britain - London Canal Museum History of canals in Great Britain Home \\(>\\) History \\(>\\) Canals in Britain In the history of canals, Britain was not a pioneer. The Chinese can claim that the Grand Canal of China was one of the first, in the tenth century, a...."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.262,
+                0.814,
+                0.29
+            ],
+            "angle": 0,
+            "content": "Answer the question based on the given passages. Only give me the answer and do not output any other words."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.29,
+                0.63,
+                0.305
+            ],
+            "angle": 0,
+            "content": "Question: Which metal is produced by the Bessemer Process?"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.305,
+                0.248,
+                0.316
+            ],
+            "angle": 0,
+            "content": "Answer:"
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.184,
+                0.33,
+                0.261,
+                0.343
+            ],
+            "angle": 0,
+            "content": "Assistant:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.183,
+                0.343,
+                0.814,
+                0.388
+            ],
+            "angle": 0,
+            "content": "The content of the file seems to be an HTML document related to the administrative division of Turkey, including population statistics, charts, and maps. This file contains scripts, metadata, and structured data typical for a web page."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.184,
+                0.398,
+                0.255,
+                0.411
+            ],
+            "angle": 0,
+            "content": "Checker:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.183,
+                0.411,
+                0.816,
+                0.469
+            ],
+            "angle": 0,
+            "content": "Clear Objectives: When answering user questions, the focus should be on directly addressing the question without introducing irrelevant information. Document Handling: Before confirming whether the document content is relevant to the question, detailed aspects of the document should not be directly addressed."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.184,
+                0.48,
+                0.267,
+                0.492
+            ],
+            "angle": 0,
+            "content": "Reflection:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.183,
+                0.493,
+                0.816,
+                0.77
+            ],
+            "angle": 0,
+            "content": "Issue Description: The user wants to understand why the system outputs irrelevant HTML document content based on user input and seeks detailed feedback and reflection. Reasons for the Error: Misinterpretation of Input: The system mistakenly assumed that the user uploaded a file and attempted to read its content, whereas the user only provided text input. Processing Logic Error: Without clearly determining the user's intent, the system directly parsed and outputted file content. User Experience Problems: Irrelevant Output: The user expects concise, relevant answers, but the system provided lengthy and irrelevant HTML content, affecting the user experience. Poor Communication: Failure to accurately understand and respond to the user's real needs resulted in off-topic responses In-depth Reflection and Improvement Suggestions: Clarify User Intent: Accurate Parsing of User Input: Enhance the system's natural language processing capabilities to accurately distinguish whether the user uploaded a file or simply provided text input. User Feedback Mechanism: Implement a user feedback mechanism to promptly adjust the understanding of user intent. For example, confirm the issue to verify if the user uploaded a file. Optimize Processing Logic: Layered Processing Flow: In system design, separate file processing logic from text response logic to avoid misjudgments. For instance, when a user uploads a file, process the file content separately; when a user inputs text, provide relevant answers directly. Pre-processing Check: Prior to handling files, perform pre-processing checks to confirm if the file content meets expectations. ...."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.189,
+                0.771,
+                0.442,
+                0.786
+            ],
+            "angle": 0,
+            "content": "LLMs with SAGE response: Steel."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.184,
+                0.809,
+                0.289,
+                0.822
+            ],
+            "angle": 0,
+            "content": "Ground truth"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.823,
+                0.227,
+                0.836
+            ],
+            "angle": 0,
+            "content": "Steel."
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.509,
+                0.96
+            ],
+            "angle": 0,
+            "content": "23"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.174,
+                0.033,
+                0.347,
+                0.048
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.185,
+                0.109,
+                0.533,
+                0.125
+            ],
+            "angle": 0,
+            "content": "Cases study on LCC in using GPT with SAGE."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.185,
+                0.131,
+                0.228,
+                0.144
+            ],
+            "angle": 0,
+            "content": "User:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.145,
+                0.815,
+                0.187
+            ],
+            "angle": 0,
+            "content": "import networkx as nx import pickle from Queue import PriorityQueue import copy  \nimport random import string import sys class MultiDiGraphEdgeKey(nx.MultiDiGraph):"
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.185,
+                0.199,
+                0.262,
+                0.212
+            ],
+            "angle": 0,
+            "content": "Assistant:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.213,
+                0.816,
+                0.283
+            ],
+            "angle": 0,
+            "content": "You will be given the history of a past experience where you were given a task and failed to complete it. Reflect on the strategy and actions taken. Devise a concise, new plan of action that accounts for your previous mistakes. Here are two examples: Example 1: If you failed to remember to lock the door, plan to double-check the door each time. Example2: If you missed a deadline, plan to set reminders earlier...."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.185,
+                0.294,
+                0.254,
+                0.308
+            ],
+            "angle": 0,
+            "content": "Checker:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.321,
+                0.815,
+                0.378
+            ],
+            "angle": 0,
+            "content": "The given code is a part of the Camerini algorithm, which is used for ranking edges in a directed graph. This algorithm is particularly useful for problems involving the identification of optimal or near-optimal substructures, like arborescences or spanning trees, in complex networks. The algorithm has two main phases:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.378,
+                0.815,
+                0.42
+            ],
+            "angle": 0,
+            "content": "Collapsing Phase: This phase identifies and collapses cycles in the graph, creating supernodes. This simplification helps in managing cycles more efficiently and prepares the graph for the expansion phase."
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.42,
+                0.815,
+                0.462
+            ],
+            "angle": 0,
+            "content": "Expanding Phase: After collapsing cycles into supernodes, this phase expands the supernodes back into their original structure, resulting in a ranked arborescence, where the edges are sorted or prioritized based on certain criteria."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.185,
+                0.473,
+                0.395,
+                0.488
+            ],
+            "angle": 0,
+            "content": "LLMs with SAGE response:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.488,
+                0.815,
+                0.543
+            ],
+            "angle": 0,
+            "content": "Z.addedge(eu, ev, **data.copy())) self.init/graph, Y, Z) A = best(root) self.init(graph) e, d = self.next(A, Y, Z) w = self.getgraphscore(A) - d if d != float('inf') else float('inf') P.put((-w, e, A, Y, Z)) solutions.append(A) return solutions  \ndef bestbranching(self, root): return self.best(root)"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.543,
+                0.632,
+                0.556
+            ],
+            "angle": 0,
+            "content": "def bestarborescencenorooted(self, root): return self.best(root)"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.557,
+                0.614,
+                0.57
+            ],
+            "angle": 0,
+            "content": "def bestarborescencerooted(self, root): return self.best(root)"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.571,
+                0.815,
+                0.599
+            ],
+            "angle": 0,
+            "content": "def getgraphscore(self, graph): return sum(data[self attr] for u, v, data in graphEdges(data=True))"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.599,
+                0.815,
+                0.627
+            ],
+            "angle": 0,
+            "content": "def findroots(self, graph): roots = [node for node, degree in graph.indegree() if degree == 0] return roots ......."
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.509,
+                0.96
+            ],
+            "angle": 0,
+            "content": "24"
+        }
+    ],
+    [
+        {
+            "type": "header",
+            "bbox": [
+                0.174,
+                0.033,
+                0.347,
+                0.048
+            ],
+            "angle": 0,
+            "content": "Preprint. Under review."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.185,
+                0.109,
+                0.6,
+                0.126
+            ],
+            "angle": 0,
+            "content": "Cases study on Repobench-P in using GPT with SAGE."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.186,
+                0.131,
+                0.232,
+                0.145
+            ],
+            "angle": 0,
+            "content": "User:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.164,
+                0.62,
+                0.276
+            ],
+            "angle": 0,
+            "content": "Please complete the code given below. {src//kademlia//operation//KadRefreshOperation.java   \npublic class KadRefreshOperation implements Operation   \nprivate final KadServer server;   \nprivate final KademliaNode localNode;   \nprivate final KademliaDHT dht;   \nprivate final KadConfiguration config;   \npublic KadRefreshOperation....."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.185,
+                0.306,
+                0.261,
+                0.319
+            ],
+            "angle": 0,
+            "content": "Assistant:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.32,
+                0.816,
+                0.419
+            ],
+            "angle": 0,
+            "content": "To devise a new plan of action, let's analyze the previous mistakes and come up with a solution: Mistake 1: In the KadRefreshOperation class, the execute() method calls the BucketRefreshOperation and ContentRefreshOperation without any error handling or exception handling. This can lead to unexpected errors and failures. Solution: Add proper error handling and exception handling in the execute() method of the KadRefreshOperation class. This will ensure that any errors or exceptions are properly handled and the execution can continue smoothly...."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.185,
+                0.43,
+                0.254,
+                0.442
+            ],
+            "angle": 0,
+            "content": "Checker:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.443,
+                0.816,
+                0.583
+            ],
+            "angle": 0,
+            "content": "In the 'KadRefreshOperation' class, there is no error handling when the 'execute()' method calls 'BucketRefreshOperation' and 'ContentRefreshOperation'. Analysis: If 'BucketRefreshOperation' or 'ContentRefreshOperation' throws an exception, the entire 'execute()' method will fail, potentially causing the interruption of the entire system's refresh operation. In the 'StoreOperation' class, the 'execute()' method does not handle the case of existing content in the DHT. Analysis: The 'execute()' method always returns 1 as the number of storage nodes, which is clearly incorrect. The correct number of nodes should be returned based on whether the content already exists in the DHT. Solution: Before storing the content, check if it already exists. If it does, return 0; otherwise, store the content and return the actual number of storage nodes."
+        },
+        {
+            "type": "title",
+            "bbox": [
+                0.186,
+                0.608,
+                0.395,
+                0.622
+            ],
+            "angle": 0,
+            "content": "LLMs with SAGE response:"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.622,
+                0.816,
+                0.651
+            ],
+            "angle": 0,
+            "content": "private final transient KademliaRoutingTable routingTable; private final transient Kad-Configuration config; private final transient MessageFactory messageFactory;"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.651,
+                0.814,
+                0.747
+            ],
+            "angle": 0,
+            "content": "/* Scheduled refresh operation */ private final Timer refreshTimer;  \n/* * Initialize the Kademlia system */ @param ownerId The ID for this owner * @param nodeId The ID for this node * @param InetAddress The address for this node * @param port The port for this node * @param config Configuration for the Kad system */ @throws java.io.IOException */ public JKademliaNode(String ownerId, KademliaId nodeId, InetAddress InetAddress, int port, KadConfiguration config) throws IOException { this ownerId = ownerId; this.config = config;"
+        },
+        {
+            "type": "text",
+            "bbox": [
+                0.184,
+                0.747,
+                0.811,
+                0.788
+            ],
+            "angle": 0,
+            "content": "/* Initialize the Node */ this.localNode = new Node(nodeId, InetAddress, port);  \n/* Initialize the Server */ this.server = new KadServer(localNode.getNodeId(), config);"
+        },
+        {
+            "type": "page_number",
+            "bbox": [
+                0.49,
+                0.948,
+                0.509,
+                0.96
+            ],
+            "angle": 0,
+            "content": "25"
+        }
+    ]
+]
