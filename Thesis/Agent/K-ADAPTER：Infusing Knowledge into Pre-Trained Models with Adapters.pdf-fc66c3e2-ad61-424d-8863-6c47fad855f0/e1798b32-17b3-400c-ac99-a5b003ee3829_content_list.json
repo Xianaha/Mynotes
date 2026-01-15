@@ -1,0 +1,1387 @@
+[
+    {
+        "type": "text",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "text_level": 1,
+        "bbox": [
+            111,
+            109,
+            861,
+            132
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Ruize Wang  $^{*1}$  Duyu Tang  $^{2}$  Nan Duan  $^{2}$  Zhongyu Wei  $^{3}$  Xuanjing Huang  $^{4}$  Jianshu ji  $^{5}$  Cuihong Cao  $^{5}$  Daxin Jiang  $^{6}$  Ming Zhou  $^{2}$",
+        "bbox": [
+            114,
+            166,
+            854,
+            200
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Abstract",
+        "text_level": 1,
+        "bbox": [
+            241,
+            217,
+            320,
+            233
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "We study the problem of injecting knowledge into large pre-trained models like BERT and RoBERTa. Existing methods typically update the original parameters of pre-trained models when injecting knowledge. However, when multiple kinds of knowledge are injected, they may suffer from catastrophic forgetting. To address this, we propose K-ADAPTER, which remains the original parameters of the pre-trained model fixed and supports continual knowledge infusion. Taking RoBERTa as the pre-trained model, K-ADAPTER has a neural adapter for each kind of infused knowledge, like a plug-in connected to RoBERTa. There is no information flow between different adapters, thus different adapters are efficiently trained in a distributed way. We inject two kinds of knowledge, including factual knowledge obtained from automatically aligned text-triplets on Wikipedia and Wikidata, and linguistic knowledge obtained from dependency parsing. Results on three knowledge-driven tasks (total six datasets) including relation classification, entity typing and question answering demonstrate that each adapter improves the performance, and the combination of both adapters brings further improvements. Probing experiments further show that K-ADAPTER captures richer factual and commonsense knowledge than RoBERTa.",
+        "bbox": [
+            117,
+            242,
+            444,
+            664
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "1. Introduction",
+        "text_level": 1,
+        "bbox": [
+            86,
+            696,
+            217,
+            710
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Language representation models, which are pre-trained on large-scale text corpus through unsupervised objectives like (masked) language modeling, such as BERT (Devlin et al., 2019), GPT (Radford et al., 2018; 2019), XLNet (Yang",
+        "bbox": [
+            84,
+            722,
+            475,
+            782
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "*Work is done during internship at Microsoft Research Asia  $^{1}$ Academy for Engineering and Technology, Fudan University, Shanghai, China  $^{2}$ Microsoft Research Asia, Beijing, China  $^{3}$ School of Data Science, Fudan University, Shanghai, China  $^{4}$ School of Computer Science, Fudan University, Shanghai, China  $^{5}$ Microsoft AI and Research, Redmond WA, USA  $^{6}$ Microsoft Search Technology Center Asia, Beijing, China.",
+        "bbox": [
+            84,
+            790,
+            477,
+            881
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "et al., 2019), RoBERTa (Liu et al., 2019) and T5 (Raffel et al., 2019), have established state-of-the-art performances on various NLP downstream tasks.",
+        "bbox": [
+            495,
+            218,
+            885,
+            262
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Despite the huge success of these large pre-trained models in empirical studies, recent studies suggest that models learned in such an unsupervised manner struggle to capture rich knowledge. For example, Poerner et al. (2019) suggest that although language models do well in reasoning about the surface form of entity names, they fail in capturing rich factual knowledge. Kassner & Schütze (2019) observe that BERT mostly did not learn the meaning of negation (e.g. \"not\"). Talmor et al. (2019) find that language models fail completely on half of eight reasoning tasks that require symbolic operations such as comparison, conjunction, and composition. These observations motivate us to study the injection of knowledge into pre-trained models like BERT and RoBERTa.",
+        "bbox": [
+            495,
+            270,
+            887,
+            482
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Recently, some efforts have been made to exploit injecting knowledge into pre-trained language models (Zhang et al., 2019; Lauscher et al., 2019; Levine et al., 2019; Peters et al., 2019; He et al., 2020; Xiong et al., 2020). Most previous works (as shown in Table 1) augment the standard language modeling objective with knowledge-driven objectives and update model parameters in a multi-task learning manner. Although these methods, with updated pre-trained models, obtain better performance on downstream tasks, they fail to continual learning (Kirkpatrick et al., 2017). Model parameters need to be retrained when we want to inject many new kinds of knowledge, which may result in the catastrophic forgetting of previously injected knowledge. Meanwhile, the resulting pre-trained models produce entangled representations, which makes it hard to investigate the effect of each knowledge when multiple kinds of knowledge are injected.",
+        "bbox": [
+            495,
+            489,
+            888,
+            733
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "In this paper, we propose K-ADAPTER, a flexible and simple approach that infuses knowledge into large pre-trained models. K-ADAPTER has attractive properties including supporting continual knowledge infusion and producing disentangled representations. It remains the original representation of a pre-trained model unchanged and exports different representations for different types of infused knowledge. This is achieved by the integration of compact neural models, dubbed adapters here. Adapters are knowledge-specific models plugged outside of a pre-trained model, whose inputs are the output hidden-states of intermediate layers of",
+        "bbox": [
+            495,
+            738,
+            888,
+            906
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "aside_text",
+        "text": "arXiv:2002.01808v1 [cs.CL] 5 Feb 2020",
+        "bbox": [
+            22,
+            272,
+            58,
+            700
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "table",
+        "img_path": "images/b793bbd8fa7446113251a1d48af1d503813ebfebc371f99d3708ea27f89740f5.jpg",
+        "table_caption": [
+            "Table 1. Comparison between our approach (K-ADAPTER) and previous works on injecting knowledge into BERT."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Model</td><td>Knowledge Source</td><td>Objective</td><td>BERT fixed in training?</td><td>Continual knowledge infusion?</td></tr><tr><td>ERNIE (Zhang et al., 2019)</td><td>Wikipedia, WikiData</td><td>entity linking</td><td>N</td><td>N</td></tr><tr><td>LIBERT (Lauscher et al., 2019)</td><td>WordNet</td><td>synonym word prediction, hyponym-hypernym prediction</td><td>from scratch</td><td>N</td></tr><tr><td>SenseBERT (Levine et al., 2019)</td><td>WordNet</td><td>word-supersense prediction</td><td>from scratch</td><td>N</td></tr><tr><td>KnowBERT (Peters et al., 2019)</td><td>Wordnet, Wikipedia, CrossWikis</td><td>entity linking , hypernym linking</td><td>N</td><td>N</td></tr><tr><td>WKLM (Xiong et al., 2020)</td><td>WikiPedia, WikiData</td><td>replaced entity detection</td><td>N</td><td>N</td></tr><tr><td>BERT-MK (He et al., 2020)</td><td>Unified Medical Language System</td><td>discriminate between real and fake facts</td><td>N</td><td>N</td></tr><tr><td>K-Adapter (this work)</td><td>Wikipedia, Wikidata, dependency parser</td><td>predication prediction, dependency relation prediction</td><td>Y</td><td>Y</td></tr></table>",
+        "bbox": [
+            89,
+            114,
+            883,
+            335
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "the pre-trained model. In this work, we take RoBERTa (Liu et al., 2019) as the base pre-trained model and integrate two types of knowledge, including factual knowledge obtained by aligned Wikipedia text to Wikidata triplets, linguistic knowledge obtained by applying off-the-shell dependency parser to web texts. In the pre-training phase, we train two adapters independently on relation classification task and dependency relation prediction task, respectively, while remaining the original parameters of RoBERTa frozen. Since adapters have much less trainable parameters compared with RoBERTa, the training process is memory efficient.",
+        "bbox": [
+            84,
+            358,
+            475,
+            525
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "We conduct extensive experiments on six benchmark datasets across three knowledge-driven tasks, i.e., relation classification, entity typing and question answering. Experiments show that K-ADAPTER consistently performs better than RoBERTa, and achieves state-of-the-art performance on five datasets, and comparable performance compared with CosmosQA SOTA. We further conduct probing experiments on LAMA (Poerner et al., 2019) and LAMA-UHN (Petroni et al., 2019), demonstrating that K-ADAPTER captures richer factual and commonsense knowledge than RoBERTa.",
+        "bbox": [
+            84,
+            532,
+            475,
+            696
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "The contributions of this paper are summarized as follows:",
+        "bbox": [
+            84,
+            705,
+            473,
+            720
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "list",
+        "sub_type": "text",
+        "list_items": [
+            "- We present K-ADAPTER, a flexible approach that supports continual knowledge infusion into large pretrained models (e.g. RoBERTa in this work).",
+            "- We infuse factual knowledge and linguistic knowledge, and show that adapters for both kinds of knowledge work well on downstream tasks.",
+            "- K-ADAPTER achieves state-of-the-art or comparable performance by fine-tuning parameters on three downstream tasks, and captures richer factual and commonsense knowledge than RoBERTa on probing experiments."
+        ],
+        "bbox": [
+            101,
+            733,
+            473,
+            904
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "2. Related Work",
+        "text_level": 1,
+        "bbox": [
+            496,
+            356,
+            638,
+            372
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Our work relates to the area of injecting knowledge into pretrained models such as BERT. As stated in Table 1, previous works mainly differ from the knowledge sources and the objective used for training.",
+        "bbox": [
+            495,
+            382,
+            887,
+            444
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "ERNIE (Zhang et al., 2019) injects a knowledge graph into BERT. They align entities from Wikipedia sentences to fact triples in WikiData, and discard sentences with less than three entities. In the training process, the input includes sentences and linked facts, and the knowledge-aware learning objective is to predict the correct token-entity alignment. Entity embeddings are trained on fact triples from WikiData via TransE (Bordes et al., 2013). LIBERT (Lauscher et al., 2019) injects pairs of words with synonym and hyponym-hypernym relations in WordNet. The model takes a pair of words separated by a special token as the input, and is optimized by a binary classification problem, which predicts whether the input holds a particular relation or not. SenseBERT (Levine et al., 2019) considers word-supersense knowledge. It inject knowledge by predicting the supersense of the masked word in the input, where the candidates are nouns and verbs and the ground truth comes from WordNet. KnowBERT (Peters et al., 2019) incorporates knowledge bases into BERT using Knowledge attention and recontextualization, where the knowledge comes from synset-synset and lemma-lemma relationships in WordNet, and entity linking information in Wikipedia. If entity linking supervision is available, the model is learned with an additional knowledge-aware log-likelihood or max-margin objective. WKLM (Xiong et al., 2020) also use documents from Wikipedia aligned with fact triples from WikiData. It replaces entity mentions in the original document with names of other entities of the same type. The model is trained to distinguish the correct entity mention from randomly chosen ones. BERT-MK (He et al., 2020) integrates",
+        "bbox": [
+            495,
+            450,
+            888,
+            904
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "header",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "bbox": [
+            251,
+            56,
+            722,
+            70
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "image",
+        "img_path": "images/534f4ed8f1417584cccd943b60f21ecf634cc3576948ffa1785843ce7d388b55.jpg",
+        "image_caption": [
+            "(b) K-Adapter"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            99,
+            80,
+            875,
+            338
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "image",
+        "img_path": "images/868f16539657f4ffd535ca0e9fd20cca794f4ab5a2a652afebb99c231fe2aa00.jpg",
+        "image_caption": [
+            "Figure 1. (a) Pre-trained language models inject multiple kinds of knowledge with multi-task learning. Model parameters need to be retrained when injecting new kinds of knowledge, which may result in the catastrophic forgetting (b) Our K-ADAPTER injects multiple kinds of knowledge by training adapters independently on different pre-train tasks, which supports continual knowledge infusion. When we inject new kinds of knowledge, the existing knowledge-specific adapters will not be affected. KIA represents the adapter layer and TRM represents the transformer layer, both of which are shown in Figure 2.",
+            "Figure 2. Structure of the adapter layer (left). The adapter layer consists of two projection layers and  $N = 2$  transformer layers, and a skip-connection between two projection layers."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            122,
+            468,
+            433,
+            625
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "fact triples from knowledge graph. For each entity, it sample incoming and outcoming instances from the neighbors on the knowledge graph, and replaces head or tail entity to create negative instances. The model is learned to discriminate between real and fake facts.",
+        "bbox": [
+            84,
+            715,
+            473,
+            790
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "As shown in Table 1, our model (K-ADAPTER) differs from previous studies in three aspects. First, we consider both fact-related objective (i.e. predicate/relation prediction) and linguistic-related objective (i.e. dependency relation prediction). Second, the original parameter of BERT is clamped in the knowledge infusion process. Third, our approach supports continual learning, which means that the learning",
+        "bbox": [
+            84,
+            799,
+            475,
+            906
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "of different adapters are not entangled. This flexibility enables us to efficiently inject different types of knowledge independently, and inject more types of knowledge without any loss on the previously injected knowledge.",
+        "bbox": [
+            496,
+            465,
+            885,
+            527
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "3. K-ADAPTER",
+        "text_level": 1,
+        "bbox": [
+            496,
+            546,
+            630,
+            561
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "As illustrated in Figure 1 (a), most of the previous works enhance pre-trained language models by injecting knowledge and update model parameters through multi-task learning. Regardless of these different versions of knowledge-injected methods with multi-task learning, common issues not fully studied are catastrophic forgetting of previous knowledge. To stress this, we present K-ADAPTER as shown in Figure 1(b), where multiple kinds of knowledge are injected into different compact neural models (i.e., adapters in this paper) individually instead of directly injecting knowledge into pre-trained models. It remains the original representation of a pre-trained model fixed and supports continual knowledge infusion, i.e., injecting each kind of knowledge into the corresponding knowledge-specific adapter and producing disentangled representation. Specifically, adapters are knowledge-specific models (with few parameters) plugged outside of a pre-trained model, which inputs are the output hidden-states of intermediate layers of the pre-trained model. We pre-train each adapter on different pre-train tasks independently for injecting different knowledge while the original parameters of the pre-trained model are frozen. In this paper, we exploit RoBERTa (Liu et al., 2019) as the",
+        "bbox": [
+            495,
+            571,
+            888,
+            904
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "header",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "bbox": [
+            250,
+            56,
+            722,
+            70
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "pre-trained model, and mainly infuse factual knowledge and linguistic knowledge with two kinds of adapters, i.e., factual adapter and linguistic adapter which are pre-trained on the relation classification task and dependency relation prediction task, respectively. We will first describe the structure of our adapter, and then present the process of pre-training knowledge-specific adapters in the following sections.",
+        "bbox": [
+            88,
+            85,
+            472,
+            189
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3.1. Adapter Structure",
+        "text_level": 1,
+        "bbox": [
+            89,
+            208,
+            246,
+            220
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "There are many ways to implement adapters (Rebuffi et al., 2017; Houlsby et al., 2019). In this paper, we present a different adapter structure as shown in Figure 2 as the knowledge-specific adapter. Each adapter model consists of  $K$  adapter layers that contain  $N$  transformer (Vaswani et al., 2017) layers and two projection layers. A skip-connection is applied across two projection layers. Specifically, for each adapter model, we plug adapter layers among different transformer layers of the pre-trained model. We concatenate the output hidden feature of the transformer layer of the pretrained model and the output feature of the former adapter layer as the input feature of the current adapter layer. For each knowledge-specific adapter, we use the concatenation of the last hidden feature of the pre-trained model and the last hidden feature of the adapter as the final output feature of this adapter model.",
+        "bbox": [
+            88,
+            231,
+            473,
+            470
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "In the pre-training procedure, we train each knowledge-specific adapter on different pre-training tasks individually. For various downstream tasks, K-ADAPTER can adopt the fine-tuning procedure similar to RoBERTa and BERT. When only one knowledge-specific is adopted, we can take the final output feature of this adapter model as the input for task-specific layers of the downstream task. When multiple knowledge-specific adapters are adopted, we concatenate the output features of different adapter models as the input for task-specific layers of the downstream task.",
+        "bbox": [
+            88,
+            479,
+            473,
+            628
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3.2. Pre-training settings",
+        "text_level": 1,
+        "bbox": [
+            89,
+            648,
+            259,
+            661
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "To be more specific, we use the RoBERTa  $LARGE$ $(\\mathrm{L} = 24$ $\\mathrm{H} = 1024$  A=16,355M params) implementation by Huggingface as the pre-trained model in all our experiments. As for each adapter layer, we denote the number of transformer layer as  $N$  ,the hidden dimension of transformer layer as  $H_{A}$  , the number of self-attention heads of transformer layer as  $A_{A}$  , the hidden dimension of down-projection layer as  $H_{d}$  and the hidden dimension of up-projection layer as  $H_{u}$  . In detail, we have the following adapter size:  $N = 2$ $H_{A} = 768$ $A_{A} = 12$ $H_{u} = 1024$  and  $H_{d} = 768$  The RoBERTa layers where adapter layers plug in are  $\\{0,11,23\\}$  and different adapter layers do not share parameters. Thus the total parameters for each adapter model are about  $42\\mathrm{M},$",
+        "bbox": [
+            88,
+            671,
+            473,
+            866
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "which are much smaller than  $\\mathrm{RoBERTa}_{LARGE}$  and make the training process memory efficient. Then we will describe how to inject different knowledge into knowledge-specific adapters below.",
+        "bbox": [
+            500,
+            85,
+            883,
+            143
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3.3. Factual Adapter",
+        "text_level": 1,
+        "bbox": [
+            500,
+            162,
+            643,
+            176
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Factual knowledge can be described as the basic information that concerned with facts or contains facts. In this work, we acquire factual knowledge from the relationships among entities in natural language language. We extract a sub-dataset T-REx-rc from T-REx (ElSahar et al., 2018) which is a large scale alignment dataset between Wikipedia abstracts and Wikidata triples, having 685 unique relations. To be specific, T-REx-rc only contains the sentences where a surface form of the relation appears, and then we discard all relations having lees than 50 entity pairs, collecting 430 relations and 5.5M sentences. In order to inject factual knowledge, we propose pre-training a knowledge-specific adapter called facAdapter on the T-REx-rc dataset using relation classification task. This task requires a model to classify relation labels of given entity pairs based on context. Specifically, we use the concatenation of the last hidden feature of RoBERTa and the last hidden feature of facAdapter as the input representation, and then apply the pooling layer to input representations of the given entities, and then concatenate two entity representations to perform relation classification. RoBERTa is fixed during training and the parameters of the facAdapter are trainable and initialized randomly. More training details of factual adapter can be found in the supplementary material.",
+        "bbox": [
+            500,
+            186,
+            883,
+            546
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3.4. Linguistic Adapter",
+        "text_level": 1,
+        "bbox": [
+            500,
+            566,
+            661,
+            579
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Linguistic knowledge is implicitly contained in natural language texts, e.g., syntax and semantics information. In this work, we acquire linguistic knowledge from dependency relationships among words in natural language text. We build a dataset for training the linguistic adapter. We run the off-the-shell dependency parser from Standford Parse $^2$  (Chen & Manning, 2014) on a part of Book Corpus (Zhu et al., 2015) consisting of 1M examples. To inject linguistic knowledge, we pre-train another knowledge-specific adapter called linAdapter on dependency relation prediction. This task aims to predict the father index of each token in the given sentence. Similar to training the facAdapter, we use the concatenation of the last hidden feature of RoBERTa and the last hidden feature of linAdapter as the input representation, and then apply a linear layer to input representations of each tokens to perform classification. RoBERTa is fixed during training and the parameters of the linAdapter are trainable and initialized randomly. We describe the training details of linguistic adapter in the supplementary material.",
+        "bbox": [
+            500,
+            588,
+            883,
+            873
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "header",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "bbox": [
+            253,
+            56,
+            720,
+            70
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "page_footnote",
+        "text": "$^{1}$ https://github.com/huggingface/transformers",
+        "bbox": [
+            109,
+            877,
+            377,
+            891
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "page_footnote",
+        "text": "$^{2}$ http://nlp.stanford.edu/software/lex-parser.html",
+        "bbox": [
+            519,
+            883,
+            803,
+            898
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "table",
+        "img_path": "images/e57146d827299443179db7deae448cf7104b26e931b0c57143133d9b8bd92841.jpg",
+        "table_caption": [
+            "Table 2. Results on two entity typing datasets OpenEntity and FIGER."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">Model</td><td colspan=\"3\">OpenEntity</td><td colspan=\"3\">FIGER</td></tr><tr><td>P</td><td>R</td><td>F1</td><td>Acc</td><td>Ma-F1</td><td>Mi-F1</td></tr><tr><td>NFGEC (Shimaoka et al., 2016)</td><td>68.80</td><td>53.30</td><td>60.10</td><td>55.60</td><td>75.15</td><td>71.73</td></tr><tr><td>BERT-base (Zhang et al., 2019)</td><td>76.37</td><td>70.96</td><td>73.56</td><td>52.04</td><td>75.16</td><td>71.63</td></tr><tr><td>ERNIE (Zhang et al., 2019)</td><td>78.42</td><td>72.90</td><td>75.56</td><td>57.19</td><td>75.61</td><td>73.39</td></tr><tr><td>KnowBERT (Peters et al., 2019)</td><td>78.60</td><td>73.70</td><td>76.10</td><td>-</td><td>-</td><td>-</td></tr><tr><td>KEPLER (Wang et al., 2019)</td><td>77.20</td><td>74.20</td><td>75.70</td><td>-</td><td>-</td><td>-</td></tr><tr><td>WKLM (Xiong et al., 2020)</td><td>-</td><td>-</td><td>-</td><td>60.21</td><td>81.99</td><td>77.00</td></tr><tr><td>RoBERTa</td><td>77.55</td><td>74.95</td><td>76.23</td><td>56.31</td><td>82.43</td><td>77.83</td></tr><tr><td>RoBERTa + multitask</td><td>77.96</td><td>76.00</td><td>76.97</td><td>59.86</td><td>84.45</td><td>78.84</td></tr><tr><td>K-ADAPTER (F+L)</td><td>79.25</td><td>75.00</td><td>77.06</td><td>61.81</td><td>84.87</td><td>80.54</td></tr><tr><td>K-ADAPTER (F)</td><td>79.30</td><td>75.84</td><td>77.53</td><td>59.50</td><td>84.52</td><td>80.42</td></tr><tr><td>K-ADAPTER (L)</td><td>80.01</td><td>74.00</td><td>76.89</td><td>61.10</td><td>83.61</td><td>79.18</td></tr></table>",
+        "bbox": [
+            222,
+            114,
+            750,
+            306
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4. Experiments",
+        "text_level": 1,
+        "bbox": [
+            84,
+            330,
+            217,
+            348
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "We evaluate our K-ADAPTER on three downstream tasks, i.e., relation classification, entity typing, and question answering. Furthermore, we conduct probing experiments to examine the ability of models for learning factual knowledge. The notations of K-Adapter  $(\\mathrm{F} + \\mathrm{L})$ , K-Adapter (F), and K-Adapter (L) denote our model which consists of both factual adapter and linguistic adapter, only factual adapter and only linguistic adapter, respectively. The implementation details of experiments are in the supplementary material.",
+        "bbox": [
+            84,
+            357,
+            475,
+            494
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4.1. Entity Typing",
+        "text_level": 1,
+        "bbox": [
+            84,
+            508,
+            217,
+            525
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "We conduct experiments on fine-grained entity typing which aims to predict the types of a given entity and its context. For this task, we evaluate our models on Open Entity (Choi et al., 2018) and FIGER (Ling et al., 2015) following the same split setting as Zhang et al. (2019). The statistics of datasets are shown in the supplementary material. To fine-tune our models for entity typing, we modify the input token sequence by adding the special token \"@\" before and after a certain entity, then the first \"@\" special token representation is adopted to perform classification. To compare performance on the Open Entity dataset with previous works (Shimaoka et al., 2016; Zhang et al., 2019; Peters et al., 2019; Wang et al., 2019), we evaluate the models using loose micro precision, recall and F1, and adopt micro F1 score as the final metric to represent the model performance. As for FIGER dataset, we adopt strict accuracy, loose macro, loose micro F1 scores for evaluation following the same evaluation criteria used in the previous works.",
+        "bbox": [
+            84,
+            532,
+            475,
+            806
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Baselines NFGEC (Shimaoka et al., 2016) employs recursive neural networks to compose context representations and adapts an attention mechanism to focus on relevant expressions. KEPLER (Wang et al., 2019) integrates factual knowledge into pre-trained models with the supervision",
+        "bbox": [
+            84,
+            829,
+            475,
+            906
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "of the knowledge embedding objective. They propose to encode textual descriptions of entities as their entity embeddings, and then jointly learn the knowledge embeddings and language representations. RoBERTa+multitask is our RoBERTa model pre-trained with multi-task learning (as shown in Figure 1(a)) for injecting multiple kinds of knowledge on two pre-training tasks, i.e., relation classification and dependency relation prediction. Other baseline models, such as BERT-base (Zhang et al., 2019), ERNIE (Zhang et al., 2019), KnowBERT (Peters et al., 2019) and WKLM (Xiong et al., 2020) are described in Section 2.",
+        "bbox": [
+            495,
+            332,
+            888,
+            500
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Results and Discussion The results on Open Entity and FIGER are shown in Table 2. Our K-ADAPTER  $(\\mathrm{F} + \\mathrm{L})$  achieves consistent improvements across these two datasets. As for the Open Entity dataset, our RoBERTa has achieved better results than other baseline models. K-ADAPTER  $(\\mathrm{F} + \\mathrm{L})$  achieves improvement of  $0.83\\%$  F1 and  $1.7\\%$  precision over RoBERTa, which means the factual knowledge and linguistic knowledge help to predict the types more accurately. As for the FIGER dataset, FIGER covers more entity types and thus more fine-grained than Open Entity. Compared with WKLM, our K-ADAPTER  $(\\mathrm{F} + \\mathrm{L})$  improves the macro F1 by  $2.88\\%$ , micro F1 by  $2.54\\%$  and strict accuracy by  $1.60\\%$ . This demonstrates that K-ADAPTER  $(\\mathrm{F} + \\mathrm{L})$  benefits fine-grained entity typing.",
+        "bbox": [
+            495,
+            517,
+            888,
+            731
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4.2. Question Answering",
+        "text_level": 1,
+        "bbox": [
+            496,
+            746,
+            671,
+            762
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "We conduct experiments on two question answering tasks, i.e., commonsense question answering and open-domain question answering. Commonsense question answering aims to answer questions with commonsense. We adopt CosmosQA (Huang et al., 2019) to evaluate our models. CosmosQA requires commonsense-based reading comprehension, formulated as multiple-choice questions. To fine-tune our models for CosmosQA, for each answer, the input token sequence is modified as “<SEP>context",
+        "bbox": [
+            495,
+            768,
+            888,
+            906
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "header",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "bbox": [
+            251,
+            56,
+            722,
+            70
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "table",
+        "img_path": "images/3c888b23027bd0c23088ee140185b8779d5087b73efe3218d302b00c3be8a32f.jpg",
+        "table_caption": [
+            "Table 3. Results on three question answering datasets including: CosmosQA, SearchQA and Quasar-T."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">Model</td><td colspan=\"2\">SearchQA</td><td colspan=\"2\">Quasar-T</td><td>CosmosQA</td></tr><tr><td>EM</td><td>F1</td><td>EM</td><td>F1</td><td>Accuracy</td></tr><tr><td>BiDAF (Seo et al., 2016)</td><td>28.60</td><td>34.60</td><td>25.90</td><td>28.50</td><td>-</td></tr><tr><td>AQA (Buck et al., 2018)</td><td>40.50</td><td>47.40</td><td>-</td><td>-</td><td>-</td></tr><tr><td>R^3 (Wang et al., 2017a)</td><td>49.00</td><td>55.30</td><td>35.30</td><td>41.70</td><td>-</td></tr><tr><td>DSQA (Lin et al., 2018)</td><td>49.00</td><td>55.30</td><td>42.30</td><td>49.30</td><td>-</td></tr><tr><td>Evidence Agg. (Wang et al., 2018)</td><td>57.00</td><td>63.20</td><td>42.30</td><td>49.60</td><td>-</td></tr><tr><td>BERT (Xiong et al., 2020)</td><td>57.10</td><td>61.90</td><td>40.40</td><td>46.10</td><td>-</td></tr><tr><td>WKLM (Xiong et al., 2020)</td><td>58.70</td><td>63.30</td><td>43.70</td><td>49.90</td><td>-</td></tr><tr><td>WKLM + Ranking (Xiong et al., 2020)</td><td>61.70</td><td>66.70</td><td>45.80</td><td>52.20</td><td>-</td></tr><tr><td>BERT-FT_RACE+SWAG (Huang et al., 2019)</td><td>-</td><td>-</td><td>-</td><td>-</td><td>68.70</td></tr><tr><td>RoBERTa</td><td>59.01</td><td>65.62</td><td>40.83</td><td>48.84</td><td>80.59</td></tr><tr><td>RoBERTa + multitask</td><td>59.92</td><td>66.67</td><td>44.62</td><td>51.17</td><td>81.19</td></tr><tr><td>K-ADAPTER (F+L)</td><td>61.96</td><td>67.31</td><td>45.69</td><td>52.48</td><td>81.83</td></tr><tr><td>K-ADAPTER (F)</td><td>61.85</td><td>67.17</td><td>46.75</td><td>53.27</td><td>80.93</td></tr><tr><td>K-ADAPTER (L)</td><td>61.15</td><td>66.82</td><td>45.66</td><td>52.39</td><td>80.76</td></tr></table>",
+        "bbox": [
+            199,
+            114,
+            769,
+            351
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "</SEP>question</SEP>answer</SEP>”, then the representation of the first token is adopted to perform classification, and will get a score for this answer. After getting four scores, the answer with the highest score will be selected. We report accuracy scores obtained from the leaderboard. Open-domain question answering aims to answer open-domain questions using external resources such as collections of documents and webpages. We evaluate our modes on two public open-domain QA datasets, i.e., QuasarT (Dhingra et al., 2017) and SearchQA (Dunn et al., 2017). The statistics of these datasets are shown in the supplementary material. Specifically, we first retrieve paragraphs corresponding to the question from external resources using the information retrieval system and then extract the answer from these retrieved paragraphs through the reading comprehension technique. Following previous work(Lin et al., 2018), we use the retrieved paragraphs provided by Wang et al. (2017b) for these two datasets. To fine-tune our models for this task, the input token sequence is modified as “<SEP>question</SEP>paragraph</SEP>”. We apply linear layers over the last hidden features of our model to predict the start and end position of the answer span. We adopt two metrics including ExactMatch (EM) and loose F1 scores to evaluate our models.",
+        "bbox": [
+            84,
+            377,
+            475,
+            738
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Baselines BERT-FT $_{RACE+SWAG}$  (Huang et al., 2019) is the BERT model sequentially fine-tuned on both RACE and SWAG datasets for knowledge transfer. BiDAF (Seo et al., 2016) is a reading comprehension model with a bidirectional attention network. AQA (Buck et al., 2018) is a reinforced system learning to re-write questions and aggregate the answers generated by the re-written questions.  $\\mathbf{R}^{\\wedge}3$  (Wang et al., 2017a) is a reinforced model making use of a ranker for selecting most confident paragraph to train the reading comprehension model. Evidence Agg. (Wang",
+        "bbox": [
+            84,
+            753,
+            475,
+            906
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "et al., 2018) proposes making use of the aggregated evidence from across multiple paragraphs to better determine the answer with re-rankers. BERT (Xiong et al., 2020) is the BERT re-implementation by Xiong et al. (2020) for open-domain QA. WKLM (Xiong et al., 2020) is described in Section 2, which is adopted as the reader model to read multiple paragraphs to predict a single answer. WKLM + Ranking (Xiong et al., 2020) is a WKLM paragraph reader plus with a BERT based paragraph ranker with distant-supervised data to assign each paragraph a relevance score.",
+        "bbox": [
+            495,
+            377,
+            888,
+            529
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Results and Discussion The results on CosmosQA are shown in Table 3. Compared with BERT-FT $_{RACE+SWAG}$ , our RoBERTa significantly achieves  $11.89\\%$  improvement of accuracy. CosmosQA combines reading comprehension with commonsense reasoning, requires contextual commonsense reasoning over considerably more complex, diverse, and longer context. Compared to RoBERTa, K-ADAPTER  $(\\mathrm{F} + \\mathrm{L})$  further improves the accuracy by  $1.24\\%$ , which indicates that K-ADAPTER can obtain better commonsense inference ability. Moreover, the performance of ablated K-ADAPTER models, i.e., K-ADAPTER (F) and K-ADAPTER (L) are clearly better than RoBERTa, but slightly lose compared with RoBERTa+multitask. It is notable that K-ADAPTER  $(\\mathrm{F} + \\mathrm{L})$  makes obvious improvement comparing with RoBERTa+multitask. This demonstrates that the combination of multiple knowledge-specific adapters could achieve better performance.",
+        "bbox": [
+            495,
+            550,
+            888,
+            808
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "The results for open-domain QA are shown in Table 3. Our K-ADAPTER models achieve better results on these two datasets as compared to other baselines. This indicates that our K-ADAPTER models can make full use of the infused knowledge and accordingly benefit understanding the retrieved paragraphs to answer the question. Specifically, on",
+        "bbox": [
+            495,
+            814,
+            888,
+            906
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "header",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "bbox": [
+            250,
+            56,
+            722,
+            70
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "SearchQA, our K-ADAPTER  $(\\mathrm{F} + \\mathrm{L})$  makes significant improvement of  $4.01\\%$  F1 scores, comparing with WKLM where the ranking scores are not used, and even has a slight improvement as compared to WKLM+Ranking. It is worth noting that K-ADAPTER models do not consider the confidence of each retrieved paragraph, while WKLM+Ranking utilizes ranking scores from a BERT based ranker. On the Quasar-T dataset, our K-ADAPTER  $(\\mathrm{F} + \\mathrm{L})$  also outperforms WKLM by  $2.58\\%$  F1 score and slightly outperforms WKLM+Ranking.",
+        "bbox": [
+            84,
+            84,
+            475,
+            236
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "4.3. Relation Classification",
+        "text_level": 1,
+        "bbox": [
+            84,
+            252,
+            274,
+            266
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Relation classification aims to determine the correct relation between two entities in a given sentence. We fine-tune and compare our models with several baseline methods on a large-scale relation classification dataset TACRED (Zhang et al., 2017), which covers 42 relation types and contains 106,264 sentences. The statistics of this dataset are shown in the supplementary material. To fine-tune our models for relation classification, we modify the input token sequence by adding special token \"@\" before and after the first entity, adding \"#\" before and after the second entity. Then the token representations of the first special token \"@\" and \"#\" are concatenated to perform relation classification. We evaluate the models using micro precision, recall and F1, and adopt micro F1 score as the metric to represent the model performance as previous works.",
+        "bbox": [
+            84,
+            275,
+            475,
+            501
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Baselines C-GCN (Zhang et al., 2018) employs graph convolutional networks (GCNs) over dependency tree structures to model dependency trees for relation classification. BERT-large (Baldini Soares et al., 2019) is a baseline BERT-large model of Baldini Soares et al. (2019) to perform task-specific fine-tuning on TACRED. BERT+MTB (Baldini Soares et al., 2019) is a method of training relation representation without supervision from a knowledge base or human annotators by matching the blanks (MTB). Other baseline models, such as BERT-base (Zhang et al., 2019), ERNIE (Zhang et al., 2019), KnowBERT (Peters et al., 2019), KEPLER (Wang et al., 2019) and RoBERTa+multitask are described in Section 2 and 4.1.",
+        "bbox": [
+            84,
+            522,
+            475,
+            718
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Results and Discussion Table 4 shows the performances of different models on TACRED. The results indicate that K-ADAPTER models significantly outperform all baselines, which directly demonstrate our models can benefit relation classification. In particular, (1) K-ADAPTER models outperform our RoBERTa, which proves the effectiveness of infusing knowledge into pre-trained model with adapters. (2) K-ADAPTER models gain more improvement compared with RoBERTa+multitask which learns tangled knowledge. This directly demonstrates injecting knowledge individually in K-ADAPTER way would help models make full use of",
+        "bbox": [
+            84,
+            739,
+            475,
+            905
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "table",
+        "img_path": "images/5e6f7f1b0f8db72c645c1bc7e9a24af64f85482b8c9ff9daef8c7d8ddd73b594.jpg",
+        "table_caption": [
+            "Table 4. Results on the TACRED relation classification dataset."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Model</td><td>P</td><td>R</td><td>F1</td></tr><tr><td>C-GCN (Zhang et al., 2018)</td><td>69.90</td><td>63.30</td><td>66.40</td></tr><tr><td>BERT-base (Zhang et al., 2019)</td><td>67.23</td><td>64.81</td><td>66.00</td></tr><tr><td>ERNIE (Zhang et al., 2019)</td><td>69.97</td><td>66.08</td><td>67.97</td></tr><tr><td>BERT-large (Baldini Soares et al., 2019)</td><td>-</td><td>-</td><td>70.10</td></tr><tr><td>BERT+MTB (Baldini Soares et al., 2019)</td><td>-</td><td>-</td><td>71.50</td></tr><tr><td>KnowBERT (Peters et al., 2019)</td><td>71.60</td><td>71.40</td><td>71.50</td></tr><tr><td>KEPLER (Wang et al., 2019)</td><td>70.43</td><td>73.02</td><td>71.70</td></tr><tr><td>RoBERTa</td><td>70.17</td><td>72.36</td><td>71.25</td></tr><tr><td>RoBERTa + multitask</td><td>70.18</td><td>73.11</td><td>71.62</td></tr><tr><td>K-ADAPTER (F+L)</td><td>70.05</td><td>73.92</td><td>71.93</td></tr><tr><td>K-ADAPTER (F)</td><td>69.39</td><td>74.59</td><td>71.89</td></tr><tr><td>K-ADAPTER (L)</td><td>68.85</td><td>75.37</td><td>71.96</td></tr></table>",
+        "bbox": [
+            498,
+            112,
+            888,
+            305
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "knowledge. (3) K-ADAPTER (L) achieves the best performance among all K-ADAPTER models. This demonstrates linguistic knowledge is more useful on TACRED dataset.",
+        "bbox": [
+            495,
+            330,
+            887,
+            376
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "4.4. Probing Experiments",
+        "text_level": 1,
+        "bbox": [
+            496,
+            392,
+            679,
+            407
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Although our K-ADAPTER models have shown superior performance on several knowledge-driven downstream tasks, it does not directly provide insights into whether our models infuse richer factual and commonsense knowledge. Thus we utilize a LAMA (LLanguage Model Analysis) probe (Petroni et al., 2019) to examine the ability to memorize factual knowledge. Specifically, the LAMA probing task aims to answer cloze-style questions about relational facts, e.g., \"Simon Bowman was born in [MASK]\". This task requires the language model to predict a distribution over a limited vocabulary to replace [MASK]. We report mean precision at one  $(\\mathrm{P}@\\mathrm{1})$  macro-averaged over relations.",
+        "bbox": [
+            495,
+            415,
+            887,
+            598
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Settings We consider several language models including: ELMo (Peters et al., 2018), ELMo5.5B (Peters et al., 2018), Transformer-XL (Dai et al., 2019), BERTLarge and RoBERTaLarge. We focus on LAMA-GoogleRE and LAMA-T-REx datasets, which are aimed at factual knowledge. We also conduct probe experiments on LAMA-UHN (Poerner et al., 2019), a more factual subset of LAMA-Google-RE and LAMA-T-REx, by filtering out queries that are easy to answer from entity names alone. Different models have different vocabulary sizes. To conduct a more fair comparison experiment, we adopt the intersection of vocabularies and let every language model rank only tokens in this vocabulary following Petroni et al. (2019). For simplicity, we only compare K-APDATER (F) which is infused with factual knowledge, with other baseline models.",
+        "bbox": [
+            495,
+            614,
+            887,
+            843
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Results and Discussion Results on LAMA and LAMA-UHN datasets are shown in Table 5. It is surprising that  $\\mathrm{BERT}_{\\text{LARGE}}$  performs better than RoBERTa $_{\\text{LARGE}}$ .",
+        "bbox": [
+            495,
+            859,
+            888,
+            906
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "header",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "bbox": [
+            250,
+            56,
+            722,
+            70
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "table",
+        "img_path": "images/add02747a211ff2e1db4fe3aadb3c96c55c4cb4b1104b51d2d29e358afe2b568.jpg",
+        "table_caption": [
+            "Table 5. P@1 on LAMA and LAMA-UHN across Google-RE and T-REx corpora."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">Corpus</td><td colspan=\"6\">Models</td></tr><tr><td>ELMo</td><td>ELMo5.5B</td><td>TransformerXL</td><td>BERT-large</td><td>RoBERTaLARGE</td><td>K-APDATER</td></tr><tr><td>LAMA-Google-RE</td><td>2.2</td><td>3.1</td><td>1.8</td><td>12.1</td><td>4.8</td><td>7.0</td></tr><tr><td>LAMA-UHN-Google-RE</td><td>2.3</td><td>2.7</td><td>1.3</td><td>6.5</td><td>2.5</td><td>3.7</td></tr><tr><td>LAMA-T-REx</td><td>0.2</td><td>0.3</td><td>19.5</td><td>33.9</td><td>27.1</td><td>29.1</td></tr><tr><td>LAMA-UHN-T-REx</td><td>0.2</td><td>0.2</td><td>12.6</td><td>26.2</td><td>20.1</td><td>23.0</td></tr></table>",
+        "bbox": [
+            122,
+            114,
+            846,
+            220
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "table",
+        "img_path": "images/458f15c7f5deaf707c5df4a04e8f771a4844b33d317b20c63284e7caa156867c.jpg",
+        "table_caption": [
+            "Table 6. Examples of generation for RoBERTa  ${}_{LARGE}$  and K-ADAPTER. The last column reports the top ranked predicted tokens. Correct predictions are in bold."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Query</td><td>Answer</td><td>Model</td><td>Generation</td></tr><tr><td rowspan=\"2\">The official language of Mauritius is [MASK].</td><td rowspan=\"2\">English</td><td>RoBERTa</td><td>French, English, Dutch, Arabic, Portuguese, Spanish</td></tr><tr><td>K-ADAPTER</td><td>English, French, Dutch, Arabic, Portuguese, Spanish</td></tr><tr><td rowspan=\"2\">The native language of Mammootty is [MASK].</td><td rowspan=\"2\">Malayalam</td><td>RoBERTa</td><td>English, Tamil, Hindi, Sanskrit, Arabic, Chinese, spoken</td></tr><tr><td>K-ADAPTER</td><td>Malayalam, Tamil, Hindi, Mandarin, English, Thai</td></tr><tr><td rowspan=\"2\">Birds have [MASK].</td><td rowspan=\"2\">feathers</td><td>RoBERTa</td><td>flown, feathers, babies, noticed, gone, changed, come</td></tr><tr><td>K-ADAPTER</td><td>feelings, feathers, brains, names, souls, eyes, wings</td></tr><tr><td rowspan=\"2\">Ravens can [MASK].</td><td rowspan=\"2\">fly</td><td>RoBERTa</td><td>win, play, score, lose, run, drink, fly, roll, wait, ide</td></tr><tr><td>K-ADAPTER</td><td>fly, swim, sing, shoot, kill, go, fish, drink, die, roll</td></tr><tr><td rowspan=\"2\">Sometimes virus causes [MASK].</td><td rowspan=\"2\">infection</td><td>RoBERTa</td><td>cancer, death, illness, blindness, paralysis, infection</td></tr><tr><td>K-ADAPTER</td><td>cancer, illness, death, infection, disease, problems, pain</td></tr><tr><td rowspan=\"2\">Sunshine Coast, British Columbia is located in [MASK].</td><td rowspan=\"2\">Canada</td><td>RoBERTa</td><td>Florida, California, Texas, Hawaii, Mexico, Arizona</td></tr><tr><td>K-ADAPTER</td><td>Canada, Vancouver, Victoria, BC, Australia, California</td></tr><tr><td rowspan=\"2\">iPod Touch is produced by [MASK].</td><td rowspan=\"2\">Apple</td><td>RoBERTa</td><td>Apple, Samsung, Qualcomm, LG, Microsoft, HTC</td></tr><tr><td>K-ADAPTER</td><td>Apple, HTC, Samsung, Motorola, Intel, Sony</td></tr></table>",
+        "bbox": [
+            91,
+            277,
+            879,
+            565
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "There is one possible reason: BERT uses a character-level BPE (Gage, 1994) vocabulary, while RoBERTa considers byte-level BPE vocabulary. This finding indicates that, although using bytes makes it possible to learn a subword vocabulary that can encode any text without introducing \"unknown\" tokens, it might indirectly harm the model's ability to learn factual knowledge, e.g., some proper nouns may be divided into bytes. Thus in the following experiments, we do not take BERT into account.",
+        "bbox": [
+            83,
+            589,
+            475,
+            724
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "K-ADAPTER outperforms other models (except for BERT) by a huge margin. On LAMA datasets, compared to RoBERTaLARGE, K-ADAPTER obtains  $2.2\\%$  and  $1.2\\%$  P@1 improvement across Google-RE and T-REx, respectively. Moreover, compared to RoBERTaLARGE, K-ADAPTER still achieves better results on LAMA-UHN. The results demonstrate that K-ADAPTER captures richer factual and commonsense knowledge than RoBERTa. Furthermore, Table 6 shows several examples for the generation of RoBERTaLARGE and K-ADAPTER for LAMA queries. From these examples, we can find that the objects predicted",
+        "bbox": [
+            83,
+            733,
+            477,
+            900
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "by K-ADAPTER are more accurate.",
+        "bbox": [
+            496,
+            589,
+            732,
+            604
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "5. Conclusion",
+        "text_level": 1,
+        "bbox": [
+            496,
+            625,
+            617,
+            640
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "In this paper, we propose a flexible and simple approach, called K-ADAPTER, to infuse knowledge into large pretrained models. K-ADAPTER remains the original parameters of pre-trained models unchanged and supports continual knowledge infusion, i.e., new kinds of injected knowledge will not affect the parameters learned for old knowledge. Specifically, factual knowledge and linguistic knowledge are infused into RoBERTa with two kinds of adapters, which are pre-trained on the relation classification task and dependency relation prediction task, respectively. Extensive experiments on three knowledge-driven downstream tasks demonstrate that the performance of each adapter achieves a significant improvement individually, and even more together. Probing experiments further suggest that K-ADAPTER captures richer factual and commonsense knowledge than RoBERTa.",
+        "bbox": [
+            495,
+            650,
+            888,
+            892
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "header",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "bbox": [
+            250,
+            56,
+            722,
+            70
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "References",
+        "text_level": 1,
+        "bbox": [
+            86,
+            83,
+            183,
+            99
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "Baldini Soares, L., FitzGerald, N., Ling, J., and Kwiatkowski, T. Matching the Blanks: Distributional Similarity for Relation Learning. In ACL, pp. 2895-2905, 2019.",
+            "Bordes, A., Usunier, N., Garcia-Duran, A., Weston, J., and Yakhnenko, O. Translating embeddings for modeling multi-relational data. In NIPS, pp. 2787-2795, 2013.",
+            "Buck, C., Bulian, J., Ciaramita, M., Gesmundo, A., Houlsby, N., Gajewski, W., and Wang, W. Ask the Right Questions: Active Question Reformulation with Reinforcement Learning. In ICLR, 2018.",
+            "Chen, D. and Manning, C. D. A fast and accurate dependency parser using neural networks. In EMNLP, pp. 740-750, 2014.",
+            "Choi, E., Levy, O., Choi, Y., and Zettlemoyer, L. Ultra-fine entity typing. In ACL, pp. 87-96, 2018.",
+            "Dai, Z., Yang, Z., Yang, Y., Carbonell, J., Le, Q. V., and Salakhutdinov, R. Transformer-xl: Attentive language models beyond a fixed-length context. In ACL, pp. 2978-2988, 2019.",
+            "Devlin, J., Chang, M.-W., Lee, K., and Toutanova, K. Bert: Pre-training of deep bidirectional transformers for language understanding. In *NAACL*, pp. 4171-4186, 2019.",
+            "Dhingra, B., Mazaitis, K., and Cohen, W. W. Quasar: Datasets for question answering by search and reading. In arXiv preprint arXiv:1707.03904, 2017.",
+            "Dunn, M., Sagun, L., Higgins, M., Güney, V. U., Cirik, V., and Cho, K. SearchQA: A New Q&A Dataset Augmented with Context from a Search Engine. In *ArXiv preprint arXiv*: 1704.05179, 2017.",
+            "ElSahar, H., Vougiouklis, P., Remaci, A., Gravier, C., Hare, J. S., Laforest, F., and Simperl, E. T-REx: A Large Scale Alignment of Natural Language with Knowledge Base Triples. In LREC, 2018.",
+            "Gage, P. A new algorithm for data compression. The C Users Journal, 12(2):23-38, 1994.",
+            "He, B., Zhou, D., Xiao, J., Liu, Q., Yuan, N. J., Xu, T., et al. Integrating Graph Contextualized Knowledge into Pre-trained Language Models. In AAAI, 2020.",
+            "Houlsby, N., Giurgiu, A., Jastrzebski, S., Morrone, B., De Laroussilhe, Q., Gesmundo, A., Attariyan, M., and Gelly, S. Parameter-Efficient Transfer Learning for NLP. In ICML, pp. 2790-2799, 2019."
+        ],
+        "bbox": [
+            86,
+            107,
+            475,
+            905
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "Huang, L., Bras, R. L., Bhagavatula, C., and Choi, Y. Cosmos QA: Machine reading comprehension with contextual commonsense reasoning. In EMNLP, pp. 2391-2401, 2019.",
+            "Kassner, N. and Schütze, H. Negated LAMA: Birds cannot fly. arXiv preprint arXiv:1911.03343, 2019.",
+            "Kirkpatrick, J., Pascanu, R., Rabinowitz, N., Veness, J., Desjardins, G., Rusu, A. A., Milan, K., Quan, J., Ramalho, T., Grabska-Barwinska, A., and et al. Overcoming catastrophic forgetting in neural networks. Proceedings of the National Academy of Sciences, 114(13):35213526, Mar 2017. ISSN 1091-6490. doi: 10.1073/pnas.1611835114.",
+            "Lauscher, A., Vulic, I., Ponti, E. M., Korhonen, A., and Glavaš, G. Informing unsupervised pretraining with external linguistic knowledge. arXiv preprint arXiv:1909.02339, 2019.",
+            "Levine, Y., Lenz, B., Dagan, O., Padnos, D., Sharir, O., Shalev-Shwartz, S., Shashua, A., and Shoham, Y. Sensebert: Driving some sense into bert. arXiv preprint arXiv:1908.05646, 2019.",
+            "Lin, Y., Ji, H., Liu, Z., and Sun, M. Denoising distantly supervised open-domain question answering. In ACL, pp. 1736-1745, 2018.",
+            "Ling, X., Singh, S., and Weld, D. S. Design challenges for entity linking. TACL, 3:315-328, 2015.",
+            "Liu, Y., Ott, M., Goyal, N., Du, J., Joshi, M., Chen, D., Levy, O., Lewis, M., Zettlemoyer, L., and Stoyanov, V. Roberta: A robustly optimized bert pretraining approach. arXiv preprint arXiv:1907.11692, 2019.",
+            "Peters, M. E., Neumann, M., Iyyer, M., Gardner, M., Clark, C., Lee, K., and Zettlemoyer, L. Deep contextualized word representations. In *NAACL*, pp. 2227-2237, 2018.",
+            "Peters, M. E., Neumann, M., Logan, I., Robert, L., Schwartz, R., Joshi, V., Singh, S., and Smith, N. A. Knowledge enhanced contextual word representations. In EMNLP, pp. 43-54, 2019.",
+            "Petroni, F., Rocktäschel, T., Lewis, P., Bakhtin, A., Wu, Y., Miller, A. H., and Riedel, S. Language Models as Knowledge Bases? In EMNLP, pp. 2463-2473, 2019.",
+            "Poerner, N., Waltinger, U., and Schütze, H. BERT is Not a Knowledge Base (Yet): Factual Knowledge vs. Name-Based Reasoning in Unsupervised QA. arXiv preprint arXiv:1911.03681, 2019.",
+            "Radford, A., Narasimhan, K., Salimans, T., and Sutskever, I. Improving language understanding by generative pretraining. OpenAI Blog, 2018."
+        ],
+        "bbox": [
+            500,
+            84,
+            887,
+            905
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "header",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "bbox": [
+            250,
+            56,
+            722,
+            71
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "Radford, A., Wu, J., Child, R., Luan, D., Amodei, D., and Sutskever, I. Language models are unsupervised multitask learners. OpenAI Blog, 1(8), 2019.",
+            "Raffel, C., Shazeer, N., Roberts, A., Lee, K., Narang, S., Matena, M., Zhou, Y., Li, W., and Liu, P. J. Exploring the limits of transfer learning with a unified text-to-text transformer. arXiv preprint arXiv:1910.10683, 2019.",
+            "Rebuffi, S.-A., Bilen, H., and Vedaldi, A. Learning multiple visual domains with residual adapters. In NeurIPS, pp. 506-516, 2017.",
+            "Seo, M., Kembhavi, A., Farhadi, A., and Hajishirzi, H. Bidirectional Attention Flow for Machine Comprehension. ArXiv, abs/1611.01603, 2016.",
+            "Shimaoka, S., Stenetorp, P., Inui, K., and Riedel, S. An attentive neural architecture for fine-grained entity type classification. In Proceedings of the 5th Workshop on Automated Knowledge Base Construction(AKBC), pp. 69-74, 2016.",
+            "Talmor, A., Elazar, Y., Goldberg, Y., and Berant, J. oLmpics- On what Language Model Pre-training Captures. arXiv preprint arXiv:1912.13283, 2019.",
+            "Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, L., and Polosukhin, I. Attention is all you need. In NeurIPS, pp. 5998-6008, 2017.",
+            "Wang, S., Yu, M., Guo, X., Wang, Z., Klinger, T., Zhang, W., Chang, S., Tesauro, G., Zhou, B., and Jiang, J. Reinforced reader-ranker for open-domain question answering. arXiv preprint arXiv:1709.00023, 2017a.",
+            "Wang, S., Yu, M., Jiang, J., Zhang, W., Guo, X., Chang, S., Wang, Z., Klinger, T., Tesauro, G., and Campbell, M. Evidence aggregation for answer re-ranking in open-domain question answering. In ICLR, 2018.",
+            "Wang, W., Yang, N., Wei, F., Chang, B., and Zhou, M. Gated self-matching networks for reading comprehension and question answering. In ACL, pp. 189-198, 2017b.",
+            "Wang, X., Gao, T., Zhu, Z., Liu, Z., Li, J., and Tang, J. KEPLER: A Unified Model for Knowledge Embedding and Pre-trained Language Representation. arXiv preprint arXiv:1911.06136, 2019.",
+            "Xiong, W., Du, J., Wang, W. Y., and Stoyanov, V. Pretrained Encyclopedia: Weakly Supervised Knowledge-Pretrained Language Model. In ICLR, 2020.",
+            "Yang, Z., Dai, Z., Yang, Y., Carbonell, J., Salakhutdinov, R., and Le, Q. V. XLNet: Generalized Autoregressive Pretraining for Language Understanding. arXiv preprint arXiv:1906.08237, 2019."
+        ],
+        "bbox": [
+            86,
+            84,
+            477,
+            904
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "Zhang, Y., Zhong, V., Chen, D., Angeli, G., and Manning, C. D. Position-aware Attention and Supervised Data Improve Slot Filling. In EMNLP, pp. 35-45, 2017.",
+            "Zhang, Y., Qi, P., and Manning, C. D. Graph Convolution over Pruned Dependency Trees Improves Relation Extraction. In EMNLP, pp. 2205-2215, 2018.",
+            "Zhang, Z., Han, X., Liu, Z., Jiang, X., Sun, M., and Liu, Q. ERNIE: Enhanced Language Representation with Informative Entities. In ACL, pp. 1441-1451, 2019.",
+            "Zhu, Y., Kiros, R., Zemel, R., Salakhutdinov, R., Urtasun, R., Torralba, A., and Fidler, S. Aligning Books and Movies: Towards Story-Like Visual Explanations by Watching Movies and Reading Books. In ICCV, pp. 19-27, 2015."
+        ],
+        "bbox": [
+            498,
+            84,
+            885,
+            325
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "header",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "bbox": [
+            250,
+            56,
+            722,
+            71
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Supplementary Material",
+        "text_level": 1,
+        "bbox": [
+            84,
+            82,
+            297,
+            101
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "A. Pre-Training Details",
+        "text_level": 1,
+        "bbox": [
+            84,
+            109,
+            285,
+            127
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "A.1. Factual Adapter",
+        "text_level": 1,
+        "bbox": [
+            84,
+            135,
+            236,
+            152
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "The pre-trained model is fixed during training and the parameters of the factual adapter are trainable and initialized randomly. The model is trained with cross-entropy loss. To accelerate the training process, we set the max sequence length as 64 as the average sequence length of T-REx-rc is only 22.8. We train the model for 5 epochs using a batch size of 128. We use AdamW to optimize our models with the initial learning rate of 2e-5. We train the model with 4 16G NVIDIA V100 GPUs.",
+        "bbox": [
+            84,
+            159,
+            475,
+            295
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "A.2. Linguistic Adapter",
+        "text_level": 1,
+        "bbox": [
+            84,
+            311,
+            254,
+            328
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Same as the training process of the factual adapter, the pretrained model is fixed during training and the parameters of the linguistic adapter are trainable and initialized randomly. The model is trained with BCEWithLogits loss. We set the max sequence length as 128. We train the model for 10 epochs using a batch size of 256. We use AdamW with the initial learning rate of 1e-5. We train the model with 4 16G NVIDIA V100 GPUs.",
+        "bbox": [
+            84,
+            335,
+            475,
+            455
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "B. Dataset statistics",
+        "text_level": 1,
+        "bbox": [
+            84,
+            476,
+            253,
+            492
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "In Table 7, we present the statistics of one relation classification dataset TACRED, and two entity typing datasets OpenEntity and FIGER. In Table 8, we present the statistics of one commonsense QA dataset CosmosQA and two open-domain QA datasets SearchQA and Quasar-T.",
+        "bbox": [
+            84,
+            501,
+            475,
+            579
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "table",
+        "img_path": "images/a71896eaaccdfa6c0c2efc3adc6ffb7fa3b884096b347a4476055fa84b44c434.jpg",
+        "table_caption": [
+            "Table 7. The statistics of the relation classification dataset TACRED and entity typing datasets, i.e., Open Entity and FIGER."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Dataset</td><td>Train</td><td>Dev</td><td>Test</td><td>Relation/Type</td></tr><tr><td>TACRED</td><td>68,124</td><td>22,631</td><td>15,509</td><td>42</td></tr><tr><td>Open Entity</td><td>2,000</td><td>2,000</td><td>2,000</td><td>6</td></tr><tr><td>FIGER</td><td>2,000,000</td><td>10,000</td><td>563</td><td>113</td></tr></table>",
+        "bbox": [
+            84,
+            648,
+            473,
+            726
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "table",
+        "img_path": "images/fb8114deddf723eab12d604a7c294034df9e4b2feeaa7eb5fce1f702b52e7c46.jpg",
+        "table_caption": [
+            "Table 8. The statistics of the question answering datasets, i.e., CosmosQA, SearchQA and Quasar-T."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Dataset</td><td>Train</td><td>Dev</td><td>Test</td></tr><tr><td>CosmosQA</td><td>25,588</td><td>3,000</td><td>7,000</td></tr><tr><td>SearchQA</td><td>99,811</td><td>13,893</td><td>27,247</td></tr><tr><td>Quasar-T</td><td>28,496</td><td>3,000</td><td>3,000</td></tr></table>",
+        "bbox": [
+            151,
+            813,
+            408,
+            887
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C. Fine-tuning Details and Hyperparameters",
+        "text_level": 1,
+        "bbox": [
+            496,
+            82,
+            877,
+            101
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "We implement our experiments using Huggingface<sup>3</sup>. For all fine-tuning experiments, we use AdamW as the optimizer. The parameters of adapters are fixed during the fine-tuning process and the parameters of RoBERTa are trainable and initialized from Huggingface checkpoint. We select the best hyperparameters on the validation set. For all experiments, we set the random seed to be 42 for reproducibility.",
+        "bbox": [
+            495,
+            108,
+            887,
+            215
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C.1. Entity typing",
+        "text_level": 1,
+        "bbox": [
+            496,
+            231,
+            627,
+            247
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "For Open Entity dataset, we set the max sequence length to be 256 and select the hyperparameters from batch size:  $\\{4, 8\\}$ , learning rate:  $\\{2e-5, 1e-5, 5e-6\\}$  and warmup step:  $\\{0, 200, 500, 1000, 1200\\}$ . For K-ADAPTER (F), the best performance is achieved at batch size=4, lr=5e-6, warmup=500 (it takes about 2 hours to get the best result running on singe 16G P100). For K-ADAPTER (L), the best performance is achieved at batch size=4, lr=5e-6, warmup=1000 (it takes about 2 hours to get the best result running on singe 16G P100). For K-ADAPTER (F+L), the best performance is achieved at batch size=4, lr=5e-6, warmup=1000 (it takes about 3 hours to get the best result running on singe 16G P100). For FIGER dataset, we run experiments on 4 16G P100 for 3 epochs, set the max sequence length to be 256, and select the hyperparameters from batch size:  $\\{64, 512, 2048\\}$ , learning rate:  $\\{2e-5, 1e-5, 5e-6\\}$  and warmup step:  $\\{0, 200, 500, 1000, 1200\\}$ . For K-ADAPTER (F), the best performance is achieved at batch size=2048, lr=5e-6, warmup=500. For K-ADAPTER (L), the best performance is achieved at batch size=2048, lr=5e-6, warmup=200. For K-ADAPTER (F+L), the best performance is achieved at batch size=2048, lr=5e-6, warmup=1000.",
+        "bbox": [
+            495,
+            255,
+            887,
+            588
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C.2. Question Answering",
+        "text_level": 1,
+        "bbox": [
+            496,
+            604,
+            678,
+            619
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "For CosmosQA dataset, we run experiments on one single 16G P100 for 3 epochs, set the max sequence length to be 256, and select the hyperparameters from batch size: {16, 32, 64, 128}, learning rate: {2e-5, 1e-5, 5e-6} and warmup step: {0, 200, 500, 800, 1000}. For K-ADAPTER (F+L) and its ablated models, the best performance is achieved at batch size=64, lr=1e-5, warmup=0 (it takes about 8 hours to get the best result).",
+        "bbox": [
+            495,
+            627,
+            887,
+            748
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "For SearchQA dataset, we run experiments on one single 16G P100 for 2 epochs, set the max sequence length to be 128, and select the hyperparameters from batch size:  $\\{2,4,8,16\\}$ , learning rate:  $\\{5e - 5,2e - 5,1e - 5,5e - 6\\}$  and warmup step:  $\\{0,500,1000\\}$ . For K-ADAPTER (F+L) and its ablated models, the best performance is achieved at batch size=8, lr=5e-6, warmup=0. For Quasar-T dataset, we run experiments on one single 16G P100 for 5 epochs, set the",
+        "bbox": [
+            495,
+            755,
+            887,
+            877
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "header",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "bbox": [
+            250,
+            56,
+            722,
+            70
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>3</sup>https://github.com/huggingface/transformers",
+        "bbox": [
+            514,
+            886,
+            790,
+            901
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "max sequence length to be 256, and select the hyperparameters from batch size:  $\\{2,4,8,16\\}$ , learning rate:  $\\{5e - 5, 2e - 5, 1e - 5, 5e - 6\\}$  and warmup step:  $\\{0,500,1000\\}$ . For K-ADAPTER (F+L) and its ablated models, the best performance is achieved at batch size=16, lr=1e-5, warmup=0.",
+        "bbox": [
+            89,
+            85,
+            473,
+            159
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "C.3. Relation Classification",
+        "text_level": 1,
+        "bbox": [
+            89,
+            176,
+            277,
+            191
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "For TACRED dataset, we run experiments on 4 16G P100 for 5 epochs, set the max sequence length to be 184, and select the hyperparameters from batch size:  $\\{4,8,16,32\\}$ , learning rate:  $\\{2e - 5,1e - 5,5e - 6,1e - 6\\}$  and warmup step:  $\\{0,200,500,800,1000,1200\\}$ . For K-ADAPTER (F), the best performance is achieved at batch size  $= 32$ , lr  $= 1e - 5$ , warmup  $= 500$ . For K-ADAPTER (L), the best performance is achieved at batch size  $= 32$ , lr  $= 1e - 5$ , warmup  $= 200$ . For K-ADAPTER (F+L), the best performance is achieved at batch size  $= 32$ , lr  $= 5e - 6$ , warmup  $= 1000$ .",
+        "bbox": [
+            89,
+            200,
+            473,
+            349
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "D. Probing Experiments",
+        "text_level": 1,
+        "bbox": [
+            89,
+            371,
+            290,
+            387
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "We implement our probing experiments using LAMA<sup>4</sup>. LAMA probe aims to answer cloze-style questions about relational facts, e.g., \"Simon Bowman was born in [MASK]\". This task requires the language model to predict a distribution over a limited vocabulary to replace [MASK]. When we infuse knowledge into knowledge-specific adapters, we do not change the original parameters of the pre-trained model and thus do not adopt the masked language model (MLM) as a pre-training task. Therefore, before we conduct probing experiments, we need to add and train a linear layer as the mlm layer for predicting the [MASK] entities. Specifically, we fix all the parameters of K-ADAPTER and only update the parameters of the mlm layer using a masked language modeling (MLM) loss. We adopt the raw WikiText-2 dataset (181M). We train the mlm layer with one single 16G P100 for 2 epochs. We set the max sequence length to be 512, batch size to be 1024 and warmup step to be 0.",
+        "bbox": [
+            88,
+            396,
+            473,
+            652
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "header",
+        "text": "K-ADAPTER: Infusing Knowledge into Pre-Trained Models with Adapters",
+        "bbox": [
+            253,
+            56,
+            720,
+            70
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>4</sup>https://github.com/facebookresearch/LAMA",
+        "bbox": [
+            109,
+            891,
+            375,
+            904
+        ],
+        "page_idx": 11
+    }
+]
