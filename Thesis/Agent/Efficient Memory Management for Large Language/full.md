@@ -4,265 +4,241 @@ Woosuk Kwon $^{1,*}$  Zhuohan Li $^{1,*}$  Siyuan Zhuang $^{1}$  Ying Sheng $^{1
 
 $^{1}$ UC Berkeley 2Stanford University 3Independent Researcher 4UC San Diego
 
-# Abstract
+# 摘要
 
-High throughput serving of large language models (LLMs) requires batching sufficiently many requests at a time. However, existing systems struggle because the key-value cache (KV cache) memory for each request is huge and grows and shrinks dynamically. When managed inefficiently, this memory can be significantly wasted by fragmentation and redundant duplication, limiting the batch size. To address this problem, we propose PagedAttention, an attention algorithm inspired by the classical virtual memory and paging techniques in operating systems. On top of it, we build vLLM, an LLM serving system that achieves (1) near-zero waste in KV cache memory and (2) flexible sharing of KV cache within and across requests to further reduce memory usage. Our evaluations show that vLLM improves the throughput of popular LLMs by  $2 - 4 \times$  with the same level of latency compared to the state-of-the-art systems, such as FasterTransformer and Orca. The improvement is more pronounced with longer sequences, larger models, and more complex decoding algorithms. vLLM's source code is publicly available at https://github.com/vllm-project/vllm.
+大型语言模型（LLM）的高吞吐量服务需要一次批处理足够多的请求。然而，现有系统面临困难，因为每个请求的键值缓存（KV cache）内存巨大且动态增长和收缩。当管理效率低下时，这种内存会因碎片化和冗余复制而显著浪费，限制批处理大小。为解决此问题，我们提出PagedAttention，一种受经典虚拟内存和操作系统分页技术启发的注意力算法。在此基础上，我们构建了vLLM，一个LLM服务系统，实现（1）KV cache内存接近零浪费和（2）在请求内部和跨请求灵活共享KV cache以进一步减少内存使用。我们的评估表明，与最先进的系统（如FasterTransformer和Orca）相比，在相同延迟水平下，vLLM将流行LLM的吞吐量提高了  $2 - 4 \times$ 。改进在更长序列、更大模型和更复杂解码算法的情况下更为显著。vLLM的源代码公开在https://github.com/vllm-project/vllm。
 
-# 1 Introduction
+# 1 引言
 
-The emergence of large language models (LLMs) like GPT [5, 37] and PaLM [9] have enabled new applications such as programming assistants [6, 18] and universal chatbots [19, 35] that are starting to profoundly impact our work and daily routines. Many cloud companies [34, 44] are racing to provide these applications as hosted services. However, running these applications is very expensive, requiring a large number of hardware accelerators such as GPUs. According to recent estimates, processing an LLM request can be  $10 \times$  more expensive than a traditional keyword query [43]. Given these high costs, increasing the throughput—and hence reducing
+GPT [5, 37]和PaLM [9]等大型语言模型（LLM）的出现使得编程助手[6, 18]和通用聊天机器人[19, 35]等新应用成为可能，这些应用正开始深刻影响我们的工作和日常生活。许多云公司[34, 44]正竞相将这些应用作为托管服务提供。然而，运行这些应用非常昂贵，需要大量硬件加速器如GPU。根据最近的估计，处理一个LLM请求的成本可能是传统关键词查询的  $10 \times$  [43]。考虑到这些高成本，提高吞吐量——从而降低每个请求的成本——对于LLM服务系统变得更为重要。
 
-Permission to make digital or hard copies of part or all of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. Copyrights for third-party components of this work must be honored. For all other uses, contact the owner/author(s).
+在LLM的核心是自回归Transformer模型[53]。该模型基于输入（提示）和其迄今为止生成的输出令牌序列，逐个生成单词（令牌）。对于每个请求，这个昂贵的过程重复进行，直到模型输出终止令牌。这种顺序生成过程使工作负载受内存限制，未充分利用GPU的计算能力，并限制服务吞吐量。
 
-SOSP '23, October 23-26, 2023, Koblenz, Germany
+通过将多个请求一起批处理可以提高吞吐量。然而，要在一个批次中处理许多请求，每个请求的内存空间需要高效管理。例如，图1（左）说明了在具有40GB RAM的NVIDIA A100 GPU上，一个13B参数LLM的内存分布。大约  $65\%$  的内存分配给模型权重，这些权重在服务期间保持静态。接近  $30\%$  的内存用于存储请求的动态状态。对于Transformer，这些状态包括与注意力机制相关的键和值张量，通常称为KV cache [41]，它代表早期令牌的上下文，用于在序列中生成新的输出令牌。剩余的小百分比内存用于其他数据，包括激活——评估LLM时创建的临时张量。由于模型权重是恒定的，而激活仅占用GPU内存的一小部分，KV cache的管理方式对于确定最大批处理大小至关重要。当管理效率低下时，KV cache内存会显著限制批处理大小，从而限制LLM的吞吐量，如图1（右）所示。
 
-© 2023 Copyright held by the owner/author(s).
+在本文中，我们观察到现有的LLM服务系统[31, 60]在高效管理KV cache内存方面存在不足。这主要是因为它们将请求的KV cache存储在连续的内存空间中，因为大多数深度学习框架[33, 39]要求张量存储在连续内存中。然而，与传统的深度学习工作负载中的张量不同，KV cache具有独特的特性：它随着模型生成新令牌而动态增长和收缩，并且其生命周期和长度是事先未知的。这些特性使现有系统的方法在两方面显著低效：
 
-ACM ISBN 979-8-4007-0229-7/23/10.
+首先，现有系统[31, 60]遭受内部和外部内存碎片。为了将请求的KV cache存储在连续空间中，它们预分配一个具有请求最大长度（例如2048个令牌）的连续内存块。这可能导致严重的内部碎片，因为请求的实际长度可能远短于其最大长度（例如图11）。此外，即使事先知道实际长度，预分配仍然低效：由于整个块在请求的生命周期内被保留，其他较短的请求无法使用当前未使用的该块任何部分。此外，由于每个请求的预分配大小可能不同，外部内存碎片也可能很严重。事实上，我们在图2中的分析结果显示，现有系统中只有  $20.4\% - 38.2\%$  的KV cache内存用于存储实际的令牌状态。
 
-https://doi.org/10.1145/3600006.3613165
+其次，现有系统无法利用内存共享的机会。LLM服务通常使用高级解码算法，如并行采样和波束搜索，这些算法为每个请求生成多个输出。在这些场景中，请求包含多个序列，这些序列可以部分共享它们的KV cache。然而，在现有系统中，由于序列的KV cache存储在单独的连续空间中，内存共享是不可能的。
 
-![](images/a953a01f679ca9ace31794720e7577a83e910a24f343ecb83362fd20c90c8e93.jpg)  
-Figure 1. Left: Memory layout when serving an LLM with 13B parameters on NVIDIA A100. The parameters (gray) persist in GPU memory throughout serving. The memory for the KV cache (red) is (de)allocated per serving request. A small amount of memory (yellow) is used ephemerally for activation. Right: vLLM smooths out the rapid growth curve of KV cache memory seen in existing systems [31, 60], leading to a notable boost in serving throughput.
+为了解决上述限制，我们提出PagedAttention，一种受操作系统（OS）内存碎片和共享解决方案启发的注意力算法：带有分页的虚拟内存。PagedAttention将请求的KV cache划分为块，每个块可以包含固定数量令牌的注意力键和值。在PagedAttention中，KV cache的块不一定存储在连续空间中。因此，我们可以像OS的虚拟内存那样更灵活地管理KV cache：可以将块视为页面，令牌视为字节，请求视为进程。这种设计通过使用相对较小的块并按需分配它们来减轻内部碎片。此外，它消除了外部碎片，因为所有块具有相同的大小。最后，它支持在块粒度上跨相同请求的不同序列甚至跨不同请求的内存共享。
 
-![](images/b78c804d8e99b6982048a3eb1615736aa44f3463870184810282d653d60e49a5.jpg)
+在这项工作中，我们在PagedAttention之上构建了vLLM，一个高吞吐量的分布式LLM服务引擎，实现KV cache内存接近零浪费。vLLM使用块级内存管理和抢占式请求调度，这些都与PagedAttention协同设计。vLLM支持流行的LLM，如GPT [5]、OPT [62]和LLaMA [52]，具有不同大小，包括超出单个GPU内存容量的模型。我们在各种模型和工作负载上的评估表明，与最先进的系统[31, 60]相比，vLLM将LLM服务吞吐量提高了  $2 - 4 \times$ ，完全不影响模型准确性。改进在更长序列、更大模型和更复杂解码算法的情况下更为显著（§4.3）。总之，我们做出以下贡献：
 
-the cost per request—of LLM serving systems is becoming more important.
+- 我们识别了服务LLM中的内存分配挑战，并量化了它们对服务性能的影响。  
+- 我们提出PagedAttention，一种在非连续分页内存中存储KV cache的注意力算法，灵感来自OS中的虚拟内存和分页。  
+- 我们设计并实现了vLLM，一个构建在PagedAttention之上的分布式LLM服务引擎。  
+- 我们在各种场景下评估vLLM，并证明其大幅优于先前的最先进解决方案，如FasterTransformer [31]和Orca [60]。
 
-At the core of LLMs lies an autoregressive Transformer model [53]. This model generates words (tokens), one at a time, based on the input (prompt) and the previous sequence of the output's tokens it has generated so far. For each request, this expensive process is repeated until the model outputs a termination token. This sequential generation process makes the workload memory-bound, underutilizing the computation power of GPUs and limiting the serving throughput.
+# 2 背景
 
-Improving the throughput is possible by batching multiple requests together. However, to process many requests in a batch, the memory space for each request should be efficiently managed. For example, Fig. 1 (left) illustrates the memory distribution for a 13B-parameter LLM on an NVIDIA A100 GPU with 40GB RAM. Approximately  $65\%$  of the memory is allocated for the model weights, which remain static during serving. Close to  $30\%$  of the memory is used to store the dynamic states of the requests. For Transformers, these states consist of the key and value tensors associated with the attention mechanism, commonly referred to as KV cache [41], which represent the context from earlier tokens to generate new output tokens in sequence. The remaining small
+在本节中，我们描述典型LLM的生成和服务过程，以及LLM服务中使用的迭代级调度。
 
-![](images/3f9aeeecf0659b9499c53d5e23bbd1528081c4de69756d93217a3ec739f3dc09.jpg)  
-Figure 2. Average percentage of memory wastes in different LLM serving systems during the experiment in §6.2.
+# 2.1 基于Transformer的大型语言模型
 
-percentage of memory is used for other data, including activations – the ephemeral tensors created when evaluating the LLM. Since the model weights are constant and the activations only occupy a small fraction of the GPU memory, the way the KV cache is managed is critical in determining the maximum batch size. When managed inefficiently, the KV cache memory can significantly limit the batch size and consequently the throughput of the LLM, as illustrated in Fig. 1 (right).
-
-In this paper, we observe that existing LLM serving systems [31, 60] fall short of managing the KV cache memory efficiently. This is mainly because they store the KV cache of a request in contiguous memory space, as most deep learning frameworks [33, 39] require tensors to be stored in contiguous memory. However, unlike the tensors in the traditional deep learning workloads, the KV cache has unique characteristics: it dynamically grows and shrinks over time as the model generates new tokens, and its lifetime and length are not known a priori. These characteristics make the existing systems' approach significantly inefficient in two ways:
-
-First, the existing systems [31, 60] suffer from internal and external memory fragmentation. To store the KV cache of a request in contiguous space, they pre-allocate a contiguous chunk of memory with the request's maximum length (e.g., 2048 tokens). This can result in severe internal fragmentation, since the request's actual length can be much shorter than its maximum length (e.g., Fig. 11). Moreover, even if the actual length is known a priori, the pre-allocation is still inefficient: As the entire chunk is reserved during the request's lifetime, other shorter requests cannot utilize any part of the chunk that is currently unused. Besides, external memory fragmentation can also be significant, since the preallocated size can be different for each request. Indeed, our profiling results in Fig. 2 show that only  $20.4\% - 38.2\%$  of the KV cache memory is used to store the actual token states in the existing systems.
-
-Second, the existing systems cannot exploit the opportunities for memory sharing. LLM services often use advanced
-
-decoding algorithms, such as parallel sampling and beam search, that generate multiple outputs per request. In these scenarios, the request consists of multiple sequences that can partially share their KV cache. However, memory sharing is not possible in the existing systems because the KV cache of the sequences is stored in separate contiguous spaces.
-
-To address the above limitations, we propose PagedAttention, an attention algorithm inspired by the operating system's (OS) solution to memory fragmentation and sharing: virtual memory with paging. PagedAttention divides the request's KV cache into blocks, each of which can contain the attention keys and values of a fixed number of tokens. In PagedAttention, the blocks for the KV cache are not necessarily stored in contiguous space. Therefore, we can manage the KV cache in a more flexible way as in OS's virtual memory: one can think of blocks as pages, tokens as bytes, and requests as processes. This design alleviates internal fragmentation by using relatively small blocks and allocating them on demand. Moreover, it eliminates external fragmentation as all blocks have the same size. Finally, it enables memory sharing at the granularity of a block, across the different sequences associated with the same request or even across the different requests.
-
-In this work, we build vLLM, a high-throughput distributed LLM serving engine on top of PagedAttention that achieves near-zero waste in KV cache memory. vLLM uses block-level memory management and preemptive request scheduling that are co-designed with PagedAttention. vLLM supports popular LLMs such as GPT [5], OPT [62], and LLaMA [52] with varying sizes, including the ones exceeding the memory capacity of a single GPU. Our evaluations on various models and workloads show that vLLM improves the LLM serving throughput by  $2 - 4 \times$  compared to the state-of-the-art systems [31, 60], without affecting the model accuracy at all. The improvements are more pronounced with longer sequences, larger models, and more complex decoding algorithms (§4.3). In summary, we make the following contributions:
-
-- We identify the challenges in memory allocation in serving LLMs and quantify their impact on serving performance.  
-- We propose PagedAttention, an attention algorithm that operates on KV cache stored in non-contiguous paged memory, which is inspired by the virtual memory and paging in OS.  
-- We design and implement vLLM, a distributed LLM serving engine built on top of PagedAttention.  
-- We evaluate vLLM on various scenarios and demonstrate that it substantially outperforms the previous state-of-the-art solutions such as FasterTransformer [31] and Orca [60].
-
-# 2 Background
-
-In this section, we describe the generation and serving procedures of typical LLMs and the iteration-level scheduling used in LLM serving.
-
-# 2.1 Transformer-Based Large Language Models
-
-The task of language modeling is to model the probability of a list of tokens  $(x_{1},\ldots ,x_{n})$ . Since language has a natural sequential ordering, it is common to factorize the joint probability over the whole sequence as the product of conditional probabilities (a.k.a. autoregressive decomposition [3]):
+语言建模的任务是对令牌列表  $(x_{1},\ldots ,x_{n})$  的概率进行建模。由于语言具有自然的顺序排序，通常将整个序列的联合概率分解为条件概率的乘积（也称为自回归分解[3]）：
 
 $$
 P (x) = P \left(x _ {1}\right) \cdot P \left(x _ {2} \mid x _ {1}\right) \dots P \left(x _ {n} \mid x _ {1}, \dots , x _ {n - 1}\right). \tag {1}
 $$
 
-Transformers [53] have become the de facto standard architecture for modeling the probability above at a large scale. The most important component of a Transformer-based language model is its self-attention layers. For an input hidden state sequence  $(x_{1},\ldots ,x_{n})\in \mathbb{R}^{n\times d}$ , a self-attention layer first applies linear transformations on each position  $i$  to get the query, key, and value vectors:
+Transformer [53]已成为大规模建模上述概率的事实标准架构。基于Transformer的语言模型最重要的组件是其自注意力层。对于输入隐藏状态序列  $(x_{1},\ldots ,x_{n})\in \mathbb{R}^{n\times d}$ ，自注意力层首先对每个位置  $i$  应用线性变换以获得查询、键和值向量：
 
 $$
 q _ {i} = W _ {q} x _ {i}, k _ {i} = W _ {k} x _ {i}, v _ {i} = W _ {v} x _ {i}. \tag {2}
 $$
 
-Then, the self-attention layer computes the attention score  $a_{ij}$  by multiplying the query vector at one position with all the key vectors before it and compute the output  $o_i$  as the weighted average over the value vectors:
+然后，自注意力层通过将一个位置的查询向量与其之前的所有键向量相乘来计算注意力分数  $a_{ij}$ ，并将输出  $o_i$  计算为值向量的加权平均：
 
 $$
 a _ {i j} = \frac {\exp \left(q _ {i} ^ {\top} k _ {j} / \sqrt {d}\right)}{\sum_ {t = 1} ^ {i} \exp \left(q _ {i} ^ {\top} k _ {t} / \sqrt {d}\right)}, o _ {i} = \sum_ {j = 1} ^ {i} a _ {i j} v _ {j}. \tag {3}
 $$
 
-Besides the computation in Eq. 4, all other components in the Transformer model, including the embedding layer, feed-forward layer, layer normalization [2], residual connection [22], output logit computation, and the query, key, and value transformation in Eq. 2, are all applied independently position-wise in a form of  $y_{i} = f(x_{i})$ .
+除了公式4中的计算外，Transformer模型中的所有其他组件，包括嵌入层、前馈层、层归一化[2]、残差连接[22]、输出logit计算以及公式2中的查询、键和值变换，都以  $y_{i} = f(x_{i})$  的形式独立地逐位置应用。
 
-# 2.2 LLM Service & Autoregressive Generation
+# 2.2 LLM服务与自回归生成
 
-Once trained, LLMs are often deployed as a conditional generation service (e.g., completion API [34] or chatbot [19, 35]). A request to an LLM service provides a list of input prompt tokens  $(x_{1},\ldots ,x_{n})$ , and the LLM service generates a list of output tokens  $(x_{n + 1},\ldots ,x_{n + T})$  according to Eq. 1. We refer to the concatenation of the prompt and output lists as sequence.
+训练完成后，LLM通常作为条件生成服务部署（例如，补全API [34]或聊天机器人[19, 35]）。对LLM服务的请求提供输入提示令牌列表  $(x_{1},\ldots ,x_{n})$ ，LLM服务根据公式1生成输出令牌列表  $(x_{n + 1},\ldots ,x_{n + T})$ 。我们将提示和输出列表的连接称为序列。
 
-Due to the decomposition in Eq. 1, the LLM can only sample and generate new tokens one by one, and the generation process of each new token depends on all the previous tokens in that sequence, specifically their key and value vectors. In this sequential generation process, the key and value vectors of existing tokens are often cached for generating future tokens, known as KV cache. Note that the KV cache of one token depends on all its previous tokens. This means that the KV cache of the same token appearing at different positions in a sequence will be different.
+由于公式1中的分解，LLM只能逐个采样和生成新令牌，每个新令牌的生成过程取决于该序列中的所有先前令牌，特别是它们的键和值向量。在这个顺序生成过程中，现有令牌的键和值向量通常被缓存以生成未来令牌，称为KV cache。请注意，一个令牌的KV cache取决于其所有先前令牌。这意味着出现在序列中不同位置的同一令牌的KV cache将是不同的。
 
-Given a request prompt, the generation computation in the LLM service can be decomposed into two phases:
+给定一个请求提示，LLM服务中的生成计算可以分为两个阶段：
 
-The prompt phase takes the whole user prompt  $(x_{1},\ldots ,x_{n})$  as input and computes the probability of the first new token  $P(x_{n + 1}\mid x_1,\dots,x_n)$ . During this process, also generates the key vectors  $k_{1},\ldots ,k_{n}$  and value vectors  $v_{1},\ldots ,v_{n}$ . Since prompt tokens  $x_{1},\ldots ,x_{n}$  are all known, the computation of the prompt phase can be parallelized using matrix-matrix multiplication operations. Therefore, this phase can efficiently use the parallelism inherent in GPUs.
+提示阶段将整个用户提示  $(x_{1},\ldots ,x_{n})$  作为输入，并计算第一个新令牌的概率  $P(x_{n + 1}\mid x_1,\dots,x_n)$ 。在此过程中，还生成键向量  $k_{1},\ldots ,k_{n}$  和值向量  $v_{1},\ldots ,v_{n}$ 。由于提示令牌  $x_{1},\ldots ,x_{n}$  都是已知的，提示阶段的计算可以使用矩阵-矩阵乘法操作并行化。因此，这个阶段可以高效利用GPU固有的并行性。
 
-The autoregressive generation phase generates the remaining new tokens sequentially. At iteration  $t$ , the model takes one token  $x_{n + t}$  as input and computes the probability  $P(x_{n + t + 1} \mid x_1, \ldots, x_{n + t})$  with the key vectors  $k_1, \ldots, k_{n + t}$  and value vectors  $v_1, \ldots, v_{n + t}$ . Note that the key and value vectors at positions 1 to  $n + t - 1$  are cached at previous iterations, only the new key and value vector  $k_{n + t}$  and  $v_{n + t}$  are computed at this iteration. This phase completes either when the sequence reaches a maximum length (specified by users or limited by LLMs) or when an end-of-sequence (<eos>) token is emitted. The computation at different iterations cannot be parallelized due to the data dependency and often uses matrix-vector multiplication, which is less efficient. As a result, this phase severely underutilizes GPU computation and becomes memory-bound, being responsible for most portion of the latency of a single request.
+自回归生成阶段顺序生成剩余的新令牌。在迭代  $t$  时，模型将一个令牌  $x_{n + t}$  作为输入，并使用键向量  $k_1, \ldots, k_{n + t}$  和值向量  $v_1, \ldots, v_{n + t}$  计算概率  $P(x_{n + t + 1} \mid x_1, \ldots, x_{n + t})$ 。请注意，位置1到  $n + t - 1$  的键和值向量在先前迭代中被缓存，只有新的键和值向量  $k_{n + t}$  和  $v_{n + t}$  在此迭代中计算。当序列达到最大长度（由用户指定或受LLM限制）或发出序列结束（<eos>）令牌时，此阶段完成。由于数据依赖性，不同迭代的计算无法并行化，并且通常使用矩阵-向量乘法，效率较低。因此，这个阶段严重未充分利用GPU计算并变得受内存限制，占单个请求延迟的大部分。
 
-# 2.3 Batching Techniques for LLMs
+# 2.3 LLM的批处理技术
 
-The compute utilization in serving LLMs can be improved by batching multiple requests. Because the requests share the same model weights, the overhead of moving weights is amortized across the requests in a batch, and can be overwhelmed by the computational overhead when the batch size is sufficiently large. However, batching the requests to an LLM service is non-trivial for two reasons. First, the requests may arrive at different times. A naive batching strategy would either make earlier requests wait for later ones or delay the incoming requests until earlier ones finish, leading to significant queueing delays. Second, the requests may have vastly different input and output lengths (Fig. 11). A straightforward batching technique would pad the inputs and outputs of the requests to equalize their lengths, wasting GPU computation and memory.
+通过批处理多个请求可以提高服务LLM的计算利用率。因为请求共享相同的模型权重，移动权重的开销在批次中的请求之间分摊，当批处理大小足够大时，可以被计算开销所掩盖。然而，对LLM服务的请求进行批处理并非易事，原因有二。首先，请求可能在不同时间到达。一个简单的批处理策略要么让较早的请求等待较晚的请求，要么延迟传入的请求直到较早的请求完成，导致显著的排队延迟。其次，请求的输入和输出长度可能差异很大（图11）。一种直接的批处理技术会将请求的输入和输出填充到相同长度，浪费GPU计算和内存。
 
-To address this problem, fine-grained batching mechanisms, such as cellular batching [16] and iteration-level scheduling [60], have been proposed. Unlike traditional methods that work at the request level, these techniques operate at the iteration level. After each iteration, completed requests are removed from the batch, and new ones are added. Therefore, a new request can be processed after waiting for a single iteration, not waiting for the entire batch to complete. Moreover, with special GPU kernels, these techniques eliminate the need to pad the inputs and outputs. By reducing the queueing delay and the inefficiencies from padding, the fine-grained batching mechanisms significantly increase the throughput of LLM serving.
+为了解决这个问题，提出了细粒度批处理机制，如蜂窝批处理[16]和迭代级调度[60]。与在请求级别工作的传统方法不同，这些技术在迭代级别操作。每次迭代后，完成的请求从批次中移除，并添加新的请求。因此，新请求可以在等待单个迭代后处理，而不必等待整个批次完成。此外，使用特殊的GPU内核，这些技术消除了填充输入和输出的需要。通过减少排队延迟和填充的低效率，细粒度批处理机制显著提高了LLM服务的吞吐量。
 
 ![](images/3f4dfa997de37396e05fa985e48ce17ec42d6e835b6e62930ea7c3ddc0ac3397.jpg)  
-Figure 3. KV cache memory management in existing systems. Three types of memory wastes - reserved, internal fragmentation, and external fragmentation - exist that prevent other requests from fitting into the memory. The token in each memory slot represents its KV cache. Note the same tokens can have different KV cache when at different positions.
+图3. 现有系统中的KV cache内存管理。存在三种类型的内存浪费——保留、内部碎片和外部碎片——阻止其他请求装入内存。每个内存槽中的令牌代表其KV cache。注意相同令牌在不同位置时可能有不同的KV cache。
 
-# 3 Memory Challenges in LLM Serving
+# 3 LLM服务中的内存挑战
 
-Although fine-grained batching reduces the waste of computing and enables requests to be batched in a more flexible way, the number of requests that can be batched together is still constrained by GPU memory capacity, particularly the space allocated to store the KV cache. In other words, the serving system's throughput is memory-bound. Overcoming this memory-bound requires addressing the following challenges in the memory management:
+尽管细粒度批处理减少了计算的浪费，并使请求能够以更灵活的方式进行批处理，但可以一起批处理的请求数量仍然受到GPU内存容量的限制，特别是分配给存储KV cache的空间。换句话说，服务系统的吞吐量受内存限制。克服这种内存限制需要解决内存管理中的以下挑战：
 
-Large KV cache. The KV Cache size grows quickly with the number of requests. As an example, for the 13B parameter OPT model [62], the KV cache of a single token demands 800 KB of space, calculated as 2 (key and value vectors)  $\times$  5120 (hidden state size)  $\times$  40 (number of layers)  $\times$  2 (bytes per FP16). Since OPT can generate sequences up to 2048 tokens, the memory required to store the KV cache of one request can be as much as 1.6 GB. Concurrent GPUs have memory capacities in the tens of GBs. Even if all available memory was allocated to KV cache, only a few tens of requests could be accommodated. Moreover, inefficient memory management can further decrease the batch size, as shown in Fig. 2. Additionally, given the current trends, the GPU's computation speed grows faster than the memory capacity [17]. For example, from NVIDIA A100 to H100, The FLOPS increases by more than  $2\mathrm{x}$ , but the GPU memory stays at 80GB maximum. Therefore, we believe the memory will become an increasingly significant bottleneck.
+巨大的KV cache。KV cache大小随请求数量迅速增长。例如，对于13B参数的OPT模型[62]，单个令牌的KV cache需要800 KB的空间，计算为2（键和值向量）  $\times$  5120（隐藏状态大小）  $\times$  40（层数）  $\times$  2（每个FP16的字节数）。由于OPT可以生成长达2048个令牌的序列，存储一个请求的KV cache所需的内存可能高达1.6 GB。当前的GPU内存容量为几十GB。即使将所有可用内存都分配给KV cache，也只能容纳几十个请求。此外，低效的内存管理会进一步减少批处理大小，如图2所示。另外，根据当前趋势，GPU的计算速度增长快于内存容量[17]。例如，从NVIDIA A100到H100，FLOPS增加了超过  $2\mathrm{x}$ ，但GPU内存最大保持在80GB。因此，我们相信内存将成为一个日益显著的瓶颈。
 
-Complex decoding algorithms. LLM services offer a range of decoding algorithms for users to select from, each with varying implications for memory management complexity. For example, when users request multiple random samples from a single input prompt, a typical use case in program suggestion [18], the KV cache of the prompt part, which accounts for  $12\%$  of the total KV cache memory in our experiment (§6.3), can be shared to minimize memory usage. On the other hand, the KV cache during the autoregressive generation phase should remain unshared due to the different sample results and their dependence on context and position. The extent of KV cache sharing depends on the specific decoding algorithm employed. In more sophisticated algorithms like beam search [49], different request beams can share larger portions (up to  $55\%$  memory saving, see
+复杂的解码算法。LLM服务为用户提供一系列解码算法选择，每种算法对内存管理复杂性有不同的影响。例如，当用户从单个输入提示请求多个随机样本时，这是程序建议[18]中的典型用例，提示部分的KV cache（在我们的实验中占KV cache内存的  $12\%$ ，§6.3）可以共享以最小化内存使用。另一方面，自回归生成阶段的KV cache应保持未共享，因为不同的样本结果及其对上下文和位置的依赖性。KV cache共享的程度取决于所使用的特定解码算法。在更复杂的算法如波束搜索[49]中，不同的请求波束可以共享其KV cache的更大一部分（最多可节省  $55\%$  内存，见§6.3），并且共享模式随着解码过程的推进而演变。
 
-§6.3) of their KV cache, and the sharing pattern evolves as the decoding process advances.
+未知输入和输出长度的调度。对LLM服务的请求在其输入和输出长度上表现出变异性。这要求内存管理系统适应广泛的提示长度。此外，随着请求的输出长度在解码过程中增长，其KV cache所需的内存也会扩展，并可能耗尽传入请求或现有提示的持续生成可用内存。系统需要做出调度决策，例如删除或将一些请求的KV cache从GPU内存中换出。
 
-Scheduling for unknown input & output lengths. The requests to an LLM service exhibit variability in their input and output lengths. This requires the memory management system to accommodate a wide range of prompt lengths. In addition, as the output length of a request grows at decoding, the memory required for its KV cache also expands and may exhaust available memory for incoming requests or ongoing generation for existing prompts. The system needs to make scheduling decisions, such as deleting or swapping out the KV cache of some requests from GPU memory.
+# 3.1 现有系统中的内存管理
 
-# 3.1 Memory Management in Existing Systems
+由于当前深度学习框架[33, 39]中的大多数算子要求张量存储在连续内存中，先前的LLM服务系统[31, 60]也将一个请求的KV cache存储为跨不同位置的连续张量。由于LLM输出长度的不可预测性，它们根据请求的最大可能序列长度静态分配一块内存，而不考虑请求的实际输入或最终输出长度。
 
-Since most operators in current deep learning frameworks [33, 39] require tensors to be stored in contiguous memory, previous LLM serving systems [31, 60] also store the KV cache of one request as a contiguous tensor across the different positions. Due to the unpredictable output lengths from the LLM, they statically allocate a chunk of memory for a request based on the request's maximum possible sequence length, irrespective of the actual input or eventual output length of the request.
-
-Fig. 3 illustrates two requests: request A with 2048 maximum possible sequence length and request B with a maximum of 512. The chunk pre-allocation scheme in existing systems has three primary sources of memory wastes: reserved slots for future tokens, internal fragmentation due to over-provisioning for potential maximum sequence lengths, and external fragmentation from the memory allocator like the buddy allocator. The external fragmentation will never be used for generated tokens, which is known before serving a request. Internal fragmentation also remains unused, but this is only realized after a request has finished sampling. They are both pure memory waste. Although the reserved memory is eventually used, reserving this space for the entire request's duration, especially when the reserved space is large, occupies the space that could otherwise be used to process other requests. We visualize the average percentage of memory wastes in our experiments in Fig. 2, revealing that the actual effective memory in previous systems can be as low as  $20.4\%$ .
+图3说明了两个请求：请求A的最大可能序列长度为2048，请求B的最大为512。现有系统中的块预分配方案有三个主要的内存浪费来源：为未来令牌保留的槽、由于为潜在最大序列长度过度配置导致的内部碎片，以及来自像伙伴分配器这样的内存分配器的外部碎片。外部碎片将永远不会用于生成的令牌，这在服务请求之前就知道。内部碎片也保持未使用，但这仅在请求完成采样后才实现。它们都是纯粹的内存浪费。尽管保留的内存最终被使用，但为整个请求的持续时间保留这个空间，尤其是当保留空间很大时，占用了本可以用于处理其他请求的空间。我们在图2中可视化了实验中内存浪费的平均百分比，揭示先前系统中的实际有效内存可能低至  $20.4\%$ 。
 
 ![](images/023c5bf6305a66121daa616a90b5a33c59de006ec488b52e9c6bc6d55a3fa51c.jpg)  
-Figure 4. vLLM system overview.
+图4. vLLM系统概述。
 
-Although compaction [54] has been proposed as a potential solution to fragmentation, performing compaction in a performance-sensitive LLM serving system is impractical due to the massive KV cache. Even with compaction, the pre-allocated chunk space for each request prevents memory sharing specific to decoding algorithms in existing memory management systems.
+尽管压缩[54]已被提出作为碎片的潜在解决方案，但在性能敏感的LLM服务系统中执行压缩是不切实际的，因为KV cache巨大。即使使用压缩，每个请求预分配的块空间也阻止了现有内存管理系统中解码算法特定的内存共享。
 
-# 4 Method
+# 4 方法
 
-In this work, we develop a new attention algorithm, PagedAttention, and build an LLM serving engine, vLLM, to tackle the challenges outlined in §3. The architecture of vLLM is shown in Fig. 4. vLLM adopts a centralized scheduler to coordinate the execution of distributed GPU workers. The KV cache manager effectively manages the KV cache in a paged fashion, enabled by PagedAttention. Specifically, the KV cache manager manages the physical KV cache memory on the GPU workers through the instructions sent by the centralized scheduler.
+在这项工作中，我们开发了一种新的注意力算法PagedAttention，并构建了一个LLM服务引擎vLLM，以解决§3中概述的挑战。vLLM的架构如图4所示。vLLM采用集中式调度器来协调分布式GPU工作器的执行。KV cache管理器以分页方式有效管理KV cache，由PagedAttention实现。具体来说，KV cache管理器通过集中式调度器发送的指令管理GPU工作器上的物理KV cache内存。
 
-Next, We describe the PagedAttention algorithm in §4.1. With that, we show the design of the KV cache manager in §4.2 and how it facilitates PagedAttention in §4.3, respectively. Then, we show how this design facilitates effective memory management for various decoding methods (§4.4) and handles the variable length input and output sequences (§4.5). Finally, we show how the system design of vLLM works in a distributed setting (§4.6).
+接下来，我们在§4.1中描述PagedAttention算法。在此基础上，我们分别在§4.2中展示KV cache管理器的设计，以及在§4.3中展示它如何促进PagedAttention。然后，我们展示这种设计如何促进各种解码方法的有效内存管理（§4.4）并处理可变长度的输入和输出序列（§4.5）。最后，我们展示vLLM的系统设计如何在分布式设置中工作（§4.6）。
 
 # 4.1 PagedAttention
 
-To address the memory challenges in §3, we introduce PagedAttention, an attention algorithm inspired by the classic idea of paging [25] in operating systems. Unlike the traditional attention algorithms, PagedAttention allows storing continuous keys and values in non-contiguous memory space. Specifically, PagedAttention partitions the KV cache of each sequence into KV blocks. Each block contains the key and value vectors for a fixed number of tokens, which we denote as KV
-
-![](images/52ab02514bd8d50c04979634c6893dd8bb352a60534c391c24b830f5ccb414fe.jpg)  
-Figure 5. Illustration of the PagedAttention algorithm, where the attention key and values vectors are stored as non-contiguous blocks in the memory.
-
-block size  $(B)$ . Denote the key block  $K_{j} = (k_{(j - 1)B + 1},\ldots ,k_{jB})$  and value block  $V_{j} = (v_{(j - 1)B + 1},\dots ,v_{jB})$ . The attention computation in Eq. 4 can be transformed into the following blockwise computation:
+为了解决§3中的内存挑战，我们引入PagedAttention，一种受操作系统经典分页思想[25]启发的注意力算法。与传统的注意力算法不同，PagedAttention允许将连续的键和值存储在非连续的内存空间中。具体来说，PagedAttention将每个序列的KV cache划分为KV块。每个块包含固定数量令牌的键和值向量，我们将其表示为KV块大小  $(B)$ 。表示键块  $K_{j} = (k_{(j - 1)B + 1},\ldots ,k_{jB})$  和值块  $V_{j} = (v_{(j - 1)B + 1},\dots ,v_{jB})$ 。公式4中的注意力计算可以转换为以下分块计算：
 
 $$
 A _ {i j} = \frac {\exp \left(q _ {i} ^ {\top} K _ {j} / \sqrt {d}\right)}{\sum_ {t = 1} ^ {\lceil i / B \rceil} \exp \left(q _ {i} ^ {\top} K _ {t} \mathbf {1} / \sqrt {d}\right)}, o _ {i} = \sum_ {j = 1} ^ {\lceil i / B \rceil} V _ {j} A _ {i j} ^ {\top}, \tag {4}
 $$
 
-where  $A_{ij} = (a_{i,(j-1)B+1}, \ldots, a_{i,jB})$  is the row vector of attention score on  $j$ -th KV block.
+其中  $A_{ij} = (a_{i,(j-1)B+1}, \ldots, a_{i,jB})$  是第  $j$  个KV块上的注意力分数行向量。
 
-During the attention computation, the PagedAttention kernel identifies and fetches different KV blocks separately. We show an example of PagedAttention in Fig. 5: The key and value vectors are spread across three blocks, and the three blocks are not contiguous on the physical memory. At each time, the kernel multiplies the query vector  $q_{i}$  of the query token ("forth") and the key vectors  $K_{j}$  in a block (e.g., key vectors of "Four score and seven" for block 0) to compute the attention score  $A_{ij}$ , and later multiplies  $A_{ij}$  with the value vectors  $V_{j}$  in a block to derive the final attention output  $o_{i}$ .
+在注意力计算期间，PagedAttention内核单独识别和获取不同的KV块。我们在图5中展示PagedAttention的示例：键和值向量分布在三个块中，这三个块在物理内存上不连续。每次，内核将查询令牌（“forth”）的查询向量  $q_{i}$  和一个块中的键向量  $K_{j}$ （例如，块0的“Four score and seven”的键向量）相乘，以计算注意力分数  $A_{ij}$ ，随后将  $A_{ij}$  与一个块中的值向量  $V_{j}$  相乘以得出最终的注意力输出  $o_{i}$ 。
 
-In summary, the PagedAttention algorithm allows the KV blocks to be stored in non-contiguous physical memory, which enables more flexible paged memory management in vLLM.
+总之，PagedAttention算法允许KV块存储在非连续的物理内存中，这使得vLLM中能够进行更灵活的分页内存管理。
 
-# 4.2 KV Cache Manager
+# 4.2 KV Cache管理器
 
-The key idea behind vLLM's memory manager is analogous to the virtual memory [25] in operating systems. OS partitions memory into fixed-sized pages and maps user programs' logical pages to physical pages. Contiguous logical pages can correspond to non-contiguous physical memory pages, allowing user programs to access memory as though it were contiguous. Moreover, physical memory space needs not to be fully reserved in advance, enabling the OS to dynamically allocate physical pages as needed. vLLM uses the ideas behind virtual memory to manage the KV cache in an LLM service. Enabled by PagedAttention, we organize the KV cache as fixed-size KV blocks, like pages in virtual memory.
+vLLM内存管理器背后的关键思想类似于操作系统中的虚拟内存[25]。操作系统将内存划分为固定大小的页面，并将用户程序的逻辑页面映射到物理页面。连续的逻辑页面可以对应非连续的物理内存页面，使用户程序能够像访问连续内存一样访问内存。此外，物理内存空间不需要事先完全保留，使操作系统能够根据需要动态分配物理页面。vLLM使用虚拟内存背后的思想来管理LLM服务中的KV cache。通过PagedAttention实现，我们将KV cache组织为固定大小的KV块，就像虚拟内存中的页面一样。
 
-A request's KV cache is represented as a series of logical KV blocks, filled from left to right as new tokens and their KV cache are generated. The last KV block's unfilled positions are reserved for future generations. On GPU workers, a block engine allocates a contiguous chunk of GPU DRAM and
+请求的KV cache表示为一系列逻辑KV块，随着新令牌及其KV cache的生成从左到右填充。最后一个KV块的未填充位置为未来的生成保留。在GPU工作器上，块引擎分配一块连续的GPU DRAM，并将其划分为物理KV块（这在CPU RAM上也是如此，用于交换；见§4.5）。KV块管理器还维护块表——每个请求的逻辑和物理KV块之间的映射。每个块表条目记录逻辑块对应的物理块以及填充位置的数量。分离逻辑和物理KV块使vLLM能够动态增长KV cache内存，而无需事先为所有位置保留，这消除了现有系统中的大部分内存浪费，如图2所示。
 
-![](images/6ead763b7ec91d8336120e00c8114cc385dd48064c62e4265e383c61845bd95a.jpg)  
-Figure 6. Block table translation in vLLM.
+# 4.3 使用PagedAttention和vLLM进行解码
 
-divides it into physical KV blocks (this is also done on CPU RAM for swapping; see §4.5). The KV block manager also maintains block tables—the mapping between logical and physical KV blocks of each request. Each block table entry records the corresponding physical blocks of a logical block and the number of filled positions. Separating logical and physical KV blocks allows vLLM to dynamically grow the KV cache memory without reserving it for all positions in advance, which eliminates most memory waste in existing systems, as in Fig. 2.
+接下来，我们通过一个示例（如图6所示）演示vLLM如何在单个输入序列的解码过程中执行PagedAttention和管理内存：① 与操作系统的虚拟内存一样，vLLM最初不需要为最大可能的生成序列长度保留内存。相反，它仅保留必要的KV块以容纳提示计算期间生成的KV cache。在这种情况下，提示有7个令牌，因此vLLM将前2个逻辑KV块（0和1）映射到2个物理KV块（分别为7和1）。在预取步骤中，vLLM使用传统的自注意力算法（例如[13]）生成提示和第一个输出令牌的KV cache。vLLM然后将前4个令牌的KV cache存储在逻辑块0中，接下来的3个令牌存储在逻辑块1中。剩余的槽为后续的自回归生成阶段保留。② 在第一个自回归解码步骤中，vLLM使用物理块7和1上的PagedAttention算法生成新令牌。由于最后一个逻辑块中还有一个可用槽，新生成的KV cache存储在那里，并更新块表的#filled记录。③ 在第二个解码步骤中，由于最后一个逻辑块已满，vLLM将新生成的KV cache存储在新的逻辑块中；vLLM为其分配一个新的物理块（物理块3），并将此映射存储在块表中。
 
-# 4.3 Decoding with PagedAttention and vLLM
+全局而言，对于每个解码迭代，vLLM首先选择一组候选序列进行批处理（更多细节见§4.5），并为新需要的逻辑块分配物理块。然后，vLLM将当前迭代的所有输入令牌（即提示阶段请求的所有令牌和生成阶段请求的最新令牌）连接为一个序列，并馈送到LLM中。在LLM计算期间，vLLM使用PagedAttention内核访问以逻辑KV块形式存储的先前KV cache，并将新生成的KV cache保存到物理KV块中。在一个KV块内存储多个令牌（块大小  $>1$ ）使PagedAttention内核能够并行处理更多位置的KV cache，从而提高硬件利用率和减少延迟。然而，更大的块大小也会增加内存碎片。我们在§7.2中研究块大小的影响。
 
-Next, we walk through an example, as in Fig. 6, to demonstrate how vLLM executes PagedAttention and manages the memory during the decoding process of a single input sequence: ① As in OS's virtual memory, vLLM does not require reserving the memory for the maximum possible generated sequence length initially. Instead, it reserves only the necessary KV blocks to accommodate the KV cache generated during prompt computation. In this case, The prompt has 7 tokens, so vLLM maps the first 2 logical KV blocks (0 and 1) to 2 physical KV blocks (7 and 1, respectively). In the prefetch step, vLLM generates the KV cache of the prompts and the first output token with a conventional self-attention algorithm (e.g., [13]). vLLM then stores the KV cache of the first 4 tokens in logical block 0 and the following 3 tokens in logical block 1. The remaining slot is reserved for the subsequent autoregressive generation phase. ② In the first autoregressive decoding step, vLLM generates the new token with the PagedAttention algorithm on physical blocks 7 and 1. Since one slot remains available in the last logical block, the newly generated KV cache is stored there, and the block table's #filled record is updated. ③ At the second decoding step, as the last logical block is full, vLLM stores the newly generated KV cache in a new logical block; vLLM allocates a new physical block (physical block 3) for it and stores this mapping in the block table.
+再次，随着更多令牌及其KV cache的生成，vLLM动态地将新的物理块分配给逻辑块。由于所有块从左到右填充，并且只有当所有先前的块都已满时才分配新的物理块，vLLM将一个请求的所有内存浪费限制在一个块内，因此可以有效地利用所有内存，如图2所示。这允许更多请求装入内存进行批处理——从而提高吞吐量。一旦请求完成其生成，其KV块可以被释放以存储其他请求的KV cache。在图7中，我们展示了vLLM管理两个序列内存的示例。两个序列的逻辑块映射到GPU工作器中块引擎保留的空间内的不同物理块。两个序列的相邻逻辑块不需要在物理GPU内存中连续，物理块的空间可以被两个序列有效利用。
 
-Globally, for each decoding iteration, vLLM first selects a set of candidate sequences for batching (more in §4.5), and allocates the physical blocks for the newly required logical blocks. Then, vLLM concatenates all the input tokens of the current iteration (i.e., all tokens for prompt phase
+# 4.4 其他解码场景的应用
 
-![](images/9ec7b3f48fa29cc408067e1b19e047eea92b5f097395a96b3135b743fccc618c.jpg)  
-Figure 7. Storing the KV cache of two requests at the same time in vLLM.
+$\S 4.3$  展示了PagedAttention和vLLM如何处理基本解码算法，例如贪婪解码和采样，这些算法将一个用户提示作为输入并生成单个输出序列。在许多成功的LLM应用[18, 34]中，LLM服务必须提供更复杂的解码场景，这些场景表现出复杂的访问模式和更多的内存共享机会。我们在本节展示vLLM在它们身上的普遍适用性。
 
-requests and the latest tokens for generation phase requests) as one sequence and feeds it into the LLM. During LLM's computation, vLLM uses the PagedAttention kernel to access the previous KV cache stored in the form of logical KV blocks and saves the newly generated KV cache into the physical KV blocks. Storing multiple tokens within a KV block (block size  $>1$ ) enables the PagedAttention kernel to process the KV cache across more positions in parallel, thus increasing the hardware utilization and reducing latency. However, a larger block size also increases memory fragmentation. We study the effect of block size in §7.2.
+并行采样。在基于LLM的程序助手[6, 18]中，LLM为单个输入提示生成多个采样输出；用户可以从各种候选中选择最喜欢的输出。到目前为止，我们隐式假设一个请求生成单个序列。在本文的剩余部分，我们假设更一般的情况，即一个请求生成多个序列。在并行采样中，一个请求包括共享相同输入提示的多个样本，允许提示的KV cache也共享。通过其PagedAttention和分页内存管理，vLLM可以轻松实现这种共享并节省内存。
 
-Again, vLLM dynamically assigns new physical blocks to logical blocks as more tokens and their KV cache are generated. As all the blocks are filled from left to right and a new physical block is only allocated when all previous blocks are full, vLLM limits all the memory wastes for a request within one block, so it can effectively utilize all the memory, as shown in Fig. 2. This allows more requests to fit into memory for batching—hence improving the throughput. Once a request finishes its generation, its KV blocks can be freed to store the KV cache of other requests. In Fig. 7, we show an example of vLLM managing the memory for two sequences. The logical blocks of the two sequences are mapped to different physical blocks within the space reserved by the block engine in GPU workers. The neighboring logical blocks of both sequences do not need to be contiguous in physical GPU memory and the space of physical blocks can be effectively utilized by both sequences.
+图8显示了两个输出的并行解码示例。由于两个输出共享相同的提示，我们仅在提示阶段为提示状态保留一个副本的空间；两个序列提示的逻辑块都映射到相同的物理块：两个序列的逻辑块0和1分别映射到物理块7和1。由于单个物理块可以映射到多个逻辑块，我们为每个物理块引入一个引用计数。在这种情况下，物理块7和1的引用计数均为2。在生成阶段，两个输出采样不同的输出令牌，需要单独的KV cache存储。vLLM在块粒度上为需要被多个序列修改的物理块实现写时复制机制，类似于OS虚拟内存中的写时复制技术（例如，在fork进程时）。具体来说，在图8中，当样本A1需要写入其最后一个逻辑块（逻辑块1）时，vLLM识别到相应物理块（物理块1）的引用计数大于1；它分配一个新的物理块（物理块3），指示块引擎从物理块1复制信息，并将引用计数减少到1。接下来，当样本A2写入物理块1时，引用计数已减少到1；因此A2直接将其新生成的KV cache写入物理块1。
 
-# 4.4 Application to Other Decoding Scenarios
+总之，vLLM实现了跨多个输出样本共享大部分用于存储提示KV cache的空间，除了最后的逻辑块，该块由写时复制机制管理。通过在多个样本之间共享物理块，可以大大减少内存使用，特别是对于长输入提示。
 
-$\S 4.3$  shows how PagedAttention and vLLM handle basic decoding algorithms, such as greedy decoding and sampling, that take one user prompt as input and generate a single output sequence. In many successful LLM applications [18, 34], an LLM service must offer more complex decoding scenarios that exhibit complex accessing patterns and more opportunities for memory sharing. We show the general applicability of vLLM on them in this section.
+波束搜索。在LLM任务如机器翻译[59]中，用户期望LLM输出最合适的  $k$  个翻译。波束搜索[49]被广泛用于从LLM解码最可能的输出序列，因为它减轻了完全遍历样本空间的计算复杂性。该算法依赖于波束宽度参数  $k$ ，它决定每一步保留的顶级候选数量。在解码过程中，波束搜索通过考虑所有可能的令牌来扩展波束中的每个候选序列，使用LLM计算它们各自的概率，并保留  $k \cdot |V|$  个候选中的前  $k$  个最可能序列，其中  $|V|$  是词汇表大小。
 
-Parallel sampling. In LLM-based program assistants [6, 18], an LLM generates multiple sampled outputs for a single input prompt; users can choose a favorite output from various candidates. So far we have implicitly assumed that a request
+与并行解码不同，波束搜索不仅促进初始提示块的共享，还促进不同候选之间其他块的共享，并且随着解码过程的推进，共享模式动态变化，类似于OS中由复合fork创建的进程树。图9显示了vLLM如何管理波束搜索示例的KV块，其中  $k = 4$ 。在虚线所示的迭代之前，每个候选序列已使用了4个完整的逻辑块。所有波束候选共享第一个块0（即提示）。候选3从第二个块开始与其他候选分叉。候选0-2共享前3个块，在第四块分叉。在后续迭代中，前4个最可能的候选都源自候选1和2。由于原始候选0和3不再属于顶级候选，它们的逻辑块被释放，相应物理块的引用计数减少。vLLM释放所有引用计数达到0的物理块（块2、4、5、8）。然后，vLLM分配新的物理块（块9-12）来存储来自新候选的新KV cache。现在，所有候选共享块0、1、3；候选0和1共享块6，候选2和3进一步共享块7。
 
-![](images/11b19e352df742307fab0e4962c652258ec7d33eedf4a6b32134bbcbe76a9926.jpg)  
-Figure 8. Parallel sampling example.
+先前的LLM服务系统需要频繁地在波束候选之间复制KV cache。例如，在图9所示的情况下，在虚线之后，候选3需要复制候选2的大部分KV cache以继续生成。vLLM的物理块共享显著减少了这种频繁的内存复制开销。在vLLM中，不同波束候选的大多数块可以共享。写时复制机制仅当新生成的令牌位于旧的共享块内时应用，如在并行解码中。这仅涉及复制一个块的数据。
 
-generates a single sequence. In the remainder of this paper, we assume the more general case in which a request generates multiple sequences. In parallel sampling, one request includes multiple samples sharing the same input prompt, allowing the KV cache of the prompt to be shared as well. Via its PagedAttention and paged memory management, vLLM can realize this sharing easily and save memory.
+共享前缀。通常，LLM用户提供（长）任务描述，包括指令和示例输入输出，也称为系统提示[36]。该描述与实际任务输入连接形成请求的提示。LLM基于完整提示生成输出。图10显示了一个示例。此外，可以通过提示工程进一步调整共享前缀，以提高下游任务的准确性[26, 27]。
 
-Fig. 8 shows an example of parallel decoding for two outputs. Since both outputs share the same prompt, we only reserve space for one copy of the prompt's state at the prompt phase; the logical blocks for the prompts of both sequences are mapped to the same physical blocks: the logical block 0 and 1 of both sequences are mapped to physical blocks 7 and 1, respectively. Since a single physical block can be mapped to multiple logical blocks, we introduce a reference count for each physical block. In this case, the reference counts for physical blocks 7 and 1 are both 2. At the generation phase, the two outputs sample different output tokens and need separate storage for KV cache. vLLM implements a copy-on-write mechanism at the block granularity for the physical blocks that need modification by multiple sequences, similar to the copy-on-write technique in OS virtual memory (e.g., when forking a process). Specifically, in Fig. 8, when sample A1 needs to write to its last logical block (logical block 1), vLLM recognizes that the reference count of the corresponding physical block (physical block 1) is greater than 1; it allocates a new physical block (physical block 3), instructs the block engine to copy the information from physical block 1, and decreases the reference count to 1. Next, when sample A2 writes to physical block 1, the reference count is already reduced to 1; thus A2 directly writes its newly generated KV cache to physical block 1.
+对于这种类型的应用，许多用户提示共享一个前缀，因此LLM服务提供商可以预先存储前缀的KV cache，以减少花费在前缀上的冗余计算。在vLLM中，这可以通过为LLM服务提供商预定义的一组共享前缀保留一组物理块来方便地实现，就像OS处理进程间的共享库一样。具有共享前缀的用户输入提示可以简单地将其逻辑块映射到缓存的物理块（最后一块标记为写时复制）。提示阶段计算只需要在用户的任务输入上执行。
 
-In summary, vLLM enables the sharing of most of the space used to store the prompts' KV cache across multiple output samples, with the exception of the final logical block, which is managed by a copy-on-write mechanism. By sharing physical blocks across multiple samples, memory usage can be greatly reduced, especially for long input prompts.
+混合解码方法。前面讨论的解码方法表现出多样的内存共享和访问模式。尽管如此，vLLM促进了同时处理具有不同解码偏好的请求，而现有系统无法高效做到这一点。这是因为vLLM通过一个将逻辑块转换为物理块的公共映射层隐藏了不同序列之间的复杂内存共享。LLM及其执行内核只看到每个序列的物理块ID列表，不需要处理跨序列的共享模式。与现有系统相比，这种方法拓宽了具有不同采样要求的请求的批处理机会，最终提高了系统的整体吞吐量。
 
-Beam search. In LLM tasks like machine translation [59], the users expect the top- $k$  most appropriate translations output by the LLM. Beam search [49] is widely used to decode the most probable output sequence from an LLM, as it mitigates the computational complexity of fully traversing the
+# 4.5 调度和抢占
 
-![](images/fcd61b9e21a65b639bea472f0c95654711b1b5062fb7af643125c4425d68008a.jpg)  
-Figure 9. Beam search example.
+当请求流量超过系统容量时，vLLM必须优先处理一部分请求。在vLLM中，我们对所有请求采用先到先服务（FCFS）调度策略，确保公平性并防止饥饿。当vLLM需要抢占请求时，它确保最先到达的请求首先被服务，最新的请求首先被抢占。
 
-sample space. The algorithm relies on the beam width parameter  $k$ , which determines the number of top candidates retained at every step. During decoding, beam search expands each candidate sequence in the beam by considering all possible tokens, computes their respective probabilities using the LLM, and retains the top- $k$  most probable sequences out of  $k \cdot |V|$  candidates, where  $|V|$  is the vocabulary size.
+LLM服务面临一个独特的挑战：LLM的输入提示长度可能差异很大，并且输出长度是事先未知的，取决于输入提示和模型。随着请求数量及其输出的增长，vLLM可能会耗尽GPU的物理块来存储新生成的KV cache。在此背景下，vLLM需要回答两个经典问题：（1）应该驱逐哪些块？（2）如果需要再次使用，如何恢复被驱逐的块？通常，驱逐策略使用启发式方法来预测哪个块将在未来最远的时间被访问并驱逐该块。由于在我们的情况下我们知道一个序列的所有块是一起访问的，我们实现了一种全有或全无的驱逐策略，即要么驱逐一个序列的所有块，要么一个都不驱逐。此外，一个请求内的多个序列（例如，一个波束搜索请求中的波束候选）作为序列组进行组调度。一个序列组内的序列总是被一起抢占或重新调度，因为这些序列之间可能存在内存共享。为了回答如何恢复被驱逐块的第二个问题，我们考虑两种技术：
 
-Unlike parallel decoding, beam search facilities sharing not only the initial prompt blocks but also other blocks across different candidates, and the sharing patterns dynamically change as the decoding process advances, similar to the process tree in the OS created by compound forks. Fig. 9 shows how vLLM manages the KV blocks for a beam search example with  $k = 4$ . Prior to the iteration illustrated as the dotted line, each candidate sequence has used 4 full logical blocks. All beam candidates share the first block 0 (i.e., prompt). Candidate 3 digresses from others from the second block. Candidates 0-2 share the first 3 blocks and diverge at the fourth block. At subsequent iterations, the top-4 probable candidates all originate from candidates 1 and 2. As the original candidates 0 and 3 are no longer among the top candidates, their logical blocks are freed, and the reference counts of corresponding physical blocks are reduced. vLLM frees all physical blocks whose reference counts reach 0 (blocks 2, 4, 5, 8). Then, vLLM allocates new physical blocks (blocks 9-12) to store the new KV cache from the new candidates. Now, all candidates share blocks 0, 1, 3; candidates 0 and 1 share block 6, and candidates 2 and 3 further share block 7.
+交换。这是大多数虚拟内存实现使用的经典技术，将驱逐的页面复制到磁盘上的交换空间。在我们的情况下，我们将驱逐的块复制到CPU内存。如图4所示，除了GPU块分配器，vLLM还包括一个CPU块分配器来管理交换到CPU RAM的物理块。当vLLM为新令牌耗尽空闲物理块时，它选择一组序列进行驱逐，并将它们的KV cache传输到CPU。一旦它抢占一个序列并驱逐其块，vLLM停止接受新请求，直到所有被抢占的序列完成。一旦请求完成，其块从内存中释放，被抢占序列的块被带回以继续处理该序列。请注意，通过这种设计，交换到CPU RAM的块数永远不会超过GPU RAM中的总物理块数，因此CPU RAM上的交换空间受限于为KV cache分配的GPU内存。
 
-Previous LLM serving systems require frequent memory copies of the KV cache across the beam candidates. For example, in the case shown in Fig. 9, after the dotted line, candidate 3 would need to copy a large portion of candidate 2's KV cache to continue generation. This frequent memory copy overhead is significantly reduced by vLLM's physical block sharing. In vLLM, most blocks of different beam candidates can be shared. The copy-on-write mechanism is applied only when the newly generated tokens are within an old shared block, as in parallel decoding. This involves only copying one block of data.
+全局而言，对于每个解码迭代，vLLM首先选择一组候选序列进行批处理（更多细节见§4.5），并为新需要的逻辑块分配物理块。然后，vLLM将当前迭代的所有输入令牌（即提示阶段请求的所有令牌和生成阶段请求的最新令牌）连接为一个序列，并馈送到LLM中。在LLM计算期间，vLLM使用PagedAttention内核访问以逻辑KV块形式存储的先前KV cache，并将新生成的KV cache保存到物理KV块中。在一个KV块内存储多个令牌（块大小 $>1$ ）使PagedAttention内核能够并行处理更多位置的KV cache，从而提高硬件利用率和减少延迟。然而，更大的块大小也会增加内存碎片。我们在§7.2中研究块大小的影响。
 
-Shared prefix. Commonly, the LLM user provides a (long) description of the task including instructions and example inputs and outputs, also known as system prompt [36]. The description is concatenated with the actual task input to form the prompt of the request. The LLM generates outputs based
+再次，随着更多令牌及其KV cache的生成，vLLM动态地将新的物理块分配给逻辑块。由于所有块从左到右填充，并且只有当所有先前的块都已满时才分配新的物理块，vLLM将一个请求的所有内存浪费限制在一个块内，因此可以有效地利用所有内存，如图2所示。这允许更多请求装入内存进行批处理——从而提高吞吐量。一旦请求完成其生成，其KV块可以被释放以存储其他请求的KV cache。在图7中，我们展示了vLLM管理两个序列内存的示例。两个序列的逻辑块映射到GPU工作器中块引擎保留的空间内的不同物理块。两个序列的相邻逻辑块不需要在物理GPU内存中连续，物理块的空间可以被两个序列有效利用。
 
-![](images/7c6d6a59af401fe9cec38a0f468947dfe65d40a090d68e60c55cd486d77ee5ef.jpg)  
-Figure 10. Shared prompt example for machine translation. The examples are adopted from [5].
+# 4.4 其他解码场景的应用
 
-on the full prompt. Fig. 10 shows an example. Moreover, the shared prefix can be further tuned, via prompt engineering, to improve the accuracy of the downstream tasks [26, 27].
+$\S 4.3$ 展示了PagedAttention和vLLM如何处理基本解码算法，例如贪婪解码和采样，这些算法将一个用户提示作为输入并生成单个输出序列。在许多成功的LLM应用[18, 34]中，LLM服务必须提供更复杂的解码场景，这些场景表现出复杂的访问模式和更多的内存共享机会。我们在本节展示vLLM在它们身上的普遍适用性。
 
-For this type of application, many user prompts share a prefix, thus the LLM service provider can store the KV cache of the prefix in advance to reduce the redundant computation spent on the prefix. In vLLM, this can be conveniently achieved by reserving a set of physical blocks for a set of predefined shared prefixes by the LLM service provider, as how OS handles shared library across processes. A user input prompt with the shared prefix can simply map its logical blocks to the cached physical blocks (with the last block marked copy-on-write). The prompt phase computation only needs to execute on the user's task input.
+并行采样。在基于LLM的程序助手[6, 18]中，LLM为单个输入提示生成多个采样输出；用户可以从各种候选中选择最喜欢的输出。到目前为止，我们隐式假设一个请求生成单个序列。在本文的剩余部分，我们假设更一般的情况，即一个请求生成多个序列。在并行采样中，一个请求包括共享相同输入提示的多个样本，允许提示的KV cache也共享。通过其PagedAttention和分页内存管理，vLLM可以轻松实现这种共享并节省内存。
 
-Mixed decoding methods. The decoding methods discussed earlier exhibit diverse memory sharing and accessing patterns. Nonetheless, vLLM facilitates the simultaneous processing of requests with different decoding preferences, which existing systems cannot efficiently do. This is because vLLM conceals the complex memory sharing between different sequences via a common mapping layer that translates logical blocks to physical blocks. The LLM and its execution kernel only see a list of physical block IDs for each sequence and do not need to handle sharing patterns across sequences. Compared to existing systems, this approach broadens the batching opportunities for requests with different sampling requirements, ultimately increasing the system's overall throughput.
+图8显示了两个输出的并行解码示例。由于两个输出共享相同的提示，我们仅在提示阶段为提示状态保留一个副本的空间；两个序列提示的逻辑块都映射到相同的物理块：两个序列的逻辑块0和1分别映射到物理块7和1。由于单个物理块可以映射到多个逻辑块，我们为每个物理块引入一个引用计数。在这种情况下，物理块7和1的引用计数均为2。在生成阶段，两个输出采样不同的输出令牌，需要单独的KV cache存储。vLLM在块粒度上为需要被多个序列修改的物理块实现写时复制机制，类似于OS虚拟内存中的写时复制技术（例如，在fork进程时）。具体来说，在图8中，当样本A1需要写入其最后一个逻辑块（逻辑块1）时，vLLM识别到相应物理块（物理块1）的引用计数大于1；它分配一个新的物理块（物理块3），指示块引擎从物理块1复制信息，并将引用计数减少到1。接下来，当样本A2写入物理块1时，引用计数已减少到1；因此A2直接将其新生成的KV cache写入物理块1。
 
-# 4.5 Scheduling and Preemption
+总之，vLLM实现了跨多个输出样本共享大部分用于存储提示KV cache的空间，除了最后的逻辑块，该块由写时复制机制管理。通过在多个样本之间共享物理块，可以大大减少内存使用，特别是对于长输入提示。
 
-When the request traffic surpasses the system's capacity, vLLM must prioritize a subset of requests. In vLLM, we adopt the first-come-first-serve (FCFS) scheduling policy for all requests, ensuring fairness and preventing starvation. When vLLM needs to preempt requests, it ensures that the earliest arrived requests are served first and the latest requests are preempted first.
+波束搜索。在LLM任务如机器翻译[59]中，用户期望LLM输出最合适的 $k$ 个翻译。波束搜索[49]被广泛用于从LLM解码最可能的输出序列，因为它减轻了完全遍历样本空间的计算复杂性。该算法依赖于波束宽度参数 $k$ ，它决定每一步保留的顶级候选数量。在解码过程中，波束搜索通过考虑所有可能的令牌来扩展波束中的每个候选序列，使用LLM计算它们各自的概率，并保留 $k \cdot |V|$ 个候选中的前 $k$ 个最可能序列，其中 $|V|$ 是词汇表大小。
 
-LLM services face a unique challenge: the input prompts for an LLM can vary significantly in length, and the resulting output lengths are not known a priori, contingent on both the input prompt and the model. As the number of requests and their outputs grow, vLLM can run out of the GPU's physical blocks to store the newly generated KV cache. There are two classic questions that vLLM needs to answer in this
+与并行解码不同，波束搜索不仅促进初始提示块的共享，还促进不同候选之间其他块的共享，并且随着解码过程的推进，共享模式动态变化，类似于OS中由复合fork创建的进程树。图9显示了vLLM如何管理波束搜索示例的KV块，其中 $k = 4$ 。在虚线所示的迭代之前，每个候选序列已使用了4个完整的逻辑块。所有波束候选共享第一个块0（即提示）。候选3从第二个块开始与其他候选分叉。候选0-2共享前3个块，在第四块分叉。在后续迭代中，前4个最可能的候选都源自候选1和2。由于原始候选0和3不再属于顶级候选，它们的逻辑块被释放，相应物理块的引用计数减少。vLLM释放所有引用计数达到0的物理块（块2、4、5、8）。然后，vLLM分配新的物理块（块9-12）来存储来自新候选的新KV cache。现在，所有候选共享块0、1、3；候选0和1共享块6，候选2和3进一步共享块7。
 
-context: (1) Which blocks should it evict? (2) How to recover evicted blocks if needed again? Typically, eviction policies use heuristics to predict which block will be accessed furthest in the future and evict that block. Since in our case we know that all blocks of a sequence are accessed together, we implement an all-or-nothing eviction policy, i.e., either evict all or none of the blocks of a sequence. Furthermore, multiple sequences within one request (e.g., beam candidates in one beam search request) are gang-scheduled as a sequence group. The sequences within one sequence group are always preempted or rescheduled together due to potential memory sharing across those sequences. To answer the second question of how to recover an evicted block, we consider two techniques:
+先前的LLM服务系统需要频繁地在波束候选之间复制KV cache。例如，在图9所示的情况下，在虚线之后，候选3需要复制候选2的大部分KV cache以继续生成。vLLM的物理块共享显著减少了这种频繁的内存复制开销。在vLLM中，不同波束候选的大多数块可以共享。写时复制机制仅当新生成的令牌位于旧的共享块内时应用，如在并行解码中。这仅涉及复制一个块的数据。
 
-Swapping. This is the classic technique used by most virtual memory implementations which copy the evicted pages to a swap space on the disk. In our case, we copy evicted blocks to the CPU memory. As shown in Fig. 4, besides the GPU block allocator, vLLM includes a CPU block allocator to manage the physical blocks swapped to CPU RAM. When vLLM exhausts free physical blocks for new tokens, it selects a set of sequences to evict and transfer their KV cache to the CPU. Once it preempts a sequence and evicts its blocks, vLLM stops accepting new requests until all preempted sequences are completed. Once a request completes, its blocks are freed from memory, and the blocks of a preempted sequence are brought back in to continue the processing of that sequence. Note that with this design, the number of blocks swapped to the CPU RAM never exceeds the number of total physical blocks in the GPU RAM, so the swap space on the CPU RAM is bounded by the GPU memory allocated for the KV cache.
+共享前缀。通常，LLM用户提供（长）任务描述，包括指令和示例输入输出，也称为系统提示[36]。该描述与实际任务输入连接形成请求的提示。LLM基于完整提示生成输出。图10显示了一个示例。此外，可以通过提示工程进一步调整共享前缀，以提高下游任务的准确性[26, 27]。
 
-Recomputation. In this case, we simply recompute the KV cache when the preempted sequences are rescheduled. Note that recomputation latency can be significantly lower than the original latency, as the tokens generated at decoding can be concatenated with the original user prompt as a new prompt—their KV cache at all positions can be generated in one prompt phase iteration.
+对于这种类型的应用，许多用户提示共享一个前缀，因此LLM服务提供商可以预先存储前缀的KV cache，以减少花费在前缀上的冗余计算。在vLLM中，这可以通过为LLM服务提供商预定义的一组共享前缀保留一组物理块来方便地实现，就像OS处理进程间的共享库一样。具有共享前缀的用户输入提示可以简单地将其逻辑块映射到缓存的物理块（最后一块标记为写时复制）。提示阶段计算只需要在用户的任务输入上执行。
 
-The performances of swapping and recomputation depend on the bandwidth between CPU RAM and GPU memory and the computation power of the GPU. We examine the speeds of swapping and recomputation in §7.3.
+混合解码方法。前面讨论的解码方法表现出多样的内存共享和访问模式。尽管如此，vLLM促进了同时处理具有不同解码偏好的请求，而现有系统无法高效做到这一点。这是因为vLLM通过一个将逻辑块转换为物理块的公共映射层隐藏了不同序列之间的复杂内存共享。LLM及其执行内核只看到每个序列的物理块ID列表，不需要处理跨序列的共享模式。与现有系统相比，这种方法拓宽了具有不同采样要求的请求的批处理机会，最终提高了系统的整体吞吐量。
 
-# 4.6 Distributed Execution
+# 4.5 调度和抢占
 
-Many LLMs have parameter sizes exceeding the capacity of a single GPU [5, 9]. Therefore, it is necessary to partition them across distributed GPUs and execute them in a model parallel fashion [28, 63]. This calls for a memory manager capable of handling distributed memory. vLLM is effective in distributed settings by supporting the widely used Megatron-LM style tensor model parallelism strategy on Transformers [47]. This strategy adheres to an SPMD (Single Program Multiple Data) execution schedule, wherein the linear layers are partitioned
+当请求流量超过系统容量时，vLLM必须优先处理一部分请求。在vLLM中，我们对所有请求采用先到先服务（FCFS）调度策略，确保公平性并防止饥饿。当vLLM需要抢占请求时，它确保最先到达的请求首先被服务，最新的请求首先被抢占。
 
-Table 1. Model sizes and server configurations.  
+LLM服务面临一个独特的挑战：LLM的输入提示长度可能差异很大，并且输出长度是事先未知的，取决于输入提示和模型。随着请求数量及其输出的增长，vLLM可能会耗尽GPU的物理块来存储新生成的KV cache。在此背景下，vLLM需要回答两个经典问题：（1）应该驱逐哪些块？（2）如果需要再次使用，如何恢复被驱逐的块？通常，驱逐策略使用启发式方法来预测哪个块将在未来最远的时间被访问并驱逐该块。由于在我们的情况下我们知道一个序列的所有块是一起访问的，我们实现了一种全有或全无的驱逐策略，即要么驱逐一个序列的所有块，要么一个都不驱逐。此外，一个请求内的多个序列（例如，一个波束搜索请求中的波束候选）作为序列组进行组调度。一个序列组内的序列总是被一起抢占或重新调度，因为这些序列之间可能存在内存共享。为了回答如何恢复被驱逐块的第二个问题，我们考虑两种技术：
 
-<table><tr><td>Model size</td><td>13B</td><td>66B</td><td>175B</td></tr><tr><td>GPUs</td><td>A100</td><td>4×A100</td><td>8×A100-80GB</td></tr><tr><td>Total GPU memory</td><td>40 GB</td><td>160 GB</td><td>640 GB</td></tr><tr><td>Parameter size</td><td>26 GB</td><td>132 GB</td><td>346 GB</td></tr><tr><td>Memory for KV cache</td><td>12 GB</td><td>21 GB</td><td>264 GB</td></tr><tr><td>Max. # KV cache slots</td><td>15.7K</td><td>9.7K</td><td>60.1K</td></tr></table>
+交换。这是大多数虚拟内存实现使用的经典技术，将驱逐的页面复制到磁盘上的交换空间。在我们的情况下，我们将驱逐的块复制到CPU内存。如图4所示，除了GPU块分配器，vLLM还包括一个CPU块分配器来管理交换到CPU RAM的物理块。当vLLM为新令牌耗尽空闲物理块时，它选择一组序列进行驱逐，并将它们的KV cache传输到CPU。一旦它抢占一个序列并驱逐其块，vLLM停止接受新请求，直到所有被抢占的序列完成。一旦请求完成，其块从内存中释放，被抢占序列的块被带回以继续处理该序列。请注意，通过这种设计，交换到CPU RAM的块数永远不会超过GPU RAM中的总物理块数，因此CPU RAM上的交换空间受限于为KV cache分配的GPU内存。
 
-to perform block-wise matrix multiplication, and the GPUs constantly synchronize intermediate results via an allreduce operation. Specifically, the attention operator is split on the attention head dimension, each SPMD process takes care of a subset of attention heads in multi-head attention.
+重新计算。在这种情况下，当被抢占的序列重新调度时，我们简单地重新计算KV cache。请注意，重新计算的延迟可能显著低于原始延迟，因为在解码时生成的令牌可以与原始用户提示连接作为新提示——它们在所有位置的KV cache可以在一个提示阶段迭代中生成。
 
-We observe that even with model parallel execution, each model shard still processes the same set of input tokens, thus requiring the KV Cache for the same positions. Therefore, vLLM features a single KV cache manager within the centralized scheduler, as in Fig. 4. Different GPU workers share the manager, as well as the mapping from logical blocks to physical blocks. This common mapping allows GPU workers to execute the model with the physical blocks provided by the scheduler for each input request. Although each GPU worker has the same physical block IDs, a worker only stores a portion of the KV cache for its corresponding attention heads.
+交换和重新计算的性能取决于CPU RAM和GPU内存之间的带宽以及GPU的计算能力。我们在§7.3中检查交换和重新计算的速度。
 
-In each step, the scheduler first prepares the message with input token IDs for each request in the batch, as well as the block table for each request. Next, the scheduler broadcasts this control message to the GPU workers. Then, the GPU workers start to execute the model with the input token IDs. In the attention layers, the GPU workers read the KV cache according to the block table in the control message. During execution, the GPU workers synchronize the intermediate results with the all-reduce communication primitive without the coordination of the scheduler, as in [47]. In the end, the GPU workers send the sampled tokens of this iteration back to the scheduler. In summary, GPU workers do not need to synchronize on memory management as they only need to receive all the memory management information at the beginning of each decoding iteration along with the step inputs.
+# 4.6 分布式执行
 
-# 5 Implementation
+许多LLM的参数大小超过了单个GPU的容量[5, 9]。因此，有必要将它们分区到分布式GPU上并以模型并行的方式执行[28, 63]。这需要一个能够处理分布式内存的内存管理器。vLLM通过支持Transformers上广泛使用的Megatron-LM风格张量模型并行策略[47]，在分布式设置中有效。该策略遵循SPMD（单程序多数据）执行计划，其中线性层被分区
 
-vLLM is an end-to-end serving system with a FastAPI [15] frontend and a GPU-based inference engine. The frontend extends the OpenAI API [34] interface, allowing users to customize sampling parameters for each request, such as the maximum sequence length and the beam width  $k$ . The vLLM engine is written in 8.5K lines of Python and 2K lines of C++/CUDA code. We develop control-related components including the scheduler and the block manager in Python while developing custom CUDA kernels for key operations such as PagedAttention. For the model executor, we implement popular LLMs such as GPT [5], OPT [62], and LLaMA [52] using
+表1. 模型大小和服务器配置。  
+
+<table><tr><td>模型大小</td><td>13B</td><td>66B</td><td>175B</td></tr><tr><td>GPU</td><td>A100</td><td>4×A100</td><td>8×A100-80GB</td></tr><tr><td>总GPU内存</td><td>40 GB</td><td>160 GB</td><td>640 GB</td></tr><tr><td>参数大小</td><td>26 GB</td><td>132 GB</td><td>346 GB</td></tr><tr><td>KV cache内存</td><td>12 GB</td><td>21 GB</td><td>264 GB</td></tr><tr><td>最大KV cache槽数</td><td>15.7K</td><td>9.7K</td><td>60.1K</td></tr></table>
+
+以执行分块矩阵乘法，并且GPU通过allreduce操作不断同步中间结果。具体来说，注意力算子按注意力头维度分割，每个SPMD进程负责多头注意力中的一部分注意力头。
+
+我们观察到，即使使用模型并行执行，每个模型分片仍然处理相同的输入令牌集，因此需要相同位置的KV cache。因此，vLLM在集中式调度器中包含一个单一的KV cache管理器，如图4所示。不同的GPU工作器共享该管理器，以及从逻辑块到物理块的映射。这种公共映射允许GPU工作器使用调度器为每个输入请求提供的物理块执行模型。虽然每个GPU工作器具有相同的物理块ID，但一个工作器仅存储其对应注意力头的KV cache的一部分。
+
+在每个步骤中，调度器首先为批次中每个请求准备包含输入令牌ID的消息，以及每个请求的块表。接下来，调度器将此控制消息广播到GPU工作器。然后，GPU工作器开始使用输入令牌ID执行模型。在注意力层中，GPU工作器根据控制消息中的块表读取KV cache。在执行过程中，GPU工作器使用all-reduce通信原语同步中间结果，无需调度器的协调，如[47]所述。最后，GPU工作器将此迭代的采样令牌发送回调度器。总之，GPU工作器无需在内存管理上同步，因为它们只需要在每个解码迭代开始时接收所有内存管理信息以及步骤输入。
+
+# 5 实现
+
+vLLM是一个具有FastAPI [15]前端和基于GPU的推理引擎的端到端服务系统。前端扩展了OpenAI API [34]接口，允许用户为每个请求自定义采样参数，例如最大序列长度和波束宽度  $k$ 。vLLM引擎用8.5K行Python和2K行C++/CUDA代码编写。我们使用Python开发控制相关组件，包括调度器和块管理器，同时为关键操作（如PagedAttention）开发自定义CUDA内核。对于模型执行器，我们使用
 
 ![](images/9115dbefdc2acaf7c43c38852e400164fd48b47a25f0c6c39d4df1fea64754c4.jpg)  
 (a) ShareGPT
 
 ![](images/cd29d78c1e6728397e2891d9321703ef157e1bf858911783049274421d16ba30.jpg)  
 (b) Alpaca  
-Figure 11. Input and output length distributions of the (a) ShareGPT and (b) Alpaca datasets.
+图11. (a) ShareGPT和(b) Alpaca数据集的输入和输出长度分布。
 
-PyTorch [39] and Transformers [58]. We use NCCL [32] for tensor communication across the distributed GPU workers.
+PyTorch [39]和Transformers [58]实现流行的LLM，如GPT [5]、OPT [62]和LLaMA [52]。我们使用NCCL [32]在分布式GPU工作器之间进行张量通信。
 
-# 5.1 Kernel-level Optimization
+# 5.1 内核级优化
 
-Since PagedAttention introduces memory access patterns that are not efficiently supported by existing systems, we develop several GPU kernels for optimizing it. (1) Fused reshape and block write. In every Transformer layer, the new KV cache are split into blocks, reshaped to a memory layout optimized for block read, then saved at positions specified by the block table. To minimize kernel launch overheads, we fuse them into a single kernel. (2) Fusing block read and attention. We adapt the attention kernel in FasterTransformer [31] to read KV cache according to the block table and perform attention operations on the fly. To ensure coalesced memory access, we assign a GPU warp to read each block. Moreover, we add support for variable sequence lengths within a request batch. (3) Fused block copy. Block copy operations, issued by the copy-on-write mechanism, may operate on discontinuous blocks. This can lead to numerous invocations of small data movements if we use the CUDAMemcpyAsync API. To mitigate the overhead, we implement a kernel that batches the copy operations for different blocks into a single kernel launch.
+由于PagedAttention引入了现有系统未高效支持的内存访问模式，我们开发了几个GPU内核来优化它。(1) 融合的reshape和块写入。在每个Transformer层中，新的KV cache被分割成块，reshape为针对块读取优化的内存布局，然后保存在块表指定的位置。为了最小化内核启动开销，我们将它们融合到单个内核中。(2) 融合块读取和注意力。我们调整FasterTransformer [31]中的注意力内核，使其根据块表读取KV cache并即时执行注意力操作。为了确保合并的内存访问，我们分配一个GPU warp来读取每个块。此外，我们增加了对请求批次内可变序列长度的支持。(3) 融合的块复制。写时复制机制发出的块复制操作可能在不连续的块上运行。如果我们使用CUDAMemcpyAsync API，这可能导致大量小数据移动的调用。为了减轻开销，我们实现了一个内核，将不同块的复制操作批处理到单个内核启动中。
 
-# 5.2 Supporting Various Decoding Algorithms
+# 5.2 支持各种解码算法
 
-vLLM implements various decoding algorithms using three key methods: fork, append, and free. The fork method creates a new sequence from an existing one. The append method appends a new token to the sequence. Finally, the free method deletes the sequence. For instance, in parallel sampling, vLLM creates multiple output sequences from the single input sequence using the fork method. It then adds new tokens to these sequences in every iteration with append, and deletes sequences that meet a stopping condition using free. The same strategy is also applied in beam search and prefix sharing by vLLM. We believe future decoding algorithms can also be supported by combining these methods.
+vLLM使用三个关键方法实现各种解码算法：fork、append和free。fork方法从现有序列创建新序列。append方法将新令牌附加到序列。最后，free方法删除序列。例如，在并行采样中，vLLM使用fork方法从单个输入序列创建多个输出序列。然后它在每次迭代中使用append向这些序列添加新令牌，并使用free删除满足停止条件的序列。相同的策略也应用于vLLM中的波束搜索和前缀共享。我们相信未来的解码算法也可以通过组合这些方法来支持。
 
-# 6 Evaluation
+# 6 评估
 
-In this section, we evaluate the performance of vLLM under a variety of workloads.
+在本节中，我们在各种工作负载下评估vLLM的性能。
 
 ![](images/1573cbece53404746149bcf54722dce2dbfcfea123abdc3b9950999bb141d731.jpg)  
 (a) OPT-13B, 1 GPU, ShareGPT
@@ -279,227 +255,204 @@ In this section, we evaluate the performance of vLLM under a variety of workload
 ![](images/5a5f30061c8883b851b1388537457ca8f1c8f035c50c9dfb4240146523683cbe.jpg)  
 (e) OPT-66B, 4 GPUs, Alpaca
 
-![](images/0e6f8e1a418cd283c6cda37c511b1d0363fc33a3434e67e8003cd7da1576bbfd.jpg)  
+![](images/0e6f8e1a418cd2836c6da37c511b1d0363fc33a3434e67e8003cd7da1576bbfd.jpg)  
 (f) OPT-175B, 8 GPUs, Alpaca
 
 ![](images/89b02ef496b017ec5bcd044ff270a139734100e038285ef33ebfb7880c2d847b.jpg)  
 (a) ShareGPT  
-Figure 13. Average number of batched requests when serving OPT-13B for the ShareGPT (2 reqs/s) and Alpaca (30 reqs/s) traces.
+图13. 为ShareGPT (2 reqs/s)和Alpaca (30 reqs/s)追踪服务OPT-13B时的平均批处理请求数。
 
 ![](images/0f457038c2cf66409e2bec3d4e731c3052378fdd7c3cc1df2e9208c9ad52718b.jpg)  
-Figure 12. Single sequence generation with OPT models on the ShareGPT and Alpaca dataset  
+图12. 在ShareGPT和Alpaca数据集上使用OPT模型的单序列生成  
 (b) Alpaca
 
-# 6.1 Experimental Setup
+# 6.1 实验设置
 
-Model and server configurations. We use OPT [62] models with 13B, 66B, and 175B parameters and LLaMA [52] with 13B parameters for our evaluation. 13B and 66B are popular sizes for LLMs as shown in an LLM leaderboard [38], while 175B is the size of the famous GPT-3 [5] model. For all of our experiments, we use A2 instances with NVIDIA A100 GPUs on Google Cloud Platform. The detailed model sizes and server configurations are shown in Table 1.
+模型和服务器配置。我们使用13B、66B和175B参数的OPT [62]模型和13B参数的LLaMA [52]进行评估。13B和66B是LLM的流行大小，如LLM排行榜[38]所示，而175B是著名的GPT-3 [5]模型的大小。对于我们所有的实验，我们使用Google Cloud Platform上带有NVIDIA A100 GPU的A2实例。详细的模型大小和服务器配置如表1所示。
 
-Workloads. We synthesize workloads based on ShareGPT [51] and Alpaca [50] datasets, which contain input and output texts of real LLM services. The ShareGPT dataset is a collection of user-shared conversations with ChatGPT [35]. The Alpaca dataset is an instruction dataset generated by GPT-3.5 with self-instruct [57]. We tokenize the datasets and use their input and output lengths to synthesize client requests. As shown in Fig. 11, the ShareGPT dataset has  $8.4 \times$  longer input prompts and  $5.8 \times$  longer outputs on average than the Alpaca dataset, with higher variance. Since these datasets do not include timestamps, we generate request arrival times using Poisson distribution with different request rates.
+工作负载。我们基于ShareGPT [51]和Alpaca [50]数据集合成工作负载，这些数据集包含真实LLM服务的输入和输出文本。ShareGPT数据集是用户与ChatGPT [35]分享的对话集合。Alpaca数据集是由GPT-3.5使用self-instruct [57]生成的指令数据集。我们对数据集进行令牌化，并使用其输入和输出长度合成客户端请求。如图11所示，ShareGPT数据集的输入提示平均比Alpaca数据集长  $8.4 \times$ ，输出平均长  $5.8 \times$ ，方差更高。由于这些数据集不包含时间戳，我们使用泊松分布以不同的请求率生成请求到达时间。
 
-Baseline 1: FasterTransformer. FasterTransformer [31] is a distributed inference engine highly optimized for latency.
+基线1: FasterTransformer。FasterTransformer [31]是一个针对延迟高度优化的分布式推理引擎。由于FasterTransformer没有自己的调度器，我们实现了一个具有动态批处理机制的自定义调度器，类似于现有的服务系统如Triton [30]。具体来说，我们根据GPU内存容量为每个实验设置尽可能大的最大批处理大小  $B$ 。调度器获取最多  $B$  个最早到达的请求，并将批次发送到FasterTransformer进行处理。
 
-As FasterTransformer does not have its own scheduler, we implement a custom scheduler with a dynamic batching mechanism similar to the existing serving systems such as Triton [30]. Specifically, we set a maximum batch size  $B$  as large as possible for each experiment, according to the GPU memory capacity. The scheduler takes up to  $B$  number of earliest arrived requests and sends the batch to FasterTransformer for processing.
+基线2: Orca。Orca [60]是一个针对吞吐量优化的最先进LLM服务系统。由于Orca不公开可用，我们实现了自己的Orca版本。我们假设Orca使用伙伴分配算法来确定存储KV cache的内存地址。我们基于其过度保留请求输出空间的程度实现了三个版本的Orca：
 
-Baseline 2: Orca. Orca [60] is a state-of-the-art LLM serving system optimized for throughput. Since Orca is not publicly available for use, we implement our own version of Orca. We assume Orca uses the buddy allocation algorithm to determine the memory address to store KV cache. We implement three versions of Orca based on how much it over-reserves the space for request outputs:
+- Orca (Oracle)。我们假设系统知道请求将实际生成的输出长度。这显示了Orca的上限性能，在实践中是不可行的。  
+- Orca (Pow2)。我们假设系统最多过度保留  $2 \times$  的输出空间。例如，如果真实输出长度为25，则为输出保留32个位置。  
+- Orca (Max)。我们假设系统始终为模型的最大序列长度保留空间，即2048个令牌。
 
-- Orca (Oracle). We assume the system has the knowledge of the lengths of the outputs that will be actually generated for the requests. This shows the upper-bound performance of Orca, which is infeasible to achieve in practice.  
-- Orca (Pow2). We assume the system over-reserves the space for outputs by at most  $2 \times$ . For example, if the true output length is 25, it reserves 32 positions for outputs.  
-- Orca (Max). We assume the system always reserves the space up to the maximum sequence length of the model, i.e., 2048 tokens.
-
-Key metrics. We focus on serving throughput. Specifically, using the workloads with different request rates, we measure normalized latency of the systems, the mean of every request's end-to-end latency divided by its output length, as in Orca [60]. A high-throughput serving system should retain low normalized latency against high request rates. For most experiments, we evaluate the systems with 1-hour traces. As an exception, we use 15-minute traces for the OPT-175B model due to the cost limit.
+关键指标。我们关注服务吞吐量。具体来说，使用不同请求率的工作负载，我们测量系统的归一化延迟，即每个请求的端到端延迟除以其输出长度的平均值，如Orca [60]所述。一个高吞吐量的服务系统应在高请求率下保持较低的归一化延迟。对于大多数实验，我们使用1小时追踪评估系统。作为例外，由于成本限制，我们对OPT-175B模型使用15分钟追踪。
 
 ![](images/2fd60a02aee74b8bf10dbaac6aaeb70ef6afa1f3aabbe81a75b1b550ea1c4cd6.jpg)  
-(a) parallel generation (parallel size  $= 2$ )
+(a) 并行生成（并行大小  $= 2$ ）
 
 ![](images/299e2b426acacc86b95f33585d7873ed99455d6e6d76e2e77babe7dca6132010.jpg)  
-(b) parallel generation (parallel size  $= 4$ )
+(b) 并行生成（并行大小  $= 4$ ）
 
 ![](images/af0326f1a197f5b4c580b2cfb12ebf0efbff24923c5f9807a5da48553986df27.jpg)  
-(c) parallel generation (parallel size  $= 6$ )
+(c) 并行生成（并行大小  $= 6$ ）
 
 ![](images/8084182b86612f4c57b453587263b47ebaf1da7695361f316325e2c366d303bf.jpg)  
-(d) beam search (beam width  $= 2$ )
+(d) 波束搜索（波束宽度  $= 2$ ）
 
 ![](images/3b5a9e65dd2de30b2d4ac9c1b44bb36634da0848d33367966830c90366f57517.jpg)  
-(e) beam search (beam width  $= 4$ )
+(e) 波束搜索（波束宽度  $= 4$ ）
 
 ![](images/c0dc7983a81f071c20769385eb19527443186fd0219181cd09036ed27320afbe.jpg)  
-(f) beam search (beam width  $= 6$ )
+(f) 波束搜索（波束宽度  $= 6$ ）
 
-# 6.2 Basic Sampling
+# 6.2 基本采样
 
-We evaluate the performance of vLLM with basic sampling (one sample per request) on three models and two datasets. The first row of Fig. 12 shows the results on the ShareGPT dataset. The curves illustrate that as the request rate increases, the latency initially increases at a gradual pace but then suddenly explodes. This can be attributed to the fact that when the request rate surpasses the capacity of the serving system, the queue length continues to grow infinitely and so does the latency of the requests.
+我们在三个模型和两个数据集上使用基本采样（每个请求一个样本）评估vLLM的性能。图12的第一行显示了ShareGPT数据集上的结果。曲线说明随着请求率的增加，延迟最初以渐进的步伐增加，然后突然爆发。这可以归因于当请求率超过服务系统的容量时，队列长度继续无限增长，请求的延迟也随之增加。
 
-On the ShareGPT dataset, vLLM can sustain  $1.7 \times -2.7 \times$  higher request rates compared to Orca (Oracle) and  $2.7 \times -8 \times$  compared to Orca (Max), while maintaining similar latencies. This is because vLLM's PagedAttention can efficiently manage the memory usage and thus enable batching more requests than Orca. For example, as shown in Fig. 13a, for OPT-13B vLLM processes  $2.2 \times$  more requests at the same time than Orca (Oracle) and  $4.3 \times$  more requests than Orca (Max). Compared to FasterTransformer, vLLM can sustain up to  $22 \times$  higher request rates, as FasterTransformer does not utilize a fine-grained scheduling mechanism and inefficiently manages the memory like Orca (Max).
+在ShareGPT数据集上，vLLM可以维持比Orca (Oracle)高  $1.7 \times -2.7 \times$ 的请求率，比Orca (Max)高  $2.7 \times -8 \times$ 的请求率，同时保持类似的延迟。这是因为vLLM的PagedAttention可以有效地管理内存使用，从而比Orca能够批处理更多请求。例如，如图13a所示，对于OPT-13B，vLLM同时处理的请求比Orca (Oracle)多  $2.2 \times$ ，比Orca (Max)多  $4.3 \times$ 。与FasterTransformer相比，vLLM可以维持高达  $22 \times$ 的请求率，因为FasterTransformer不使用细粒度调度机制，并且像Orca (Max)一样低效地管理内存。
 
-The second row of Fig. 12 and Fig. 13b shows the results on the Alpaca dataset, which follows a similar trend to the ShareGPT dataset. One exception is Fig. 12 (f), where vLLM's advantage over Orca (Oracle) and Orca (Pow2) is less pronounced. This is because the model and server configuration for OPT-175B (Table 1) allows for large GPU memory space available to store KV cache, while the Alpaca dataset has short sequences. In this setup, Orca (Oracle) and Orca (Pow2) can also batch a large number of requests despite the inefficiencies in their memory management. As a result, the performance of the systems becomes compute-bound rather than memory-bound.
+图12的第二行和图13b显示了Alpaca数据集上的结果，其趋势与ShareGPT数据集类似。一个例外是图12 (f)，其中vLLM相对于Orca (Oracle)和Orca (Pow2)的优势不那么明显。这是因为OPT-175B的模型和服务器配置（表1）允许大量GPU内存空间用于存储KV cache，而Alpaca数据集具有短序列。在此设置中，尽管内存管理效率低下，Orca (Oracle)和Orca (Pow2)也可以批处理大量请求。因此，系统的性能变得受计算限制而非内存限制。
 
 ![](images/2401cc9cd7a4f940c4ea9a0b92b6e1953efd81873c6a57d95e4ace978f85ea9d.jpg)  
-Figure 14. Parallel generation and beam search with OPT-13B on the Alpaca dataset.  
-(a) Parallel sampling  
-Figure 15. Average amount of memory saving from sharing KV blocks, when serving OPT-13B for the Alpaca trace.
+图14. 在Alpaca数据集上使用OPT-13B进行并行生成和波束搜索。  
+(a) 并行采样  
+图15. 当为Alpaca追踪服务OPT-13B时，通过共享KV块实现的平均内存节省量。
 
 ![](images/29a091a4a2c1b9edfb5de209b26c292c3f1a1c0f0f52000298621ac397075b4d.jpg)  
-(b) Beam search
+(b) 波束搜索
 
-# 6.3 Parallel Sampling and Beam Search
+# 6.3 并行采样和波束搜索
 
-We evaluate the effectiveness of memory sharing in PagedAttention with two popular sampling methods: parallel sampling and beam search. In parallel sampling, all parallel sequences in a request can share the KV cache for the prompt. As shown in the first row of Fig. 14, with a larger number of sequences to sample, vLLM brings more improvement over the Orca baselines. Similarly, the second row of Fig. 14 shows the results for beam search with different beam widths. Since beam search allows for more sharing, vLLM demonstrates even greater performance benefits. The improvement of vLLM over Orca (Oracle) on OPT-13B and the Alpaca dataset goes from  $1.3 \times$  in basic sampling to  $2.3 \times$  in beam search with a width of 6.
+我们使用两种流行的采样方法评估PagedAttention中内存共享的有效性：并行采样和波束搜索。在并行采样中，请求中的所有并行序列可以共享提示的KV cache。如图14的第一行所示，随着采样序列数量的增加，vLLM相对于Orca基线的改进更大。类似地，图14的第二行显示了不同波束宽度的波束搜索结果。由于波束搜索允许更多共享，vLLM展示了更大的性能优势。vLLM相对于Orca (Oracle)在OPT-13B和Alpaca数据集上的改进从基本采样中的  $1.3 \times$ 增加到波束搜索宽度为6时的  $2.3 \times$ 。
 
-Fig. 15 plots the amount of memory saving, computed by the number of blocks we saved by sharing divided by the number of total blocks without sharing. We show  $6.1\% - 9.8\%$  memory saving on parallel sampling and  $37.6\% - 55.2\%$  on beam search. In the same experiments with the ShareGPT dataset, we saw  $16.2\% - 30.5\%$  memory saving on parallel sampling and  $44.3\% - 66.3\%$  on beam search.
+图15绘制了内存节省量，通过共享节省的块数除以未共享的总块数计算。我们在并行采样上显示  $6.1\% - 9.8\%$ 的内存节省，在波束搜索上显示  $37.6\% - 55.2\%$ 的内存节省。在相同实验中使用ShareGPT数据集，我们在并行采样上看到  $16.2\% - 30.5\%$ 的内存节省，在波束搜索上看到  $44.3\% - 66.3\%$ 的内存节省。
 
-# 6.4 Shared prefix
+# 6.4 共享前缀
 
-We explore the effectiveness of vLLM for the case a prefix is shared among different input prompts, as illustrated in
+我们探索了vLLM在如图10所示的前缀在不同输入提示之间共享的情况下的有效性。对于模型，我们使用多语言的LLaMA-13B [52]。对于工作负载，我们使用WMT16 [4]英德翻译数据集，并合成两个包含指令和一些翻译示例的前缀。第一个前缀包含一个示例（即单样本），而另一个前缀包含5个示例（即少样本）。如图16 (a)所示，当共享单样本前缀时，vLLM实现了比Orca (Oracle)高  $1.67 \times$ 的吞吐量。此外，当共享更多示例时（图16 (b)），vLLM实现了比Orca (Oracle)高  $3.58 \times$ 的吞吐量。
+
+# 6.5 聊天机器人
+
+聊天机器人[8, 19, 35]是LLM最重要的应用之一。为了实现聊天机器人，我们让模型通过将聊天历史和最后一个用户查询连接到提示中来生成响应。我们使用ShareGPT数据集合成聊天历史和用户查询。由于OPT-13B模型的上下文长度有限，我们将提示截断到最后1024个令牌，并让模型最多生成1024个令牌。我们不存储不同对话轮次之间的KV cache，因为这样做会占用对话轮次之间其他请求的空间。
+
+图17显示，vLLM可以维持比三个Orca基线高  $2 \times$ 的请求率。由于ShareGPT数据集包含许多长对话，大多数请求的输入提示有1024个令牌。由于伙伴分配算法，Orca基线为请求输出保留1024个令牌的空间，无论它们如何预测输出长度。因此，三个Orca基线行为相似。相比之下，vLLM可以有效地
 
 ![](images/123aa689a291bafbbdc1d63a2d2222d4ad18737980e1613cefe350239b68743a.jpg)  
-Figure 16. Translation workload where the input prompts share a common prefix. The prefix includes (a) 1 example with 80 tokens or (b) 5 examples with 341 tokens.
+图16. 输入提示共享共同前缀的翻译工作负载。前缀包括(a) 1个示例，80个令牌或(b) 5个示例，341个令牌。
 
 ![](images/2a1c777e8b46fda81ec146958e38c2551039e1dc782eaf2b9e4b59e36fc98099.jpg)  
-Figure 17. Performance on chatbot workload.
+图17. 聊天机器人工作负载的性能。
 
-Fig. 10. For the model, we use LLaMA-13B [52], which is multilingual. For the workload, we use the WMT16 [4] English-to-German translation dataset and synthesize two prefixes that include an instruction and a few translation examples. The first prefix includes a single example (i.e., one-shot) while the other prefix includes 5 examples (i.e., few-shot). As shown in Fig. 16 (a), vLLM achieves  $1.67 \times$  higher throughput than Orca (Oracle) when the one-shot prefix is shared. Furthermore, when more examples are shared (Fig. 16 (b)), vLLM achieves  $3.58 \times$  higher throughput than Orca (Oracle).
+处理长提示，因为PagedAttention解决了内存碎片化和保留的问题。
 
-# 6.5 Chatbot
+# 7 消融研究
 
-A chatbot [8, 19, 35] is one of the most important applications of LLMs. To implement a chatbot, we let the model generate a response by concatenating the chatting history and the last user query into a prompt. We synthesize the chatting history and user query using the ShareGPT dataset. Due to the limited context length of the OPT-13B model, we cut the prompt to the last 1024 tokens and let the model generate at most 1024 tokens. We do not store the KV cache between different conversation rounds as doing this would occupy the space for other requests between the conversation rounds.
+在本节中，我们研究vLLM的各个方面，并通过消融实验评估我们的设计选择。
 
-Fig. 17 shows that vLLM can sustain  $2 \times$  higher request rates compared to the three Orca baselines. Since the ShareGPT dataset contains many long conversations, the input prompts for most requests have 1024 tokens. Due to the buddy allocation algorithm, the Orca baselines reserve the space for 1024 tokens for the request outputs, regardless of how they predict the output lengths. For this reason, the three Orca baselines behave similarly. In contrast, vLLM can effectively
+# 7.1 内核微基准测试
+
+PagedAttention中的动态块映射影响涉及存储KV cache的GPU操作的性能，即块读/写和注意力。与现有系统相比，我们的GPU内核（§5）涉及访问块表、执行额外分支和处理可变序列长度的额外开销。如图18a所示，与高度优化的FasterTransformer实现相比，这导致注意力内核延迟高  $20 - 26\%$ 。我们认为开销很小，因为它只影响注意力算子而不影响模型中的其他算子，如Linear。尽管存在开销，但PagedAttention使vLLM在端到端性能上显著优于FasterTransformer（§6）。
+
+# 7.2 块大小的影响
+
+块大小的选择可能对vLLM的性能产生重大影响。如果块大小太小，vLLM可能无法充分利用GPU的并行性来读取和处理KV cache。如果块大小太大，内部碎片增加，共享概率降低。
+
+在图18b中，我们使用固定请求率下的ShareGPT和Alpaca追踪以及基本采样，评估了具有不同块大小的vLLM的性能。在ShareGPT追踪中，块大小从16到128导致最佳性能。在Alpaca追踪中，虽然块大小16和32效果良好，但更大的块大小会显著降低性能，因为序列变得比块大小短。在实践中，我们发现块大小16足够大以有效利用GPU，并且足够小以避免在大多数工作负载中出现显著的内部碎片。因此，vLLM将其默认块大小设置为16。
 
 ![](images/94e6d0262576b716ec68139a5ac9add4421b4133583a3cecf75a2ce46ea862f0.jpg)  
-(a) Latency of attention kernels.
+(a) 注意力内核的延迟。
 
 ![](images/79211121c6996586d6961ae264caafcf30ba3defb66dd68947b4b37cc1538c83.jpg)  
-(b) End-to-end latency with different block sizes.  
-Figure 18. Ablation experiments.
+(b) 不同块大小下的端到端延迟。  
+图18. 消融实验。
 
-handle the long prompts, as PagedAttention resolves the problem of memory fragmentation and reservation.
+# 7.3 重新计算与交换的比较
 
-# 7 Ablation Studies
+vLLM支持重新计算和交换作为其恢复机制。为了理解两种方法之间的权衡，我们评估了它们的端到端性能，并微基准测试了它们的开销，如图19所示。我们的结果显示，交换在小块大小时会产生过多的开销。这是因为小块大小通常导致CPU和GPU之间大量的小数据传输，这限制了有效的PCIe带宽。相比之下，重新计算的开销在不同块大小下保持不变，因为重新计算不使用KV块。因此，当块大小较小时，重新计算更高效，而当块大小较大时，交换更高效，尽管重新计算的开销从不高于交换延迟的  $20\%$ 。对于中等块大小从16到64，两种方法表现出相当的端到端性能。
 
-In this section, we study various aspects of vLLM and evaluate the design choices we make with ablation experiments.
+# 8 讨论
 
-# 7.1 Kernel Microbenchmark
+将虚拟内存和分页技术应用于其他GPU工作负载。虚拟内存和分页的思想对于管理LLM服务中的KV cache是有效的，因为工作负载需要动态内存分配（因为输出长度事先未知），并且其性能受GPU内存容量的限制。然而，这通常不适用于每个GPU工作负载。例如，在DNN训练中，张量形状通常是静态的，因此可以提前优化内存分配。另一个例子是，在服务不是LLM的DNN时，内存效率的提高可能不会导致任何性能改进，因为性能主要受计算限制。在这种情况下，引入vLLM的技术可能反而会由于内存间接寻址和非连续块内存的额外开销而降低性能。然而，我们很高兴看到vLLM的技术被应用于具有类似于LLM服务特性的其他工作负载。
 
-The dynamic block mapping in PagedAttention affects the performance of the GPU operations involving the stored KV cache, i.e., block read/writes and attention. Compared to the existing systems, our GPU kernels (§5) involve extra overheads of accessing the block table, executing extra branches, and handling variable sequence lengths. As shown in Fig. 18a, this leads to  $20 - 26\%$  higher attention kernel latency, compared to the highly-optimized FasterTransformer implementation. We believe the overhead is small as it only affects the attention operator but not the other operators in the model, such as Linear. Despite the overhead, PagedAttention makes vLLM significantly outperform FasterTransformer in end-to-end performance (§6).
+在应用虚拟内存和分页时的LLM特定优化。vLLM通过利用特定于应用程序的语义重新解释并增强了虚拟内存和分页的思想。一个例子是vLLM的全有或全无的换出策略，该策略利用了一个事实：处理请求需要其所有对应的令牌状态存储在GPU内存中。另一个例子是用于恢复驱逐块的重新计算方法，这在操作系统中是不可行的。此外，vLLM通过将内存访问操作的GPU内核与其他操作（如注意力）的内核融合，减轻了分页中内存间接寻址的开销。
 
-# 7.2 Impact of Block Size
+# 9 相关工作
 
-The choice of block size can have a substantial impact on the performance of vLLM. If the block size is too small, vLLM may not fully utilize the GPU's parallelism for reading and processing KV cache. If the block size is too large, internal fragmentation increases and the probability of sharing decreases.
+通用模型服务系统。模型服务近年来一直是活跃的研究领域，许多系统被提出来解决深度学习模型部署的各个方面。Clipper [11]、TensorFlow Serving [33]、Nexus [45]、InferLine [10]和Clockwork [20]是一些早期的通用模型服务系统。它们研究用于服务单个或多个模型的批处理、缓存、放置和调度。最近，DVABatch [12]引入了多入口多出口批处理。REEF [21]和Shepherd [61]提出了服务中的抢占。AlpaServe [28]利用模型并行实现统计多路复用。然而，这些通用系统未能考虑LLM推理的自回归特性和令牌状态，导致优化机会的缺失。
 
-In Fig. 18b, we evaluate the performance of vLLM with different block sizes, using the ShareGPT and Alpaca traces with basic sampling under fixed request rates. In the ShareGPT trace, block sizes from 16 to 128 lead to the best performance. In the Alpaca trace, while the block size 16 and 32 work well, larger block sizes significantly degrade the performance since the sequences become shorter than the block sizes. In practice, we find that the block size 16 is large enough to efficiently utilize the GPU and small enough to avoid significant internal fragmentation in most workloads. Accordingly, vLLM sets its default block size as 16.
+专门用于Transformer的服务系统。由于Transformer架构的重要性，已经开发了许多专门用于它的服务系统。这些系统利用GPU内核优化[1, 29, 31, 56]、高级批处理机制[14, 60]、模型并行[1, 41, 60]和参数共享[64]来实现高效服务。其中，Orca [60]与我们的方法最相关。
 
-![](images/42addfd1ddbc9aa694f90950c1a74171a4d7006a3dfbe844fd0cfa892e7e1924.jpg)  
-(a) Microbenchmark
+与Orca的比较。Orca [60]中的迭代级调度和vLLM中的PagedAttention是互补的技术：虽然两个系统都旨在提高GPU利用率，从而提高LLM服务的吞吐量，但Orca通过调度和交错请求来实现，以便可以并行处理更多请求，而vLLM通过增加内存利用率来实现，以便更多请求的工作集可以装入内存。通过减少内存碎片和启用共享，vLLM在批次中并行运行更多请求，并实现比Orca快  $2 - 4 \times$ 的速度。实际上，像Orca中那样对请求进行细粒度调度和交错使内存管理更具挑战性，使得vLLM中提出的技术更加关键。
 
-![](images/3d7a90405e28e7216c0489f2257d4ac74efc56535d7314be61f9d531162533f7.jpg)  
-(b) End-to-end performance  
-Figure 19. (a) Overhead of recomputation and swapping for different block sizes. (b) Performance when serving OPT-13B with the ShareGPT traces at the same request rate.
+内存优化。加速器的计算能力和内存容量之间不断扩大的差距使得内存成为训练和推理的瓶颈。交换[23, 42, 55]、重新计算[7, 24]及其组合[40]已被用于减少训练的峰值内存。值得注意的是，FlexGen [46]研究了如何在有限的GPU内存下为LLM推理交换权重和令牌状态，但它不针对在线服务设置。OLLA [48]优化张量的生命周期和位置以减少碎片，但它不做细粒度的块级管理或在线服务。FlashAttention [13]应用平铺和内核优化以减少注意力计算的峰值内存并减少I/O成本。本文在在线服务的背景下引入了块级内存管理的新思想。
 
-# 7.3 Comparing Recomputation and Swapping
+# 10 结论
 
-vLLM supports both recomputation and swapping as its recovery mechanisms. To understand the tradeoffs between the two methods, we evaluate their end-to-end performance and microbenchmark their overheads, as presented in Fig. 19. Our results reveal that swapping incurs excessive overhead with small block sizes. This is because small block sizes often result in numerous small data transfers between CPU and GPU, which limits the effective PCIe bandwidth. In contrast, the overhead of recomputation remains constant across different block sizes, as recomputation does not utilize the KV blocks. Thus, recomputation is more efficient when the block size is small, while swapping is more efficient when the block size is large, though recomputation overhead is never higher than  $20\%$  of swapping's latency. For medium block sizes from 16 to 64, the two methods exhibit comparable end-to-end performance.
+本文提出了PagedAttention，一种新的注意力算法，允许注意力键和值存储在非连续的分页内存中，并介绍了vLLM，一个通过PagedAttention实现高效内存管理的高吞吐量LLM服务系统。受操作系统启发，我们展示了如何将现有技术（如虚拟内存和写时复制）进行调整，以高效管理KV cache并处理LLM服务中的各种解码算法。我们的实验表明，vLLM实现了比最先进系统高  $2 - 4\times$ 的吞吐量改进。
 
-# 8 Discussion
+# 致谢
 
-Applying the virtual memory and paging technique to other GPU workloads. The idea of virtual memory and paging is effective for managing the KV cache in LLM serving because the workload requires dynamic memory allocation (since the output length is not known a priori) and its performance is bound by the GPU memory capacity. However, this does not generally hold for every GPU workload. For example, in DNN training, the tensor shapes are typically static, and thus memory allocation can be optimized ahead of time. For another example, in serving DNNs that are not LLMs, an increase in memory efficiency may not result in any performance improvement since the performance is primarily compute-bound. In such scenarios, introducing the vLLM's techniques may rather degrade the performance due to the extra overhead of memory indirection and non-contiguous block memory. However, we would be excited to see vLLM's techniques being applied to other workloads with similar properties to LLM serving.
+我们要感谢Xiaoxuan Liu、Zhifeng Chen、Yanping Huang、匿名SOSP审稿人以及我们的指导者Lidong Zhou的深刻反馈。这项研究部分得到了Andreessen Horowitz、Anyscale、Astronomer、Google、IBM、Intel、Lacework、Microsoft、Mohamed Bin Zayed University of Artificial Intelligence、Samsung SDS、Uber和VMware的资助。
 
-LLM-specific optimizations in applying virtual memory and paging. vLLM re-interprets and augments the idea of virtual memory and paging by leveraging the application-specific semantics. One example is vLLM's all-or-nothing
+# 参考文献
 
-swap-out policy, which exploits the fact that processing a request requires all of its corresponding token states to be stored in GPU memory. Another example is the recomputation method to recover the evicted blocks, which is not feasible in OS. Besides, vLLM mitigates the overhead of memory indirection in paging by fusing the GPU kernels for memory access operations with those for other operations such as attention.
-
-# 9 Related Work
-
-General model serving systems. Model serving has been an active area of research in recent years, with numerous systems proposed to tackle diverse aspects of deep learning model deployment. Clipper [11], TensorFlow Serving [33], Nexus [45], InferLine [10], and Clockwork [20] are some earlier general model serving systems. They study batching, caching, placement, and scheduling for serving single or multiple models. More recently, DVABatch [12] introduces multi-entry multi-exit batching. REEF [21] and Shepherd [61] propose preemption for serving. AlpaServe [28] utilizes model parallelism for statistical multiplexing. However, these general systems fail to take into account the autoregressive property and token state of LLM inference, resulting in missed opportunities for optimization.
-
-Specialized serving systems for transformers. Due to the significance of the transformer architecture, numerous specialized serving systems for it have been developed. These systems utilize GPU kernel optimizations [1, 29, 31, 56], advanced batching mechanisms [14, 60], model parallelism [1, 41, 60], and parameter sharing [64] for efficient serving. Among them, Orca [60] is most relevant to our approach.
-
-Comparison to Orca. The iteration-level scheduling in Orca [60] and PagedAttention in vLLM are complementary techniques: While both systems aim to increase the GPU utilization and hence the throughput of LLM serving, Orca achieves it by scheduling and interleaving the requests so that more requests can be processed in parallel, while vLLM is doing so by increasing memory utilization so that the working sets of more requests fit into memory. By reducing memory fragmentation and enabling sharing, vLLM runs more requests in a batch in parallel and achieves a  $2 - 4 \times$  speedup compared to Orca. Indeed, the fine-grained scheduling and interleaving of the requests like in Orca makes memory management more challenging, making the techniques proposed in vLLM even more crucial.
-
-Memory optimizations. The widening gap between the compute capability and memory capacity of accelerators has caused memory to become a bottleneck for both training and inference. Swapping [23, 42, 55], recomputation [7, 24] and their combination [40] have been utilized to reduce the peak memory of training. Notably, FlexGen [46] studies how to swap weights and token states for LLM inference with
-
-limited GPU memory, but it does not target the online serving settings. OLLA [48] optimizes the lifetime and location of tensors to reduce fragmentation, but it does not do fine-grained block-level management or online serving. FlashAttention [13] applies tiling and kernel optimizations to reduce the peak memory of attention computation and reduce I/O costs. This paper introduces a new idea of block-level memory management in the context of online serving.
-
-# 10 Conclusion
-
-This paper proposes PagedAttention, a new attention algorithm that allows attention keys and values to be stored in non-contiguous paged memory, and presents vLLM, a high-throughput LLM serving system with efficient memory management enabled by PagedAttention. Inspired by operating systems, we demonstrate how established techniques, such as virtual memory and copy-on-write, can be adapted to efficiently manage KV cache and handle various decoding algorithms in LLM serving. Our experiments show that vLLM achieves  $2 - 4\times$  throughput improvements over the state-of-the-art systems.
-
-# Acknowledgement
-
-We would like to thank Xiaoxuan Liu, Zhifeng Chen, Yanping Huang, anonymous SOSP reviewers, and our shepherd, Lidong Zhou, for their insightful feedback. This research is partly supported by gifts from Andreessen Horowitz, Anyscale, Astronomer, Google, IBM, Intel, Lacework, Microsoft, Mohamed Bin Zayed University of Artificial Intelligence, Samsung SDS, Uber, and VMware.
-
-# References
-
-[1] Reza Yazdani Aminabadi, Samyam Rajbhandari, Minjia Zhang, Ammar Ahmad Awan, Cheng Li, Du Li, Elton Zheng, Jeff Rasley, Shaden Smith, Olatunjri Ruwase, et al. 2022. DeepSpeed Inference: Enabling Efficient Inference of Transformer Models at Unprecedented Scale. arXiv preprint arXiv:2207.00032 (2022).  
-[2] Jimmy Lei Ba, Jamie Ryan Kiros, and Geoffrey E Hinton. 2016. Layer normalization. arXiv preprint arXiv:1607.06450 (2016).  
-[3] Yoshua Bengio, Réjean Ducharme, and Pascal Vincent. 2000. A neural probabilistic language model. Advances in neural information processing systems 13 (2000).  
-[4] Ond rej Bojar, Rajen Chatterjee, Christian Federmann, Yvette Graham, Barry Haddow, Matthias Huck, Antonio Jimeno Yepes, Philipp Koehn, Varvara Logacheva, Christof Monz, Matteo Negri, Aurelie Neveol, Mariana Neves, Martin Popel, Matt Post, Raphael Rubino, Carolina Scarton, Lucia Specia, Marco Turchi, Karin Verspoor, and Marcos Zampieri. 2016. Findings of the 2016 Conference on Machine Translation. In Proceedings of the First Conference on Machine Translation. Association for Computational Linguistics, Berlin, Germany, 131-198. http://www.aclweb.org/anthology/W/W16/W16-2301  
-[5] Tom Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared D Kaplan, Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, et al. 2020. Language models are few-shot learners. Advances in neural information processing systems 33 (2020), 1877-1901.  
-[6] Mark Chen, Jerry Tworek, Heewoo Jun, Qiming Yuan, Henrique Ponde de Oliveira Pinto, Jared Kaplan, Harri Edwards, Yuri Burda, Nicholas
-
-Joseph, Greg Brockman, et al. 2021. Evaluating large language models trained on code. arXiv preprint arXiv:2107.03374 (2021).  
-[7] Tianqi Chen, Bing Xu, Chiyuan Zhang, and Carlos Guestrin. 2016. Training deep nets with sublinear memory cost. arXiv preprint arXiv:1604.06174 (2016).  
+[1] Reza Yazdani Aminabadi, Samyam Rajbhandari, Minjia Zhang, Ammar Ahmad Awan, Cheng Li, Du Li, Elton Zheng, Jeff Rasley, Shaden Smith, Olatunjri Ruwase, et al. 2022. DeepSpeed Inference: Enabling Efficient Inference of Transformer Models at Unprecedented Scale. arXiv预印本 arXiv:2207.00032 (2022)。  
+[2] Jimmy Lei Ba, Jamie Ryan Kiros, and Geoffrey E Hinton. 2016. Layer normalization. arXiv预印本 arXiv:1607.06450 (2016)。  
+[3] Yoshua Bengio, Réjean Ducharme, and Pascal Vincent. 2000. A neural probabilistic language model. 神经信息处理系统进展 13 (2000)。  
+[4] Ond rej Bojar, Rajen Chatterjee, Christian Federmann, Yvette Graham, Barry Haddow, Matthias Huck, Antonio Jimeno Yepes, Philipp Koehn, Varvara Logacheva, Christof Monz, Matteo Negri, Aurelie Neveol, Mariana Neves, Martin Popel, Matt Post, Raphael Rubino, Carolina Scarton, Lucia Specia, Marco Turchi, Karin Verspoor, and Marcos Zampieri. 2016. Findings of the 2016 Conference on Machine Translation. 在首届机器翻译会议论文集中。计算语言学协会，柏林，德国，131-198。http://www.aclweb.org/anthology/W/W16/W16-2301  
+[5] Tom Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared D Kaplan, Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, et al. 2020. Language models are few-shot learners. 神经信息处理系统进展 33 (2020), 1877-1901。  
+[6] Mark Chen, Jerry Tworek, Heewoo Jun, Qiming Yuan, Henrique Ponde de Oliveira Pinto, Jared Kaplan, Harri Edwards, Yuri Burda, Nicholas Joseph, Greg Brockman, et al. 2021. Evaluating large language models trained on code. arXiv预印本 arXiv:2107.03374 (2021)。  
+[7] Tianqi Chen, Bing Xu, Chiyuan Zhang, and Carlos Guestrin. 2016. Training deep nets with sublinear memory cost. arXiv预印本 arXiv:1604.06174 (2016)。  
 [8] Wei-Lin Chiang, Zhuohan Li, Zi Lin, Ying Sheng, Zhanghao Wu, Hao Zhang, Lianmin Zheng, Siyuan Zhuang, Yonghao Zhuang, Joseph E. Gonzalez, Ion Stoica, and Eric P. Xing. 2023. Vicuna: An Open-Source Chatbot Impressing GPT-4 with  $90\%$ * ChatGPT Quality. https://lmsys.org/blog/2023-03-30-vicuna/  
-[9] Aakanksha Chowdhery, Sharan Narang, Jacob Devlin, Maarten Bosma, Gaurav Mishra, Adam Roberts, Paul Barham, Hyung Won Chung, Charles Sutton, Sebastian Gehrmann, et al. 2022. Palm: Scaling language modeling with pathways. arXiv preprint arXiv:2204.02311 (2022).  
-[10] Daniel Crankshaw, Gur-Eyal Sela, Xiangxi Mo, Corey Zumar, Ion Stoica, Joseph Gonzalez, and Alexey Tumanov. 2020. InferLine: latency-aware provisioning and scaling for prediction serving pipelines. In Proceedings of the 11th ACM Symposium on Cloud Computing. 477-491.  
-[11] Daniel Crankshaw, Xin Wang, Guilio Zhou, Michael J Franklin, Joseph E Gonzalez, and Ion Stoica. 2017. Clipper: A Low-Latency Online Prediction Serving System. In 14th USENIX Symposium on Networked Systems Design and Implementation (NSDI 17). 613-627.  
-[12] Weihao Cui, Han Zhao, Quan Chen, Hao Wei, Zirui Li, Deze Zeng, Chao Li, and Minyi Guo. 2022. DVABatch: Diversity-aware Multi-Entry Multi-Exit Batching for Efficient Processing of DNN Services on GPUs. In 2022 USENIX Annual Technical Conference (USENIX ATC 22). 183-198.  
-[13] Tri Dao, Dan Fu, Stefano Ermon, Atri Rudra, and Christopher Ré. 2022. Flashattention: Fast and memory-efficient exact attention with io-awareness. Advances in Neural Information Processing Systems 35 (2022), 16344-16359.  
-[14] Jiarui Fang, Yang Yu, Chengduo Zhao, and Jie Zhou. 2021. Turbo Transformers: an efficient GPU serving system for transformer models. In Proceedings of the 26th ACM SIGPLAN Symposium on Principles and Practice of Parallel Programming. 389-402.  
-[15] FastAPI. 2023. FastAPI. https://github.com/tiangolo/fastapi.  
-[16] Pin Gao, Lingfan Yu, Yongwei Wu, and Jinyang Li. 2018. Low latency rnn inference with cellular batching. In Proceedings of the Thirteenth EuroSys Conference. 1-15.  
-[17] Amir Gholami, Zhewei Yao, Sehoon Kim, Michael W Mahoney, and Kurt Keutzer. 2021. Ai and memory wall. *RiseLab Medium Post* 1 (2021), 6.  
+[9] Aakanksha Chowdhery, Sharan Narang, Jacob Devlin, Maarten Bosma, Gaurav Mishra, Adam Roberts, Paul Barham, Hyung Won Chung, Charles Sutton, Sebastian Gehrmann, et al. 2022. Palm: Scaling language modeling with pathways. arXiv预印本 arXiv:2204.02311 (2022)。  
+[10] Daniel Crankshaw, Gur-Eyal Sela, Xiangxi Mo, Corey Zumar, Ion Stoica, Joseph Gonzalez, and Alexey Tumanov. 2020. InferLine: latency-aware provisioning and scaling for prediction serving pipelines. 在第11届ACM云计算研讨会论文集中。477-491。  
+[11] Daniel Crankshaw, Xin Wang, Guilio Zhou, Michael J Franklin, Joseph E Gonzalez, and Ion Stoica. 2017. Clipper: A Low-Latency Online Prediction Serving System. 在第14届USENIX网络系统设计与实现研讨会（NSDI 17）上。613-627。  
+[12] Weihao Cui, Han Zhao, Quan Chen, Hao Wei, Zirui Li, Deze Zeng, Chao Li, and Minyi Guo. 2022. DVABatch: Diversity-aware Multi-Entry Multi-Exit Batching for Efficient Processing of DNN Services on GPUs. 在2022 USENIX年度技术会议（USENIX ATC 22）上。183-198。  
+[13] Tri Dao, Dan Fu, Stefano Ermon, Atri Rudra, and Christopher Ré. 2022. Flashattention: Fast and memory-efficient exact attention with io-awareness. 神经信息处理系统进展 35 (2022), 16344-16359。  
+[14] Jiarui Fang, Yang Yu, Chengduo Zhao, and Jie Zhou. 2021. Turbo Transformers: an efficient GPU serving system for transformer models. 在第26届ACM SIGPLAN并行编程原理与实践研讨会论文集中。389-402。  
+[15] FastAPI. 2023. FastAPI. https://github.com/tiangolo/fastapi。  
+[16] Pin Gao, Lingfan Yu, Yongwei Wu, and Jinyang Li. 2018. Low latency rnn inference with cellular batching. 在第13届EuroSys会议论文集中。1-15。  
+[17] Amir Gholami, Zhewei Yao, Sehoon Kim, Michael W Mahoney, and Kurt Keutzer. 2021. ai and memory wall. *RiseLab Medium Post* 1 (2021), 6。  
 [18] Github. 2022. https://github.com/features/copilot  
 [19] Google. 2023. https://bard.google.com/  
-[20] Arpan Gujarati, Reza Karimi, Safya Alzayat, Wei Hao, Antoine Kaufmann, Ymir Vigfusson, and Jonathan Mace. 2020. Serving {DNNs} like Clockwork: Performance Predictability from the Bottom Up. In 14th USENIX Symposium on Operating Systems Design and Implementation (OSDI 20). 443-462.  
-[21] Mingcong Han, Hanze Zhang, Rong Chen, and Haibo Chen. 2022. Microsecond-scale Preemption for Concurrent {GPU-accelerated} {DNN} Inferences. In 16th USENIX Symposium on Operating Systems Design and Implementation (OSDI 22). 539-558.  
-[22] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2016. Deep residual learning for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition. 770-778.  
-[23] Chien-Chin Huang, Gu Jin, and Jinyang Li. 2020. Swapadvisor: Pushing deep learning beyond thegpu memory limit via smart swapping. In Proceedings of the Twenty-Fifth International Conference on Architectural Support for Programming Languages and Operating Systems. 1341-1355.  
-[24] Paras Jain, Ajay Jain, Aniruddha Nrusimha, Amir Gholami, Pieter Abbeel, Joseph Gonzalez, Kurt Keutzer, and Ion Stoica. 2020. Checkmate: Breaking the memory wall with optimal tensor rematerialization.
-
-Proceedings of Machine Learning and Systems 2 (2020), 497-511.  
-[25] Tom Kilburn, David BG Edwards, Michael J Lanigan, and Frank H Sumner. 1962. One-level storage system. IRE Transactions on Electronic Computers 2 (1962), 223-235.  
-[26] Brian Lester, Rami Al-Rfou, and Noah Constant. 2021. The power of scale for parameter-efficient prompt tuning. arXiv preprint arXiv:2104.08691 (2021).  
-[27] Xiang Lisa Li and Percy Liang. 2021. Prefix-tuning: Optimizing continuous prompts for generation. arXiv preprint arXiv:2101.00190 (2021).  
-[28] Zhuohan Li, Lianmin Zheng, Yinmin Zhong, Vincent Liu, Ying Sheng, Xin Jin, Yanping Huang, Zhifeng Chen, Hao Zhang, Joseph E Gonzalez, et al. 2023. AlpaServe: Statistical Multiplexing with Model Parallelism for Deep Learning Serving. arXiv preprint arXiv:2302.11665 (2023).  
-[29] Lingxiao Ma, Zhiqiang Xie, Zhi Yang, Jilong Xue, Youshan Miao, Wei Cui, Wenxiang Hu, Fan Yang, Lintao Zhang, and Lidong Zhou. 2020. Rammer: Enabling holistic deep learning compiler optimizations with rtasks. In Proceedings of the 14th USENIX Conference on Operating Systems Design and Implementation. 881-897.  
-[30] NVIDIA. [n.d.]. Triton Inference Server. https://developer.nvidia.com/nvidia-triton-inference-server.  
-[31] NVIDIA. 2023. FasterTransformer. https://github.com/NVIDIA/FasterTransformer.  
-[32] NVIDIA. 2023. NCCL: The NVIDIA Collective Communication Library. https://developer.nvidia.com/nccl.  
-[33] Christopher Olston, Noah Fiedel, Kiril Gorovoy, Jeremiah Harmsen, Li Lao, Fangwei Li, Vinu Rajashekhar, Sukriti Ramesh, and Jordan Soyke. 2017. Tensorflow-serving: Flexible, high-performance ml serving. arXiv preprint arXiv:1712.06139 (2017).  
+[20] Arpan Gujarati, Reza Karimi, Safya Alzayat, Wei Hao, Antoine Kaufmann, Ymir Vigfusson, and Jonathan Mace. 2020. Serving {DNNs} like Clockwork: Performance Predictability from the Bottom Up. 在第14届USENIX操作系统设计与实现研讨会（OSDI 20）上。443-462。  
+[21] Mingcong Han, Hanze Zhang, Rong Chen, and Haibo Chen. 2022. Microsecond-scale Preemption for Concurrent {GPU-accelerated} {DNN} Inferences. 在第16届USENIX操作系统设计与实现研讨会（OSDI 22）上。539-558。  
+[22] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2016. Deep residual learning for image recognition. 在IEEE计算机视觉与模式识别会议论文集中。770-778。  
+[23] Chien-Chin Huang, Gu Jin, and Jinyang Li. 2020. Swapadvisor: Pushing deep learning beyond thegpu memory limit via smart swapping. 在第25届国际编程语言与操作系统架构支持会议论文集中。1341-1355。  
+[24] Paras Jain, Ajay Jain, Aniruddha Nrusimha, Amir Gholami, Pieter Abbeel, Joseph Gonzalez, Kurt Keutzer, and Ion Stoica. 2020. Checkmate: Breaking the memory wall with optimal tensor rematerialization。机器学习与系统进展 2 (2020), 497-511。  
+[25] Tom Kilburn, David BG Edwards, Michael J Lanigan, and Frank H Sumner. 1962. One-level storage system. IRE电子计算机汇刊 2 (1962), 223-235。  
+[26] Brian Lester, Rami Al-Rfou, and Noah Constant. 2021. The power of scale for parameter-efficient prompt tuning. arXiv预印本 arXiv:2104.08691 (2021)。  
+[27] Xiang Lisa Li and Percy Liang. 2021. Prefix-tuning: Optimizing continuous prompts for generation. arXiv预印本 arXiv:2101.00190 (2021)。  
+[28] Zhuohan Li, Lianmin Zheng, Yinmin Zhong, Vincent Liu, Ying Sheng, Xin Jin, Yanping Huang, Zhifeng Chen, Hao Zhang, Joseph E Gonzalez, et al. 2023. AlpaServe: Statistical Multiplexing with Model Parallelism for Deep Learning Serving. arXiv预印本 arXiv:2302.11665 (2023)。  
+[29] Lingxiao Ma, Zhiqiang Xie, Zhi Yang, Jilong Xue, Youshan Miao, Wei Cui, Wenxiang Hu, Fan Yang, Lintao Zhang, and Lidong Zhou. 2020. Rammer: Enabling holistic deep learning compiler optimizations with rtasks. 在第14届USENIX操作系统设计与实现会议论文集中。881-897。  
+[30] NVIDIA. [n.d.]. Triton Inference Server. https://developer.nvidia.com/nvidia-triton-inference-server。  
+[31] NVIDIA. 2023. FasterTransformer. https://github.com/NVIDIA/FasterTransformer。  
+[32] NVIDIA. 2023. NCCL: The NVIDIA Collective Communication Library. https://developer.nvidia.com/nccl。  
+[33] Christopher Olston, Noah Fiedel, Kiril Gorovoy, Jeremiah Harmsen, Li Lao, Fangwei Li, Vinu Rajashekhar, Sukriti Ramesh, and Jordan Soyke. 2017. Tensorflow-serving: Flexible, high-performance ml serving. arXiv预印本 arXiv:1712.06139 (2017)。  
 [34] OpenAI. 2020. https://openai.com/blog/openai-api  
 [35] OpenAI. 2022. https://openai.com/blog/chatgpt  
 [36] OpenAI. 2023. https://openai.com/blog/custom-instructions-for-chatgpt  
 [37] OpenAI. 2023. GPT-4 Technical Report. arXiv:2303.08774 [cs.CL]  
-[38] LMSYS ORG. 2023. Chatbot Arena Leaderboard Week 8: Introducing MT-Bench and Vicuna-33B. https://lmsys.org/blog/2023-06-22-leaderboard/.  
-[39] Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, et al. 2019. Pytorch: An imperative style, high-performance deep learning library. Advances in neural information processing systems 32 (2019).  
-[40] Shishir G Patil, Paras Jain, Prabal Dutta, Ion Stoica, and Joseph Gonzalez. 2022. POET: Training Neural Networks on Tiny Devices with Integrated Rematerialization and Paging. In International Conference on Machine Learning. PMLR, 17573-17583.  
-[41] Reiner Pope, Sholto Douglas, Aakanksha Chowdhery, Jacob Devlin, James Bradbury, Anselm Levskaya, Jonathan Heek, Kefan Xiao, Shivani Agrawal, and Jeff Dean. 2022. Efficiently Scaling Transformer Inference. arXiv preprint arXiv:2211.05102 (2022).  
-[42] Jie Ren, Samyam Rajbhandari, Reza Yazdani Aminabadi, Olatunj Ruwase, Shuangyan Yang, Minjia Zhang, Dong Li, and Yuxiong He. 2021. ZeRO-Offload: Democratizing Billion-Scale Model Training.. In USENIX Annual Technical Conference. 551-564.  
+[38] LMSYS ORG. 2023. Chatbot Arena Leaderboard Week 8: Introducing MT-Bench and Vicuna-33B. https://lmsys.org/blog/2023-06-22-leaderboard/。  
+[39] Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, et al. 2019. Pytorch: An imperative style, high-performance deep learning library. 神经信息处理系统进展 32 (2019)。  
+[40] Shishir G Patil, Paras Jain, Prabal Dutta, Ion Stoica, and Joseph Gonzalez. 2022. POET: Training Neural Networks on Tiny Devices with Integrated Rematerialization and Paging. 在国际机器学习会议上。PMLR, 17573-17583。  
+[41] Reiner Pope, Sholto Douglas, Aakanksha Chowdhery, Jacob Devlin, James Bradbury, Anselm Levskaya, Jonathan Heek, Kefan Xiao, Shivani Agrawal, and Jeff Dean. 2022. Efficiently Scaling Transformer Inference. arXiv预印本 arXiv:2211.05102 (2022)。  
+[42] Jie Ren, Samyam Rajbhandari, Reza Yazdani Aminabadi, Olatunj Ruwase, Shuangyan Yang, Minjia Zhang, Dong Li, and Yuxiong He. 2021. ZeRO-Offload: Democratizing Billion-Scale Model Training.. 在USENIX年度技术会议上。551-564。  
 [43] Reuters. 2023. https://www.reuters.com/technology/tech-giants-ai-like-bing-bard-poses-billion-dollar-search-problem-2023-02-22/  
 [44] Amazon Web Services. 2023. https://aws.amazon.com/bedrock/  
-[45] Haichen Shen, Lequn Chen, Yuchen Jin, Liangyu Zhao, Bingyu Kong, Matthai Philipose, Arvind Krishnamurthy, and Ravi Sundaram. 2019. Nexus: A GPU cluster engine for accelerating DNN-based video analysis. In Proceedings of the 27th ACM Symposium on Operating Systems Principles. 322-337.  
-[46] Ying Sheng, Lianmin Zheng, Binhang Yuan, Zhuohan Li, Max Ryabinin, Daniel Y Fu, Zhiqiang Xie, Beidi Chen, Clark Barrett, Joseph E Gonzalez, et al. 2023. High-throughput Generative Inference of Large
-
-Language Models with a Single GPU. arXiv preprint arXiv:2303.06865 (2023).  
-[47] Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, and Bryan Catanzaro. 2019. Megatron-lm: Training multi-billion parameter language models using model parallelism. arXiv preprint arXiv:1909.08053 (2019).  
-[48] Benoit Steiner, Mostafa Elhoushi, Jacob Kahn, and James Hegarty. 2022. OLLA: Optimizing the Lifetime and Location of Arrays to Reduce the Memory Usage of Neural Networks. (2022). https://doi.org/10.48550/arXiv.2210.12924  
-[49] Ilya Sutskever, Oriol Vinyals, and Quoc V Le. 2014. Sequence to sequence learning with neural networks. Advances in neural information processing systems 27 (2014).  
-[50] Rohan Taori, Ishaan Gulrajani, Tianyi Zhang, Yann Dubois, Xuechen Li, Carlos Guestrin, Percy Liang, and Tatsunori B. Hashimoto. 2023. Stanford Alpaca: An Instruction-following LLaMA model. https://github.com/tatsu-lab/stanford_alpaca.  
+[45] Haichen Shen, Lequn Chen, Yuchen Jin, Liangyu Zhao, Bingyu Kong, Matthai Philipose, Arvind Krishnamurthy, and Ravi Sundaram. 2019. Nexus: A GPU cluster engine for accelerating DNN-based video analysis. 在第27届ACM操作系统原理研讨会论文集中。322-337。  
+[46] Ying Sheng, Lianmin Zheng, Binhang Yuan, Zhuohan Li, Max Ryabinin, Daniel Y Fu, Zhiqiang Xie, Beidi Chen, Clark Barrett, Joseph E Gonzalez, et al. 2023. High-throughput Generative Inference of Large Language Models with a Single GPU. arXiv预印本 arXiv:2303.06865 (2023)。  
+[47] Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, and Bryan Catanzaro. 2019. Megatron-lm: Training multi-billion parameter language models using model parallelism. arXiv预印本 arXiv:1909.08053 (2019)。  
+[48] Benoit Steiner, Mostafa Elhoushi, Jacob Kahn, and James Hegarty. 2022. OLLA: Optimizing the Lifetime and Location of Arrays to Reduce the Memory Usage of Neural Networks. (2022)。https://doi.org/10.48550/arXiv.2210.12924  
+[49] Ilya Sutskever, Oriol Vinyals, and Quoc V Le. 2014. Sequence to sequence learning with neural networks. 神经信息处理系统进展 27 (2014)。  
+[50] Rohan Taori, Ishaan Gulrajani, Tianyi Zhang, Yann Dubois, Xuechen Li, Carlos Guestrin, Percy Liang, and Tatsunori B. Hashimoto. 2023. Stanford Alpaca: An Instruction-following LLaMA model. https://github.com/tatsu-lab/stanford_alpaca。  
 [51] ShareGPT Team. 2023. https://sharegpt.com/  
-[52] Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie-Anne Lachaux, Timothée Lacroix, Baptiste Roziere, Naman Goyal, Eric Hambro, Faisal Azhar, et al. 2023. Llama: Open and efficient foundation language models. arXiv preprint arXiv:2302.13971 (2023).  
-[53] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017. Attention is all you need. Advances in neural information processing systems 30 (2017).  
-[54] Jing Wang, Youyou Lu, Qing Wang, Minhui Xie, Keji Huang, and Jiwu Shu. 2022. Pacman: An Efficient Compaction Approach for {Log-Structured} {Key-Value} Store on Persistent Memory. In 2022 USENIX Annual Technical Conference (USENIX ATC 22). 773–788.  
-[55] Linnan Wang, Jinmian Ye, Yiyang Zhao, Wei Wu, Ang Li, Shuaiwen Leon Song, Zenglin Xu, and Tim Kraska. 2018. Superneurons: Dynamic GPU memory management for training deep neural networks. In Proceedings of the 23rd ACM SIGPLAN symposium on principles and practice of parallel programming. 41-53.  
-[56] Xiaohui Wang, Ying Xiong, Yang Wei, Mingxuan Wang, and Lei Li. 2021. LightSeq: A High Performance Inference Library for Transformers. In Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies: Industry Papers. 113-120.  
-[57] Yizhong Wang, Yeganeh Kordi, Swaroop Mishra, Alisa Liu, Noah A Smith, Daniel Khashabi, and Hannaneh Hajishirzi. 2022. Self-Instruct: Aligning Language Model with Self Generated Instructions. arXiv preprint arXiv:2212.10560 (2022).  
-[58] Thomas Wolf, Lysandre Debut, Victor Sanh, Julien Chaumont, Clement Delangue, Anthony Moi, Pierrick Cistac, Tim Rault, Rémi Louf, Morgan Funtowicz, et al. 2020. Transformers: State-of-the-art natural language processing. In Proceedings of the 2020 conference on empirical methods in natural language processing: system demonstrations. 38-45.  
-[59] Yonghui Wu, Mike Schuster, Zhifeng Chen, Quoc V Le, Mohammad Norouzi, Wolfgang Macherey, Maxim Krikun, Yuan Cao, Qin Gao, Klaus Macherey, et al. 2016. Google's neural machine translation system: Bridging the gap between human and machine translation. arXiv preprint arXiv:1609.08144 (2016).  
-[60] Gyeong-In Yu, Joo Seong Jeong, Geon-Woo Kim, Soojeong Kim, and Byung-Gon Chun. 2022. Orca: A Distributed Serving System for {Transformer-Based} Generative Models. In 16th USENIX Symposium on Operating Systems Design and Implementation (OSDI 22). 521-538.  
-[61] Hong Zhang, Yupeng Tang, Anurag Khandelwal, and Ion Stoica. 2023. SHEPHERD: Serving DNNs in the Wild. In 20th USENIX Symposium on Networked Systems Design and Implementation (NSDI 23). USENIX Association, Boston, MA, 787-808. https://www.usenix.org/conference/nsdi23/presentation/zhang-hong
+[52] Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie-Anne Lachaux, Timothée Lacroix, Baptiste Roziere, Naman Goyal, Eric Hambro, Faisal Azhar, et al. 2023. Llama: Open and efficient foundation language models. arXiv预印本 arXiv:2302.13971 (2023)。  
+[53] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017. Attention is all you need. 神经信息处理系统进展 30 (2017)。  
+[54] Jing Wang, Youyou Lu, Qing Wang, Minhui Xie, Keji Huang, and Jiwu Shu. 2022. Pacman: An Efficient Compaction Approach for {Log-Structured} {Key-Value} Store on Persistent Memory. 在2022 USENIX年度技术会议（USENIX ATC 22）上。773-788。  
+[55] Linnan Wang, Jinmian Ye, Yiyang Zhao, Wei Wu, Ang Li, Shuaiwen Leon Song, Zenglin Xu, and Tim Kraska. 2018. Superneurons: Dynamic GPU memory management for training deep neural networks. 在第23届ACM SIGPLAN并行编程原理与实践研讨会论文集中。41-53。  
+[56] Xiaohui Wang, Ying Xiong, Yang Wei, Mingxuan Wang, and Lei Li. 2021. LightSeq: A High Performance Inference Library for Transformers. 在2021年北美计算语言学协会会议：人类语言技术：行业论文论文集中。113-120。  
+[57] Yizhong Wang, Yeganeh Kordi, Swaroop Mishra, Alisa Liu, Noah A Smith, Daniel Khashabi, and Hannaneh Hajishirzi. 2022. Self-Instruct: Aligning Language Model with Self Generated Instructions. arXiv预印本 arXiv:2212.10560 (2022)。  
+[58] Thomas Wolf, Lysandre Debut, Victor Sanh, Julien Chaumont, Clement Delangue, Anthony Moi, Pierrick Cistac, Tim Rault, Rémi Louf, Morgan Funtowicz, et al. 2020. Transformers: State-of-the-art natural language processing. 在2020年自然语言处理经验方法会议：系统演示论文集中。38-45。  
+[59] Yonghui Wu, Mike Schuster, Zhifeng Chen, Quoc V Le, Mohammad Norouzi, Wolfgang Macherey, Yuan Cao, Qin Gao, Klaus Macherey, et al. 2016. Google's neural machine translation system: Bridging the gap between human and machine translation. arXiv预印本 arXiv:1609.08144 (2016)。  
+[60] Gyeong-In Yu, Joo Seong Jeong, Geon-Woo Kim, Soojeong Kim, and Byung-Gon Chun. 2022. Orca: A Distributed Serving System for {Transformer-Based} Generative Models. 在第16届USENIX操作系统设计与实现研讨会（OSDI 22）上。521-538。  
+[61] Hong Zhang, Yupeng Tang, Anurag Khandelwal, and Ion Stoica. 2023. SHEPHERD: Serving DNNs in the Wild. 在第20届USENIX网络系统设计与实现研讨会（NSDI 23）上。USENIX协会，波士顿，马萨诸塞州，787-808。https://www.usenix.org/conference/nsdi23/presentation/zhang-hong
 
-[62] Susan Zhang, Stephen Roller, Naman Goyal, Mikel Artetxe, Moya Chen, Shuohui Chen, Christopher Dewan, Mona Diab, Xian Li, Xi Victoria Lin, et al. 2022. Opt: Open pre-trained transformer language models. arXiv preprint arXiv:2205.01068 (2022).  
-[63] Lianmin Zheng, Zhuohan Li, Hao Zhang, Yonghao Zhuang, Zhifeng Chen, Yanping Huang, Yida Wang, Yuanzhong Xu, Danyang Zhuo,
-
-Eric P Xing, et al. 2022. Alpa: Automating Inter-and Intra-Operator Parallelism for Distributed Deep Learning. In 16th USENIX Symposium on Operating Systems Design and Implementation (OSDI 22), 559-578.  
-[64] Zhe Zhou, Xuechao Wei, Jiejing Zhang, and Guangyu Sun. 2022. PetS: A Unified Framework for Parameter-Efficient Transformers Serving. In 2022 USENIX Annual Technical Conference (USENIX ATC 22). 489-504.
+[62] Susan Zhang, Stephen Roller, Naman Goyal, Mikel Artetxe, Moya Chen, Shuohui Chen, Christopher Dewan, Mona Diab, Xian Li, Xi Victoria Lin, et al. 2022. Opt: Open pre-trained transformer language models. arXiv预印本 arXiv:2205.01068 (2022)。  
+[63] Lianmin Zheng, Zhuohan Li, Hao Zhang, Yonghao Zhuang, Zhifeng Chen, Yanping Huang, Yida Wang, Yuanzhong Xu, Danyang Zhuo, Eric P Xing, et al. 2022. Alpa: Automating Inter-and Intra-Operator Parallelism for Distributed Deep Learning. 在第16届USENIX操作系统设计与实现研讨会（OSDI 22），559-578。  
+[64] Zhe Zhou, Xuechao Wei, Jiejing Zhang, and Guangyu Sun. 2022. PetS: A Unified Framework for Parameter-Efficient Transformers Serving. 在2022 USENIX年度技术会议（USENIX ATC 22）上。489-504。
